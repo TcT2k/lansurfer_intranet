@@ -3,7 +3,12 @@
 
 // Scripte
 	require $LS_BASEPATH."../includes/ls_const.inc";
-	require $LS_BASEPATH."../includes/ls_conf.inc";
+	$cfgFile = $LS_BASEPATH."../conf/base.inc";
+	if (!file_exists($cfgFile)) {
+		define ('LS_CONFIGURED', false);
+		define ('LS_LANGUAGE', 'en_EN');
+	} else
+		require $cfgFile;
   require $LS_BASEPATH."../includes/sql_util.inc";
 	require $LS_BASEPATH."../includes/ls_printing.inc";
 	require $LS_BASEPATH."../includes/user_util.inc";
@@ -55,7 +60,7 @@
 	}
 
 	function StartPage($title = "", $innerstyle = 1, $icon = '') {
-		global $LS_BASEPATH, $HTTP_COOKIE_VARS, $LS_POPUPPAGE;
+		global $LS_BASEPATH, $LS_POPUPPAGE, $LS_BODYTAGS;
 
 		user_auth();
 ?>
@@ -66,20 +71,26 @@
 	<? if ($innerstyle == STYLE_NAVBAR): ?>
 	<base target="main">
 	<? endif; ?>
+
+	<script language="JavaScript">
+	<!--
+		var BasePath = "<? echo $LS_BASEPATH; ?>";
+	//-->
+	</script>
+	<script language="JavaScript" src="<? echo $LS_BASEPATH; ?>default.js"></script>
 </head>
 
-<body background="<? echo $LS_BASEPATH; ?>images/preview.gif">
-<? require $LS_BASEPATH.'../includes/js_default.inc'; ?>
+<body background="<? echo $LS_BASEPATH; ?>images/preview.gif" <? echo $LS_BODYTAGS; ?>>
 <? if (!$LS_POPUPPAGE): ?>
-<h3 class=content><?  
-	if ($icon && $icon != $LS_BASEPATH.'images/tourney/icons/')
-		echo '<img width=32 height=32 border=0 src="'.$icon.'"> ';
-	echo $title; 
-?></h3>
-<?
-if ($title)
-	NavPrint($title);
-?>
+	<h3 class=content><?  
+		if ($icon && $icon != $LS_BASEPATH.'images/tourney/icons/')
+			echo '<img width=32 height=32 border=0 src="'.$icon.'"> ';
+		echo $title; 
+	?></h3>
+	<?
+	if ($title)
+		NavPrint($title);
+	?>
 <? endif; ?>
 <p class="content">
 <?		
@@ -135,6 +146,39 @@ if ($title)
 			$thedate = -1;
 		
 		return $thedate;
+	}
+	
+	function LSLoadModules($setupinfo = false) {
+		global $LS_BASEPATH, $LSCurrentModules;
+
+		function LoadModule($s, $si) {
+			
+			include $s.'/info.inc';
+			if ($si && file_exists($s.'/setup.inc'))
+				include $s.'/setup.inc';
+			
+			return $info;
+		}
+	
+		$d = dir($LS_BASEPATH.'../modules');
+		while ($s = $d->read()) {
+			$path = ($d->path.'/'.$s);
+			$info = $path .'/info.inc';
+			if ($s[0] != '.' && is_dir($path) && file_exists($info)) {
+				$mods[$s] = LoadModule($path, $setupinfo);
+				
+				$LSModules[$s] = true;
+			}
+		}
+		$d->close();
+		ksort($mods);
+		include $LS_BASEPATH.'../conf/modules.inc';
+		
+		foreach ($mods as $key => $mod) {
+			if ($LSModules[$key])
+				$LSCurrentModules[$key] = $mod;
+		}
+		
 	}
 
 	$LS_PLATFORM = $OSTYPE;

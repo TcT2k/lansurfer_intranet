@@ -1,33 +1,24 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-	
 	$LS_BASEPATH = '../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 
 	
 	StartPage("Catering - Sortiment");
 	
 	user_auth(TRUE);
 
-//ToDo: Checken ob user eingelogged ist.
-if ($user_valid=="true") {
+	if ($user_valid=="true") {
 	
-	//Default werte belegen :
-	//Standart Sortierung nach nummer:
 	if ($order=="") $order=nummer;
-	//Standart Filtern nach lieferant id = 1:
 	if ($filter=="") $filter=1;
 	
-	//Sortierung realisieren :
 	if ($direction=="ASC") $direction="DESC";
 	else $direction="ASC";
 	if ($direction=="") $direction="ASC";
 	
-	// user id ermitteln ...
 	$user_id = $user_current[id];
 	$user_current['kontostand'] = number_format ($user_current['kontostand'],2,",",".");
 	
-	//Status der letzten bestellung ermitteln :
 	$text="noch nicht bearbeitet";
 	$res=SQL_Query("SELECT * FROM CatOrder WHERE user_id='$user_id'AND wagen=0 AND ausgeliefert=0 ORDER by time ASC");
 	if ($row=mysql_fetch_array($res)) {
@@ -49,10 +40,8 @@ if ($user_valid=="true") {
 		while ($row=mysql_fetch_array($res));
 	}
 	else {
-		//noch keine bestellung
 		$text="Keine Bestellung bisher";
 	}
-	//Ende Status der ...
 		
 	require $LS_BASEPATH.'../includes/catering/header.inc';
 ?>
@@ -130,7 +119,6 @@ if ($user_valid=="true") {
   <tr>
       <td><font size="4">
       <?
-      	//Den Namen des aktuell ausgewählten Lieferanten gross ausgeben
       	$res=SQL_Query("SELECT name FROM CatSupplier WHERE id='$filter'");
       	$row=mysql_fetch_array($res);
       	echo $row[name]." :";
@@ -159,7 +147,6 @@ if ($user_valid=="true") {
 </table>
 <?
 	$i=0;
-	//Alle Produkte des jeweiligen Lieferanten anzeigen ...
 	if ($suche=="")	$res=SQL_Query("SELECT * FROM CatProduct WHERE lieferant='$filter' ORDER BY $order $direction");
 	else $res=SQL_Query("SELECT * FROM CatProduct WHERE lieferant='$filter' AND name LIKE '%$suche%' OR beschreibung LIKE '%$suche%' ORDER BY $order $direction");
 	if ($suche=="")	$res2=SQL_Query("SELECT * FROM CatProduct WHERE lieferant='$filter' ORDER BY $order $direction");
@@ -174,7 +161,6 @@ if ($user_valid=="true") {
 			if ($row[size]==1)$size="mittel";
 			if ($row[size]==2)$size="gross";
 			if (($i>0)&&($row[nummer]!=$old_nummer)) {
-			// Die Reihen-trennlinien nicht beim 1. mal zeichnen...	
 				?>
 				<table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
 				  <tr> 
@@ -190,9 +176,7 @@ if ($user_valid=="true") {
 				<?
 			}
 			$i++;			
-			// Gleiche Pizza Nummer nur andere Grösse ?
 			if ($row[nummer]==$old_nummer) {
-				// Dann nur Grösse und Preis ausgeben ...
 			?>
 				<table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
 				  <tr> 

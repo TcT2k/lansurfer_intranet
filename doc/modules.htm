@@ -1,0 +1,218 @@
+<!-- place in LS_directory/doc -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>
+
+<head>
+  <META NAME="HTTP_EQUIV" CONTENT="text/html; charset=ISO-8859-1">
+	<title>LANsurfer Intranet Readme</title>
+  <LINK REL="STYLESHEET" HREF="../htdocs/intra.css">
+</head>
+
+<body>
+	
+<h3 class=content>LANsurfer Intranet Modules</h3>
+	
+<p class=content> Copyright (c) 2000-2002 Tobias 'TcT' Taschner<br>
+		<address><a href="mailto:tct@lansurfer.com">tct@lansurfer.com</a></address>
+	<p></p>
+
+	
+<h3 class=content>Grundlegendes</h3>
+	
+<p class=content> Mit den LANsurfer Modules ist es ab sofort ganz einfach eigene 
+  Module in das LANsurfer Intranet einzuh&auml;ngen. Die Module k&ouml;nnen bei 
+  der Installation der Software dann nach belieben aktiviert/deaktiviert werden, 
+  um das Intranet optimal auf die eigenen W&uuml;nsche und Bed&uuml;rfnisse anzupassen.<br>
+  Um selber ein Modul zu programmieren sind folgende Schritte zu beachten:</p>
+<ul>
+  <li class="content"> an die Verzeichnisstruktur halten</li>
+  <li class="content">info.htm anpassen</li>
+  <li class="content">info.inc anpassen</li>
+  <li class="content">setup.inc anpassen</li>
+</ul>
+<p class="content">Hier nochmal die Vorgehensweise etwas detaillierter:</p>
+<ol>
+  <li class="content">Die Quelltexte inklusive Grafiken und sonstigen Dingen des 
+    neuen Moduls sind unter <i>htdocs/Modul_Name</i> abzulegen. Die Verzeichnisstruktur 
+    innnerhalb des Ordners kann dabei beliebig angelegt werden. Im Verzeichnis 
+    <i>includes/Modul_Name</i> werden wie der Name schon sagt, die Includes des 
+    Moduls abgelegt um sie vor dem Zugriff von aussen zu sch&uuml;tzen.<br>
+  </li>
+  <li class="content">In der <i>info.htm</i> sollte der Autor des Moduls sein 
+    Modul beschreiben, als da w&auml;ren die Funktionsweise des Moduls in der 
+    notwendigen Ausf&uuml;rhlichkeit, die einstellbaren Optionen und zum Beispiel 
+    eine Versionsuebersicht und Kontaktm&ouml;glichkeiten.</li>
+  <li class="content">Die <i>info.inc</i> enth&auml;lt alle anzeigbaren Informationen 
+    des neuen Moduls. Das sind zum einen der Autor und dessen E-mail, zum anderen 
+    aber auch der Name des Moduls, die Versionsnummer und das Releasedatum. Wenn 
+    das Modul die Men&uuml;leiste um einen Punkt erweitern soll, muss dem Punkt 
+    'menuitems' ein Array hinzugef&uuml;gt werden, was den Namen des Modulverzeichnisses 
+    und den Modulnamen enth&auml;lt. Soll auf der Adminseite ein Link fuer Admins 
+    hinzugef&uuml;gt werden, so muss dem Punkt 'menuitems_orga' ein Array hinzugef&uuml;gt 
+    werden, was den Namen des Modulverzeichnisses und den Modulnamen enth&auml;lt.</li>
+  <li class="content">Die <i>setup.inc</i> beinhaltet alle Informationen die f&uuml;r 
+    das LANsurfer System zur Installation des Moduls wichtig sind. Hier sind z.B. 
+    erweiterte Setup-Optionen beschrieben, die der User ausw&auml;hlen kann, aber 
+    vor allem wird die SQL Tabellenstruktur des Moduls definiert.</li>
+</ol>
+<p class="content">Wichtig ist, das jeglicher Ausgabetext in englischer Sprache 
+  zu formulieren ist und folgendermassen formatiert wird &lt;? echo _(&quot;text&quot;); 
+  ?&gt;. Das ganze hat den Sinn, das man dann sp&auml;ter on-the-fly
+  die gew&uuml;nschte Sprache w&auml;hlen kann. Den deutschen Teil &uuml;bersetzen 
+  wir dann, compilen die Sprachdatei und packen alles in ein neues Intranet Release.</p>
+<p class="content">Einen Blick Wert sind auf jeden Fall auch die Dateien <i>ls_const.inc</i>, 
+  <i>ls_printing.inc</i> und <i>sql_util.inc</i> im Includes Verzeichnis, da in 
+  diesen Dateien Konstanten und Funktionen definiert werden, die das Programmieren 
+  f&uuml;r LANsurfer doch erheblich vereinfachen (Datenbankzugriffe, Forms, Errorhandling, 
+  Navigationsbuttons etc.) und eine einheitliche CI und gleichmaessige Benutzerfuehrung 
+  erm&ouml;glichen. Wir bitten darum die neuen Module auch nach diesen Gesichtspunkten 
+  zu gestalten, sie also nach Aussehen und Navigationsschema den bisherigen Modulen 
+  nachzuahmen.</p>
+<h3 class=content>Verzeichnisstruktur<br>
+</h3>
+<p class=content> htdocs<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="25" height="8">Modul_Name<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8"> 
+  <font color="#99ccff">// Quelltexte</font><br>
+  <br>
+  htdocs<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="25" height="8">orga<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8">Modul_Name<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="25" height="8"> 
+  <font color="#99ccff">// Quelltexte (Administratives Interface)</font> <br>
+</p>
+<p class=content> includes<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="25" height="8">Modul_Name<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8"> 
+  <font color="#99ccff">// Includes</font><br>
+  <br>
+  modules<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="25" height="8">Modul_Name<br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8">info.htm<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="53" height="8"> 
+  <font color="#99ccff">// Informationsdatei mit Modulbeschreibung (HTML ohne 
+  Header!)</font> <br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8">info.inc<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="60" height="8"> 
+  <font color="#99ccff">// Informationen und Menueeintrag</font> <br>
+  <img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="50" height="8">setup.inc<img src="file:///K|/Web/work/htdocs/ls_intra/htdocs/images/pixel.gif" width="45" height="8"> 
+  <font color="#99ccff">// Setup Optionen und SQL Table Eintraege</font><br>
+</p>
+<h3 class=content>info.inc<br>
+</h3>
+<pre> &lt;?
+  /*
+  * LANsurfer - Catering Module Definition
+  */
+  
+  $info['vendor'] = &quot;<font color="#009900">Autor des Moduls</font>&quot;;
+  $info['vendorURL'] = &quot;<font color="#009900">http://URL des Autors</font>&quot;;
+  $info['displayname'] = _(&quot;<font color="#009900">Name des Moduls</font>&quot;);
+  $info['version'] = &quot;<font color="#009900">Version zb (</font><font color="#00CC00"><font color="#006600">1.0</font><font color="#009900">)</font></font>&quot;;
+  $info['builddate'] = &quot;<font color="#009900">Releasedatum (</font><font color="#00CC00"><font color="#006600">JJJJ-MM-TT</font><font color="#009900">)</font></font>&quot;;
+  
+  $info['menuitems'] = array('<font color="#009900">Modul_Verzeichnis</font>/' =&gt; _(&quot;<font color="#009900">Modul_Name</font>&quot;)); <font color="#99ccff">// Menuepunkt in der Navigation</font>
+
+  $info['orga_menuitems'] = array('<font color="#009900">Modul_Verzeichnis</font>/'=&gt; _(&quot;<font color="#009900">Modul_Name</font>&quot;)); <font color="#99ccff">// Menuepunkt auf der Adminseite</font>
+?&gt;
+</pre>
+  
+<h3 class=content>setup.inc<br>
+</h3>
+<pre>&lt;?
+  /*
+  * LANsurfer - Catering Module Setup
+  */
+  
+  $info['setup'] = array( <font color="#99ccff">// Setup Optionen (s. Setup Optionen Parameter)</font>
+  '<font color="#009900">Globaler Variablennname (</font><font color="#006600">zb LS_USE_EMOTICONS</font><font color="#009900">)</font>' =&gt; array('caption' =&gt; 
+  _(&quot;<font color="#009900">Optionsbeschreibung (</font><font color="#006600">kurz &amp; englisch</font><font color="#009900">)</font>&quot;), 'default' =&gt; false, 
+  'type' =&gt; 'bool')
+  );
+ 
+  $info['sql'] = array( <font color="#99ccff">// SQL Tables</font>
+  array(
+  'name' =&gt; &quot;<font color="#009900">Tabellenname</font>&quot;,
+  'fields' =&gt; &quot;
+  <font color="#009900">SQL Tabellenfelder Definitionen zb:</font>
+  <font color="#006600">id int(11) DEFAULT '0' NOT NULL auto_increment,
+  date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+  text text,
+  PRIMARY KEY (id),
+  KEY date_index (date)</font>
+  &quot;
+  ),
+  );
+?&gt;
+</pre>
+<h3 class=content>Setup Optionen Parameter</h3>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr> 
+    <td class="form" valign="top"><font color="#99ccff">Dropdown</font></td>
+    <td class="form" width="150" valign="top">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"> 
+      <pre>'<font color="#009900">LS_LANGUAGE</font>' => array('caption' => _("<font color="#009900">Intranet Language</font>"),
+'default' => array(
+		        	<font color="#009900">'de_DE</font>' => _(<font color="#006600">"Germa</font><font color="#009900">n</font>"),
+		        	<font color="#009900">'en_EN</font>' => _(<font color="#006600">"Englis</font><font color="#009900">h</font>"),
+		      )), 
+</pre>
+    </td>
+    <td class="form" width="150" valign="top"> 
+      <select name="newCfg[LS_LANGUAGE]">
+        <option value="de_DE" selected>Deutsch</option>
+        <option value="en_EN">Englisch</option>
+      </select>
+    </td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"><br>
+      <font color="#99ccff">Checkbox </font></td>
+    <td class="form" width="150" valign="top">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"> 
+      <pre>'<font color="#009900">LS_IP_PUBLIC</font>' => array('caption' => _("<font color="#009900">Show IPs on public guest list</font>"),
+'default' => <font color="#006600">false</font>,
+'type' => '<font color="#006600">bool</font>')</pre>
+    </td>
+    <td class="form" width="150" valign="top"> 
+      <input type="checkbox" value="1" name="newCfg[LS_USE_EMOTICONS]">
+    </td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"><br>
+      <font color="#99ccff">Textbox</font></td>
+    <td class="form" width="150" valign="top">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"> 
+      <pre><p>'<font color="#009900">LS_BEAMER_MSGNO</font>' =&gt; array('caption' =&gt; _(&quot;<font color="#009900">Beamer news items</font>&quot;),<br>'default' =&gt; '<font color="#009900">3</font>')</p></pre>
+    </td>
+    <td class="form" width="150" valign="top"> 
+      <input type="text" value="3" name="newCfg[LS_BEAMER_MSGNO]"class="form_field">
+    </td>
+  </tr>
+  <tr>
+    <td class="form" valign="top"><br>
+      <font color="#99ccff">Textfield </font></td>
+    <td class="form" valign="top">&nbsp;</td>
+  </tr>
+  <tr> 
+    <td class="form" valign="top"> 
+      <pre>'<font color="#009900">LS_BEAMER_SPONSORS</font>' =&gt; array('caption' =&gt; _(&quot;<font color="#009900">Beamer sponsors</font>&quot;),
+'default' =&gt; &quot;<font color="#009900">&lt;CENTER&gt;\n&lt;FONT FACE=\&quot;Verdana\&quot; COLOR=\&quot;#99CCFF\&quot; SIZE=\&quot;5\&quot;&gt;&lt;B&gt;Insert 
+              sponsors here ...&lt;/B&gt;&lt;/FONT&gt;\n&lt;/CENTER&gt;</font>&quot;,
+'type' =&gt; '<font color="#006600">textarea</font>')</pre>
+    </td>
+    <td class="form" valign="top"> 
+      <textarea name="newCfg[LS_BEAMER_SPONSORS]" class="form_textarea"  cols=40 rows=8><CENTER>
+<FONT FACE="Verdana" COLOR="#99CCFF" SIZE="5"><B>Insert sponsors here ...</B></FONT>
+</CENTER></textarea>
+    </td>
+  </tr>
+</table>
+
+<p class=content> Documentation Copyright (c) 2000-2002 Joerg 'InV' Stephan<br>
+		<address><a href="mailto:inv@lansurfer.com">inv@lansurfer.com</a></address>
+	<p></p>
+</body>
+
+</html>

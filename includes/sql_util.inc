@@ -8,8 +8,8 @@
 		global $SQL_Initialized, $SQL_Link, $SQL_DBLink;
 
 		if (!$SQL_Initialized) {
-			if (!($SQL_Link = mysql_connect(SQL_HOST, SQL_USER, SQL_PASSWORD)))
-				SQL_Error();
+			if (!($SQL_Link = @mysql_connect(SQL_HOST, SQL_USER, SQL_PASSWORD)))
+				SQL_Error("");
 			mysql_select_db(SQL_DB, $SQL_Link);
 			$SQL_Initialized = TRUE;
 		}
@@ -36,6 +36,14 @@
 			return $res;
 		else
 			SQL_Error($query, $die);
+	}
+	
+	function SQL_fetch_array($res) {
+		return mysql_fetch_array($res);
+	}
+
+	function SQL_result($res, $row = 0, $col = 0) {
+		return mysql_result($res, $row, $col);
 	}
 	
 	// Funktioniert wie AddSlashes aber berücksichtigt nur '
@@ -81,6 +89,9 @@
 		$err = mysql_error();
 		$errNo = mysql_errno();
 		$msg = _("SQL Error").': '.$errNo.'<br>';
+		if ($errNo == 1045) {
+			$msg .= $err.'<br>';
+		}
 		
 		$mon = date('m');
 		$year = date('Y');

@@ -10,17 +10,6 @@
 
 	PrintTabs();
 
-?>
-<script language="JavaScript">
-<!--
-	function ShowTeam(id) {
-		var left =  (screen.availHeight - 500) / 2;
-		var top =  (screen.availHeight - 520) / 2;
-		window.open("team_detail.php?id=" + id, "TeamDetail", "height=500,width=520,screenX="+left+",screenY="+top+",locationbar=0,menubar=0,resizable=1,scrollbars=1,status=0");
-	}
-// -->
-</script>
-<?
 	echo '<p class=content>';
 	printf(($tourney->TeamSize > 1) ?  _("%d Team(s).") : _("%d Player(s)."), $tourney->RealStartTeams);
 	echo '</p>';

@@ -39,4 +39,20 @@
 	define('STYLE_NOINNER',			2);
 	define('STYLE_NAVBAR',			3);
 
+// Posting Optionen
+	define('POSTING_LATEST', 		1);		// Letztes Posting in zu dem Topic/NewsItem
+	define('POSTING_NEWS', 			2);		// Posting gehört zum Newsitem 
+
+// Posting Typen
+	define('PT_TOPIC',			0);
+	define('PT_NEWS',				1);
+	
+// Forum Options
+	define('FORUM_PRIVATE',			1);		// never show in overview pages
+	define('FORUM_TEAM',				2);		// Only Team members may enter this forum
+	define('FORUM_NOANONYMOUS', 4);		// Disallow Anonymous (non login) postings
+
+// Forum Topic Options
+	define('FTO_CLOSED',			1);
+
 ?>

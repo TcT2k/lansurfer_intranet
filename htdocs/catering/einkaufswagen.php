@@ -1,27 +1,20 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Catering - Einkaufswagen");
 	
-	//Checken ob user eingelogged ist.
-if ($user_valid=="true") {
+	if ($user_valid=="true") {
 	user_auth(TRUE);
 	
-	//Default werte belegen :
 	if ($order=="") $order=name;
 	
-	//Sortierung realisieren :
 	if ($direction=="ASC") $direction="DESC";
 	else $direction="ASC";
 	if ($direction=="") $direction="ASC";
 	
-	// user id ermitteln ...
 	$user_id=$user_current[id];
 	$user_current[kontostand]=number_format ($user_current[kontostand],2,",",".");
 	
-	// Neue Ware in den Einkaufskorb legen 
 	if ($action=="add_wagen") {
 		$res=SQL_Query("SELECT id,angebot_id,anzahl FROM CatOrder WHERE user_id='$user_id' AND wagen=1");
 		$vorhanden=0;
@@ -44,7 +37,6 @@ if ($user_valid=="true") {
 		}
 	}
 	
-	// Anzahl bzw Preise neu anzeigen und datenbank updaten...
 	elseif ($action=="refresh") {
 		for ($i=0;$i<$idcount;$i++) {
 			if ($anzahl_nummer[$i]==0) 
@@ -53,12 +45,10 @@ if ($user_valid=="true") {
 				SQL_Query("UPDATE CatOrder SET anzahl='$anzahl_nummer[$i]' WHERE id='$id_nummer[$i]'");
 		}
 	}
-	// Bestellung löschen ...
 	elseif ($action=="del_from_wagen") {
 		SQL_Query("DELETE FROM CatOrder WHERE id='$id' AND user_id='$user_id' AND wagen=1");
 	}
 	
-	//Status der letzten bestellung ermitteln :
 	$text="noch nicht bearbeitet";
 	$res=SQL_Query("SELECT * FROM CatOrder WHERE user_id='$user_id'AND wagen=0 AND ausgeliefert=0 ORDER by time ASC");
 	if ($row=mysql_fetch_array($res)) {
@@ -80,10 +70,8 @@ if ($user_valid=="true") {
 		while ($row=mysql_fetch_array($res));
 	}
 	else {
-		//noch keine bestellung
 		$text="Keine Bestellung bisher";
 	}
-	//Ende Status der ...
 	
 	require $LS_BASEPATH.'../includes/catering/header.inc';
 ?>
@@ -169,7 +157,6 @@ if ($user_valid=="true") {
 <td><img src="../images/spacer.gif" width="1" height="10"></td>
 </tr>
 </table>
-<? //Überschrifften tabelle ... ?>
 <table width="95%" border="0" cellspacing="0" cellpadding="0" align="center">
   <th class="liste"> 
 <td class="liste" width="5"><img src="../images/spacer.gif" width="5" height="1"></td>
@@ -187,8 +174,6 @@ if ($user_valid=="true") {
   </tr>
 </table>
 <? 
-	// Ende Überschrifften
-	
 	
 	$res=SQL_Query("SELECT o.id,
 						o.anzahl,
@@ -210,7 +195,6 @@ if ($user_valid=="true") {
 			if ($row[size]==0)$size="klein";
 			elseif ($row[size]==1)$size="mittel";
 			elseif ($row[size]==2)$size="gross";
-			//Spalten mit Produktdaten ...
 			?>
 			<input type="hidden" name="id_nummer[<?echo $idcount;?>]" value="<?echo"$row[id]";?>">
 <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">

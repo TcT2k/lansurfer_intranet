@@ -1,13 +1,10 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Bestellung Statistiken");
 
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
-	//Log Datei Festlegen :
-	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.log","a");
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.txt","a");
 
 	$orga=$user_current[name];	
 	?>
@@ -45,7 +42,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 												 ORDER BY CatProduct.lieferant");
 	if ($row=mysql_fetch_array($res)) {
 		do {
-			//Umsätze ermitteln ...
 			$umsatz_gesamt+=$row[preis]*$row[anzahl];
 			if ($row[vorhanden]==1) $umsatz_intern+=$row[preis]*$row[anzahl];
 			else $umsatz_extern+=$row[preis]*$row[anzahl];
@@ -62,7 +58,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	</div><div align="center">
 	<br>
 	<?
-	//Die Umsätze nach den Lieferanten sortiert anzeigen
 	$res=SQL_Query("SELECT id,name FROM CatSupplier");
 	if ($row=mysql_fetch_array($res)) {
 		$i=0;
@@ -82,7 +77,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<?
 		echo "<div class=\"content\"><b>$lieferant_name[$j]</b></div><br>";
 		
-		// Suchrichtung:
 		if ($direction[$j]=="ASC") $direction[$j]="DESC";
 		else $direction[$j]="ASC";
 		if ($direction[$j]=="") $direction[$j]="ASC";
@@ -142,7 +136,6 @@ else {
 	<a href="../party/details.php">Login</a>
 	<br>
 	<?
-	//Log Datei schliessen
 	fclose($fp);
 }
 EndPage();

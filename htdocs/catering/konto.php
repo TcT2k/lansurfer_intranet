@@ -1,26 +1,18 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Catering - KONTO");
 	
-	//Log Datei Festlegen :
 	$fp=fopen($LS_BASEPATH."../includes/logs/catering_user.txt", "a");
 
-	//Checken ob user eingelogged ist.
-if ($user_valid=="true") {
+	if ($user_valid=="true") {
 	user_auth(TRUE);
 	
-	// user id ermitteln ...
 	$user_id=$user_current[id];
 	$user_current[kontostand]=number_format ($user_current[kontostand],2,",",".");
 	
 	
-	//Bestellung löschen
 	if ($action=="delete") {
-		// Loescht eine Bestellung aus der Datenbank wenn sie noch nicht bearbeitet,ausgeliefert oder eingetroffen ist.
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		$res=SQL_Query("SELECT bearbeitet,eingetroffen,ausgeliefert,anzahl,angebot_id,user_id FROM CatOrder WHERE id='$id'");
 		if ($row=mysql_fetch_array($res)) {
 			$error=0;
@@ -41,9 +33,7 @@ if ($user_valid=="true") {
 			$month=date(m);
 			$hour=date(H);
 			$minute=date(i);
-			//In Log Datei schreiben:
 			fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung von $user[name] gelöscht\n");
-			//Zurücksetzen des Kontos...
 			$res=SQL_Query("SELECT preis FROM CatProduct WHERE id='$angebot_id'");
 			$row=mysql_fetch_array($res);
 			$gutschrifft=$anzahl*$row[preis];
@@ -59,9 +49,6 @@ if ($user_valid=="true") {
 			echo "Datenbank fehler - Bitte melden Sie sich bei dem Orga Team!";
 		}
 	}
-	
-	
-	//Details der Bestellung anzeigen :
 	
 	if ($action=="detailed") {
 	require $LS_BASEPATH.'../includes/catering/header.inc';
@@ -139,10 +126,9 @@ if ($user_valid=="true") {
 			o.angebot_id = p.id	AND o.id = '$id'	AND o.user_id = '$user_id'");
 		$row=mysql_fetch_array($res);
 		if ($row[ausgeliefert]==1) $text="ausgeliefert";
-		else if ($row[eingetroffen]==1) $text="Eingetroffen - bitte abholen !";
+		else if ($row[eingetroffen]==1) $text="Eingetroffen - bitte abholen!";
 		else if ($row[bearbeitet]==1) $text="bearbeitet";
 		else $text="Noch nicht bearbeitet";
-		//$row[preis]=number_format($row[preis],2,",",".");
 ?>
 	<table width="95%" border="0" cellpadding="0" cellspacing="0" align="center">
 	  <tr> 
@@ -207,13 +193,11 @@ if ($user_valid=="true") {
 		}
 		?>
 		<blockquote>
-		<a href="konto.php"><img src="../images/navigation/arrow_right.gif" border="0"> zurück zur Übersicht</a></a> 
+		<a class="content" href="konto.php"><img src="../images/navigation/arrow_right.gif" border="0"> zurück zur Übersicht</a></a>
 		</blockquote>
 		<?
 	}
 	
-	
-	// BESTELLUNG ORDERN UND NOCHMALS DEN KONTOSTAND ÜBERPRÜFEN ...
 	
 	if ($action=="order") {
 		$res=SQL_Query("SELECT  s.name AS lieferant,
@@ -269,7 +253,6 @@ if ($user_valid=="true") {
 			while ($row=mysql_fetch_array($res)) {
 				SQL_Query("UPDATE CatOrder SET time=NOW(),wagen=0,bearbeitet=0,eingetroffen=0,ausgeliefert=0 WHERE id='$row[id]'");
 			}	
-			//neuen Kontostand speichern :
 			SQL_Query("UPDATE user SET kontostand='$diff' WHERE id='$user_id'");
 			?>
 			<blockquote>
@@ -288,12 +271,8 @@ if ($user_valid=="true") {
 		}
 	}
 	
-	
-	// DIE BESTELLUNG ÜBERPRÜFEN ...
-	
 	if ($action=="validate") {
 		
-	//Status der letzten bestellung ermitteln :
 	$text="noch nicht bearbeitet";
 	$res=SQL_Query("SELECT * FROM CatOrder WHERE user_id='$user_id'AND wagen=0 AND ausgeliefert=0 ORDER by time ASC");
 	if ($row=mysql_fetch_array($res)) {
@@ -303,7 +282,7 @@ if ($user_valid=="true") {
 				if ($row[eingetroffen]==1) {
 					$id=$row[id];
 					$status="ein";
-					$text="Bitte Abholen !";
+					$text="Bitte Abholen!";
 				}
 				else if (($row[bearbeitet]==1)&&($status=="")) {
 					$id=$row[id];
@@ -315,10 +294,8 @@ if ($user_valid=="true") {
 		while ($row=mysql_fetch_array($res));
 	}
 	else {
-		//noch keine bestellung
 		$text="Keine Bestellung bisher";
 	}
-	//Ende Status der ...
 	
 	require $LS_BASEPATH.'../includes/catering/header.inc';
 ?>
@@ -389,7 +366,6 @@ if ($user_valid=="true") {
 	</table>
 	<br>
 	<br>
-	<? //Überschrifften tabelle ... ?>
 <table width="95%" border="0" cellspacing="0" cellpadding="0" align="center">
   <th class="liste"> 
 <td class="liste" width="5"><img src="../images/spacer.gif" width="5" height="1"></td>
@@ -428,7 +404,6 @@ if ($user_valid=="true") {
 			do {
 				$preis= FloatToCurrency($row[preis], true) *$row[anzahl];
 				$gesamtpreis+=$preis;
-				//$row[preis]=number_format($row[preis],2,",",".");
 				if ($row[size]==0)$size="klein";
 				if ($row[size]==1)$size="mittel";
 				if ($row[size]==2)$size="gross";
@@ -521,7 +496,6 @@ if ($user_valid=="true") {
 
 }
 if ($action=="") {											
-	//Status der letzten bestellung ermitteln :
 	$text="noch nicht bearbeitet";
 	$res=SQL_Query("SELECT * FROM CatOrder WHERE user_id='$user_id'AND wagen=0 AND ausgeliefert=0 ORDER by time ASC");
 	if ($row=mysql_fetch_array($res)) {
@@ -531,7 +505,7 @@ if ($action=="") {
 				if ($row[eingetroffen]==1) {
 					$id=$row[id];
 					$status="ein";
-					$text="Bitte Abholen !";
+					$text="Bitte Abholen!";
 				}
 				else if (($row[bearbeitet]==1)&&($status=="")) {
 					$id=$row[id];
@@ -543,10 +517,8 @@ if ($action=="") {
 		while ($row=mysql_fetch_array($res));
 	}
 	else {
-		//noch keine bestellung
 		$text="Keine Bestellung bisher";
 	}
-	//Ende Status der ...
 	require $LS_BASEPATH.'../includes/catering/header.inc';
 ?>
 <table width="95%" border="0" cellpadding="0" cellspacing="0" valign="top" align="center">
@@ -638,7 +610,6 @@ if ($action=="") {
 	</table>
 	
 	<?
-	//Spalten für offene Bestellungen zeichnen ...
 	$res= SQL_Query("SELECT bestellung.id AS id,
 														UNIX_TIMESTAMP(bestellung.time) AS date,
 														bestellung.bearbeitet AS bearbeitet,
@@ -657,7 +628,7 @@ if ($action=="") {
 	if ($row=mysql_fetch_array($res)) {
 		do {
 		if ($row[eingetroffen]==1) {
-			$status="abholen !";
+			$status="abholen!";
 			$color="FF0000";
 		}
 		else if ($row[bearbeitet]==1) {
@@ -682,7 +653,6 @@ if ($action=="") {
 		}
 		while ($row=mysql_fetch_array($res));
 	}
-	// Ende der Spalten für offene Bestellungen
 	?>
 	<table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
 	  <tr> 
@@ -718,7 +688,6 @@ if ($action=="") {
 	  </tr>
   </table>
   <?
-  //Spalten für alte Bestellungen zeichnen ...
 	$res= SQL_Query("SELECT bestellung.id AS id,
 														UNIX_TIMESTAMP(bestellung.time) AS date,
 														bestellung.bearbeitet AS bearbeitet,
@@ -758,7 +727,6 @@ if ($action=="") {
   </tr>
 </table>
 <?
-	// Ende der Spalten für alte Bestellungen
 }
 }
 else {

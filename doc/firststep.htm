@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"><html>
+<html>
+<head>
+  <META NAME="HTTP_EQUIV" CONTENT="text/html; charset=ISO-8859-1">
+	<title>LANsurfer Intranet Readme</title>
+  <LINK REL="STYLESHEET" HREF="../htdocs/intra.css">
+</head>
+
+<body>
+	<h3 class=content>LANsurfer Intranet Readme</h3>
+	<p class=content>
+		Copyright (c) 2000-2002 Tobias 'TcT' Taschner<br>
+		<address><a href="mailto:tct@lansurfer.com">tct@lansurfer.com</a></address>
+	</p>
+
+	<h3 class=content>Installation</h3>
+	<p class=content>
+		Die Benutzung der Software setzt einen Funktionsf&auml;higen MySQL Server vorraus.
+		Des weiteren wird ein Web Server ben&ouml;tigt der mindestens PHP 4.0.5 unterst&uuml;tzt.
+		Um ein nicht englisches Intranet zu betreiben muss das modul "gettext" von PHP geladen sein.
+	</p>
+
+	<h3 class=content>Grundlegende Schritte zur Einrichtung</h3>
+	<p class=content>
+		<ol type=I>
+			<li class=content>aus dem <a target=_new href="http://www.lansurfer.com/germany/">Internet von LANsurfer</a> in der "Party Konfiguration" die "Daten fuers Intranet" herrunterladen</li>
+			<li class=content>Einfach alle Dateien auspacken in dem Verzeichnis <i>htdocs</i> befinden sich das eigentliche Programm in Form von PHP Scripten</li>
+			<li class=content>im Browser die <i>_setup.php</i> (z.B. <a target=_new href="http://localhost/_setup.php">http://localhost/_setup.php</a>) aufrufen, und den Anweisungen auf der Seite folgen
+				<ol>
+					<li class=content>
+						Modul Auswahl:<br>
+		    		Nicht ben&ouml;tigte Module einfach deaktivieren und "Speichern" dr&uuml;cken
+		    	</li>
+     			<li class=content>
+     				Konfiguration:<br>
+     				Hier einfach die ben&ouml;tigten Angaben eintragen (diese Einstellungen k&ouml;nnen sp&auml;ter immer wieder bearbeitet werden)
+     			</li>
+     			<li class=content>
+     				Datenbank &Uuml;berpr&uuml;fen/Erzeugen:<br>
+		    		Hier wird das korrekte Format der Datenbank &uuml;berpr&uuml;ft und dieses ggf. angepasst. Diese Seite sollte nach einem Intranet Update aufgerufen werden.
+     			</li>
+     			<li class=content>
+						Registrierungsdaten Importieren<br>
+						Auf dieser Seite einfach die <i>intranet.sql</i> ausw&auml;hlen ind den "Import" button dr&uuml;cken
+     			</li>
+				</ol>
+ 			<li class=content>
+				evtl. noch das aussehen der Dateien ein wenig anpassen:<br>
+				Dazu sind besonders die Dateien in <i>includes/design/</i>, <i>intra.css</i> (Style Sheet angaben die im ganzen Intranet 
+				benutzt werden) und <i>includes/ls_base.inc</i> zu beachten
+			</li>
+    </ol> 
+	</p>
+
+	<h3 class=content>Wichtige Hinweise</h3>
+	<p class=content>
+		<ul>
+			<li class=content>Nach dem Importieren der Intranetdaten mindestens einem Benutzer des OrgaTeams auf der "Admin Page" das Recht "Turniere" gegeben werden.</li>
+			<li class=content>F&uuml;r die Benutzung des Caterings gilt das gleiche</li>
+			<li class=content>zum Login muss Cookie Support im Browser aktiviert sein</li>
+		</ul>
+	</p>
+	
+	<h3 class=content>Sicherheits Hinweis</h3>
+	<p class=content>
+		<ul>
+			<li class=content>Die Datei <i>_setup.php</i> sollte, wenn sie nicht mehr gebraucht wird, entfernt werden oder umbenannt werden</li>
+		</ul>
+	</p>
+
+</body>
+
+</html>

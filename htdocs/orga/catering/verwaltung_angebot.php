@@ -1,8 +1,6 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 
 	StartPage("Angebots Verwaltung");
 
@@ -84,7 +82,7 @@ elseif ($mode=="edit_lieferant") {
 						 <td class=form><input type"text" name="telefon" value="<?echo"$row[telefon]";?>"></td>
 						</tr>
 						<tr>
-						 <td class=form>Zugewiesene Kunden Nr.</td>
+						 <td class=form>Zugewiesene Lieferanten Nr.</td>
 						 <td class=form><input type"text" name="knr" value="<?echo"$row[knr]";?>"></td>
 						</tr>
 					</table>
@@ -169,7 +167,7 @@ elseif ($mode=="edit") {
 		</form>
 		<br>
 		<br>
-		<a href="verwaltung_angebot.php">Zur&uuml;ck</a> zur Angebots Verwaltung ...
+		<div class="content"><a href="verwaltung_angebot.php">Zur&uuml;ck</a> zur Angebots Verwaltung ...</div>
 	<?
 }
 if (($mode!="edit")&&($mode!="edit_lieferant")) {
@@ -287,7 +285,7 @@ if (($mode!="edit")&&($mode!="edit_lieferant")) {
 					</td>
 				</tr>
 				<tr>
-					<td class=form>Preis (Pfennige durch '.' trennen)</td>
+					<td class=form>Preis (Cents durch '.' trennen)</td>
 					<td class=form><input type="text" name="preis" size="5" class="form_field"></td>
 				</tr>
 				<tr>
@@ -332,7 +330,7 @@ if (($mode!="edit")&&($mode!="edit_lieferant")) {
 		<tr>
 			<th class=liste>Name</th>
 			<th class=liste>Telefon</th>
-			<th class=liste>Kundennummer</th>
+			<th class=liste>Lieferantennummer</th>
 		</tr>
 		<?
 		$result=SQL_Query("SELECT * FROM CatSupplier ORDER BY name");
@@ -366,7 +364,7 @@ if (($mode!="edit")&&($mode!="edit_lieferant")) {
 				 <td class=form><input type"text" name="telefon" class="form_field"></td>
 				</tr>
 				<tr>
-				 <td class=form>Zugewiesene Kunden Nr.</td>
+				 <td class=form>Zugewiesene Lieferanten Nr.</td>
 				 <td class=form><input type"text" name="knr" class="form_field"></td>
 				</tr>
 			</table>

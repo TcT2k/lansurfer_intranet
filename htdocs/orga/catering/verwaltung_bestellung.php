@@ -1,20 +1,15 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Bestellungen Verwalten");
 
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
-	//Log Datei Festlegen :
-	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.log","a");
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.txt","a");
 	
 
 	$orga=$user_current[name];	
 
 	if ($mode=="change_bearbeitet") {
-		// Setzt die entsprechende Bestellung auf den Status Bearbeitet oder "nicht bearbeitet"
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		if ($old==1) $new=0;
 		else $new=1;
 		SQL_Query("UPDATE CatOrder SET bearbeitet=$new WHERE id='$id'");
@@ -22,14 +17,10 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		$month=date(m);
 		$hour=date(H);
 		$minute=date(i);
-		//$orga=
-		// In Log Datei schreiben 
 		if ($new==1) fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung von $user auf Bearbeitet gestellt von $orga\n");
 		else fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung von $user auf nicht Bearbeitet gestellt von $orga\n");	
 	}	
 	if ($mode=="change_eingetroffen") {
-		// Setzt die entsprechende Bestellung auf den Status Eingetroffen oder "nicht eingetroffen"
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		if ($old==1) $new=0;
 		else $new=1;
 		SQL_Query("UPDATE CatOrder SET eingetroffen=$new WHERE id='$id'");
@@ -37,17 +28,12 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		$month=date(m);
 		$hour=date(H);
 		$minute=date(i);
-		//$orga=
-		// In Log Datei schreiben :
 		if ($new==1) fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf eingetroffen gestellt von $orga\n");
 		else  fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf nicht eingetroffen gestellt von $orga\n");	
 	}	
 	if ($mode=="del") {
-		// Loescht eine Bestellung aus der Datenbank unabhängig davon ob die Bestellung Eingetroffen ist oder nicht.
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		$res=mysql_query ("SELECT user_id,angebot_id,anzahl FROM CatOrder WHERE id='$id'");
 		if ($row=mysql_fetch_array($res)) {	
-			//Den Wert der gelöschten Bestellung wieder dem Konto gutschreiben
 			$anzahl=$row[anzahl];
 			$user_id=$row[user_id];
 			$angebot=$row[angebot_id];
@@ -65,22 +51,17 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 			$month=date(m);
 			$hour=date(H);
 			$minute=date(i);
-			//In Log Datei schreiben:
 			fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung von $user wurde von $orga gelöscht.\n");
 			fputs($fp,"		Der Kontostand von $user (id : $user_id) um $anzahl x $preis = $gutschrifft auf $kontostand erhöht.\n");	
 		}
 		else {
-			//Datenbankfehler : in Logdatei schreiben
 			fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung der id $id sollte gelöscht werden. DATENBANK FEHLER!!\n");
 		}
 	}
 	if ($mode=="do_ausgeliefert") {
-		//Setzt den Status auf Ausgeliefert.
-		//Es wird zusätzlich ein Eintrag in der Log Datei gemacht.
 		if ($old==1) {
 			SQL_Query("UPDATE CatOrder SET ausgeliefert=0 WHERE id='$id'");
 			
-			//Das Produkt wieder aus der Statistik löschen
 			$res=SQL_Query("SELECT angebot_id,anzahl FROM CatOrder WHERE id='$id'");
 			$row=mysql_fetch_array($res);
 			$angebot_id=$row[angebot_id];
@@ -100,27 +81,22 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 			SQL_Query("UPDATE CatOrder SET ausgeliefert=1 WHERE id='$id'");
 			fputs($fp,"[$day.$month] um [$hour:$minute] Bestellung von $user wurde von $orga ausgeliefert.\n");			
 			
-			//Das Produkt zur Statistik hinzufügen ...
 			$res=SQL_Query("SELECT angebot_id,anzahl FROM CatOrder WHERE id='$id'");
 			$row=mysql_fetch_array($res);
 			$angebot_id=$row[angebot_id];
 			$anzahl=$row[anzahl];
 			$res=SQL_Query("SELECT anzahl FROM CatStats WHERE angebot_id='$angebot_id'");
 			if ($row=mysql_fetch_array($res)) {
-				//Produkt schon vorhanden : aufadieren der neuen anzahl
 				$newanzahl=$anzahl+$row[anzahl];
 				SQL_Query("UPDATE CatStats SET anzahl='$newanzahl' WHERE angebot_id='$angebot_id'");
 			}
 			else {
-				//Produkt noch nicht in Statistik vorhanden : neu anlegen
 				SQL_Query("INSERT INTO CatStats (angebot_id,anzahl) VALUES ('$angebot_id','$anzahl')");
 			}
 		}
 	}
 	
 	if ($mode=="group_bestellung_status_setzen") {
-		// Es werden alle Bestellung eines Lieferanten gruppiert nach Art und Grösse auf bearbeitet gesetzt.
-		// Zudem werden die Bestellten Produkte in einer neuen Tabelle abgelegt. (History Funktion)
 		$res=SQL_Query("SELECT angebot.name AS name,
 														 angebot.nummer AS nummer,
 														 angebot.size AS size,
@@ -136,9 +112,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 														 	AND bestellung.wagen=0
 														 GROUP BY angebot.nummer,angebot.size");
 		if ($row=mysql_fetch_array($res)) {
-		//Alle Artikel sollen in einer neuen Tabelle gespeichert werden um
-		//nachher die einzelnen Bestellungen nach telefonischer bestellung gruppiert
-		//wieder anzeigen oder rückgängig machen zu können.
 			$res2=SQL_Query ("SELECT group_id FROM CatHistory");
 			if ($row2=mysql_fetch_array($res2)) {
 				$group_id=0;
@@ -191,8 +164,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 					$month=date(m);
 					$hour=date(H);
 					$minute=date(i);
-					//$orga=
-					// In Log Datei schreiben 
 					fputs($fp,"[$day.$month] um [$hour:$minute] Gruppenbestellung - Bestellung mit der id $row[id] von $user[0] auf Bearbeitet gestellt von $orga\n");
 				}
 			}	
@@ -224,18 +195,13 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	<br>
 	<?
 	if ($mode=="group_bestellung") {
-		// Es werden alle Bestellung eines Lieferanten gruppiert nach Art und Grösse mit der jeweiligen 
-		// Anzahl aufgelistet und alle Bestellungen können gleichzeitig auf "bearbeitet" gesetzt werden...
-		// Gleichzzeitig wird eine Druckbare Datei erzeugt die alle nötigen infos enthält.
-		
-		//Druckbare Datei anlegen:
 		unlink($LS_BASEPATH."../includes/logs/bestellung.txt");
 		$best=fopen($LS_BASEPATH."../includes/logs/bestellung.txt","a");
 		
 		$res=mysql_query("SELECT * FROM CatSupplier WHERE id='$lieferant'");
 		$row=mysql_fetch_array($res);
-		fputs($best,"Lieferant : $row[name] - Telefon : $row[telefon] - Kunden Nr. : $row[knr]\n\n");
-		echo "<p class=\"content\">Lieferant: $row[name] - Telefon: $row[telefon] - Kunden Nr.: $row[knr]</p>";
+		fputs($best,"Lieferant : $row[name] - Telefon : $row[telefon] - Lieferanten Nr. : $row[knr]\n\n");
+		echo "<p class=\"content\">Lieferant: $row[name] - Telefon: $row[telefon] - Lieferanten Nr.: $row[knr]</p>";
 		$res=SQL_Query("SELECT angebot.name AS name,
 														 angebot.nummer AS nummer,
 														 angebot.size AS size,
@@ -296,7 +262,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 			fputs($best,"Name : $name[$j] - Size : $sizetext - Anzahl : $anzahl[$j]\n");
 		}
 		
-		//Die einzelnen Bestellungen in die Druckbare Datei schreiben ...
 		$res=SQL_Query("SELECT angebot.name AS name,
 													angebot.nummer AS nummer,
 													angebot.size AS size,
@@ -342,9 +307,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<?	
 	}
 	
-	//Komplette Liste nicht immer anzeigen ...
 	if ($mode!="group_bestellung") {
-	// Suchen ...
 	if ($suche=="") {
 		?>
 		<form action="verwaltung_bestellung.php" method=POST>
@@ -359,9 +322,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<a href="verwaltung_bestellung.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&filter=<?echo"$filter";?>">Alle User</a> zeigen<br>
 		<?
 	}
-	// Ende suchen !
-	
-	// Filtern :
 	if ($filter=="") {
 		$res=SQL_Query("SELECT * FROM CatSupplier");
 		?>
@@ -389,9 +349,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<p class="content"><a href="verwaltung_bestellung.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen</p>
 		<?
 	}
-	// ENDE Filtern!
-	
-	// Suchrichtung:
 	if ($direction=="ASC") $direction="DESC";
 	else $direction="ASC";
 	if ($direction=="") $direction="ASC";
@@ -634,7 +591,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	</form>
 	<?	
 }
-//letzte Klammer für die Anzeige der Liste (je nach mode nicht alles auflisten)
 }
 
 else {
@@ -644,7 +600,6 @@ else {
 	<a href="../party/details.php">Login</a>
 	<br>
 	<?
-	//Log Datei schliessen
 	fclose($fp);
 }
 EndPage();

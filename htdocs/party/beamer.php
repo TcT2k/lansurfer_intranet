@@ -4,9 +4,7 @@
 $LS_BASEPATH = "../";
 include $LS_BASEPATH."../includes/ls_base.inc";
 
-$res = SQL_Query("SELECT msg_no FROM beamer");
-$row = mysql_fetch_array($res);
-$msg_no = $row[msg_no];
+$msg_no = LS_BEAMER_MSGNO;
 
 if ($z==false) {
 $z=0;

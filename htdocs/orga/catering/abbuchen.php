@@ -1,11 +1,10 @@
 <?
-$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	$LS_BASEPATH = '../../';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 		StartPage("Abbuchungen");
 
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
-	//Log Datei Festlegen :
-	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.log","a");
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.txt","a");
 	 
 	if ($mode=="bezahlung_intern") {
 		$res=SQL_Query("SELECT preis FROM CatProduct WHERE id='$angebot_id'");
@@ -24,15 +23,12 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<?
 		}
 		else {
-			//Das Produkt zur Statistik hinzufügen ...
 			$res=SQL_Query("SELECT anzahl FROM CatStats WHERE angebot_id='$angebot_id'");
 			if ($row=mysql_fetch_array($res)) {
-				//Produkt schon vorhanden : aufadieren der neuen anzahl
 				$newanzahl=$row[anzahl]+$anzahl;
 				SQL_Query("UPDATE CatStats SET anzahl='$newanzahl' WHERE angebot_id='$angebot_id'");
 			}
 			else {
-				//Produkt noch nicht in Statistik vorhanden : neu anlegen
 				SQL_Query("INSERT INTO CatStats (angebot_id,anzahl) VALUES ('$angebot_id','$anzahl')");
 			}
 
@@ -40,11 +36,8 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 			SQL_Query ("UPDATE user SET kontostand=$newguthaben WHERE id='$id'");
 			echo "$preis DM wurde vom Konto abgebucht.<br>";
 			echo "Neuer Kontostand : <b>$newguthaben</b>";
-			//Logdatei schreiben:
 			fputs($fp,"Der Kontostand von user $row[name] wurde durch abbuchung von angebots_id $angebot_id um DM $preis auf $newguthaben geändert.\n");
 			
-			// Testen ob der neue Kontostand ausreicht um die aktuellen Bestellkosten zu decken:
-			// MODYFIED 26.05.2001 : nicht mehr nötig !
 			/*
 			$res=SQL_Query("SELECT CatOrder.anzahl AS anzahl,
 															 CatProduct.preis AS preis

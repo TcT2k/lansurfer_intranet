@@ -1,10 +1,8 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Konten Verwaltung");
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	
 	if ($mode=="submit_edit") {
 		$kontostand+=$alter_kontostand;
@@ -79,7 +77,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<a href="verwaltung_konten.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>">Alle User</a> zeigen<br>
 		<?
 	}
-	// Suchrichtung:
 	$directionold=$direction;
 	if ($direction=="ASC") $direction="DESC";
 	else $direction="ASC";
@@ -152,7 +149,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 								</div>
 								</td>
 								<?
-								} //Das Kauf Pulldown menu nur zeigen wenn gesucht wurde
+								}
 								?>
 							</tr>
 						<?

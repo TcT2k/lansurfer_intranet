@@ -1,0 +1,2426 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2002-02-19 16:07+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: htdocs/index.php:14
+msgid "LANsurfer - Intranet"
+msgstr ""
+
+#: htdocs/top.php:29
+#, c-format
+msgid "Inbox (%d)"
+msgstr ""
+
+#: htdocs/ims/index.php:6 htdocs/ims/index.php:10 htdocs/ims/index.php:130
+#: htdocs/top.php:31
+msgid "Inbox"
+msgstr ""
+
+#: htdocs/top.php:36
+msgid "Messages"
+msgstr ""
+
+#: htdocs/party/details.php:37 htdocs/party/details.php:42 htdocs/top.php:42
+msgid "Login"
+msgstr ""
+
+#: htdocs/top.php:58
+msgid "Admin Page"
+msgstr ""
+
+#: htdocs/_setup.php:32
+msgid ""
+"<b>Warning:</b> This file <i>_setup.php</i> must be deleted or moved out of "
+"the document root after the initial setup."
+msgstr ""
+
+#: htdocs/_setup.php:35
+msgid "Start"
+msgstr ""
+
+#: htdocs/_setup.php:36 htdocs/_setup.php:91 htdocs/_setup.php:181
+msgid "Module Selection"
+msgstr ""
+
+#: htdocs/_setup.php:37 htdocs/_setup.php:192 htdocs/_setup.php:277
+msgid "Configuration"
+msgstr ""
+
+#: htdocs/_setup.php:38 htdocs/_setup.php:284
+msgid "Check/Create Database"
+msgstr ""
+
+#: htdocs/_setup.php:39 htdocs/_setup.php:391
+msgid "Import Registration Data"
+msgstr ""
+
+#: htdocs/_setup.php:67
+msgid "Intranet Version"
+msgstr ""
+
+#: htdocs/_setup.php:68
+msgid "Intranet Build Date"
+msgstr ""
+
+#: htdocs/_setup.php:72
+msgid "PHP Configuration"
+msgstr ""
+
+#: htdocs/_setup.php:72
+msgid "More..."
+msgstr ""
+
+#: htdocs/_setup.php:73
+msgid "Magic Quotes"
+msgstr ""
+
+#: htdocs/_setup.php:74 htdocs/_setup.php:77 htdocs/_setup.php:81
+msgid "On"
+msgstr ""
+
+#: htdocs/_setup.php:74 htdocs/_setup.php:77 htdocs/_setup.php:83
+msgid "Off"
+msgstr ""
+
+#: htdocs/_setup.php:76
+msgid "Register Globals"
+msgstr ""
+
+#: htdocs/_setup.php:79
+msgid "GNU Gettext Support"
+msgstr ""
+
+#: htdocs/_setup.php:83
+msgid "Workaround enabled (only english language available)"
+msgstr ""
+
+#: htdocs/_setup.php:85 htdocs/_setup.php:177 htdocs/_setup.php:273
+#: htdocs/_setup.php:387
+msgid "Next"
+msgstr ""
+
+#: htdocs/_setup.php:88 htdocs/_setup.php:177 htdocs/_setup.php:273
+#: htdocs/_setup.php:387 htdocs/_setup.php:467
+#: htdocs/tourney/match_details.php:442 htdocs/tourney/team_detail.php:126
+#: htdocs/tourney/team_detail.php:156 htdocs/tourney/team_detail.php:194
+#: htdocs/tourney/team_detail.php:205 htdocs/tourney/team_detail.php:221
+#: includes/ls_printing.inc:260
+msgid "Back"
+msgstr ""
+
+#: htdocs/_setup.php:111
+msgid "Module selection saved."
+msgstr ""
+
+#: htdocs/_setup.php:113 htdocs/_setup.php:219 includes/tourney/base.inc:81
+msgid "Error"
+msgstr ""
+
+#: htdocs/_setup.php:113
+#, c-format
+msgid "Module selection could not be saved. Check file permissions on %s."
+msgstr ""
+
+#: htdocs/_setup.php:133 htdocs/board/index.php:36 htdocs/board/topic.php:212
+#: htdocs/board/topic.php:214 htdocs/board/topic.php:220
+#: htdocs/orga/board/edit.php:69 htdocs/orga/board/index.php:24
+#: htdocs/orga/guest_detail.php:76 htdocs/orga/index.php:104
+#: htdocs/orga/member.php:33 htdocs/orga/team.php:39
+#: htdocs/party/details.php:71 htdocs/party/guests.php:176
+#: htdocs/tourney/index.php:91 htdocs/tourney/orga/admins.php:55
+#: htdocs/tourney/orga/admins.php:87 htdocs/tourney/orga/edit.php:224
+#: htdocs/tourney/orga/group.php:48 htdocs/tourney/orga/index.php:86
+#: htdocs/tourney/ranking.php:33 htdocs/tourney/team_detail.php:25
+#: htdocs/tourney/team_detail.php:72 htdocs/tourney/teams.php:63
+#: includes/guest_list.inc:152
+msgid "Name"
+msgstr ""
+
+#: htdocs/_setup.php:134
+msgid "Version"
+msgstr ""
+
+#: htdocs/_setup.php:135
+msgid "Build Date"
+msgstr ""
+
+#: htdocs/_setup.php:136
+msgid "Vendor"
+msgstr ""
+
+#: htdocs/_setup.php:156 htdocs/_setup.php:160
+msgid "N/A"
+msgstr ""
+
+#: htdocs/_setup.php:172 htdocs/_setup.php:269 htdocs/board/topic.php:227
+#: htdocs/orga/board/edit.php:77 htdocs/orga/guest_detail.php:138
+#: htdocs/orga/guest_detail.php:172 htdocs/orga/member.php:54
+#: htdocs/orga/news.php:94 htdocs/party/details_edit.php:28
+#: htdocs/tourney/orga/edit.php:332 htdocs/tourney/orga/group.php:56
+msgid "Save"
+msgstr ""
+
+#: htdocs/_setup.php:179
+msgid "No module selection saved."
+msgstr ""
+
+#: htdocs/_setup.php:217
+msgid "Configuration Saved."
+msgstr ""
+
+#: htdocs/_setup.php:219
+#, c-format
+msgid "Configuration file could not be saved. Check file permissions on %s."
+msgstr ""
+
+#: htdocs/_setup.php:275
+msgid "No configuration saved."
+msgstr ""
+
+#: htdocs/_setup.php:288
+msgid "Search for databases..."
+msgstr ""
+
+#: htdocs/_setup.php:293 htdocs/_setup.php:299
+msgid "OK"
+msgstr ""
+
+#: htdocs/_setup.php:295
+#, c-format
+msgid "Database %s exists."
+msgstr ""
+
+#: htdocs/_setup.php:297
+#, c-format
+msgid "Creating database %s ... "
+msgstr ""
+
+#: htdocs/_setup.php:305
+#, c-format
+msgid "Searching for existing tables in database %s"
+msgstr ""
+
+#: htdocs/_setup.php:315
+msgid "Checking existing tables and creating required tables"
+msgstr ""
+
+#: htdocs/_setup.php:318
+msgid "Table"
+msgstr ""
+
+#: htdocs/_setup.php:319 htdocs/party/guests.php:179
+#: htdocs/tourney/index.php:92 htdocs/tourney/match_details.php:94
+#: htdocs/tourney/match_details.php:111 htdocs/tourney/match_details.php:372
+#: includes/guest_list.inc:156 includes/tourney/tabs.inc:49
+#: includes/tourney/tabs.inc:68
+msgid "Status"
+msgstr ""
+
+#: htdocs/_setup.php:340
+msgid "Created"
+msgstr ""
+
+#: htdocs/_setup.php:342
+msgid "Exists"
+msgstr ""
+
+#: htdocs/_setup.php:361
+#, c-format
+msgid "Field %s added"
+msgstr ""
+
+#: htdocs/_setup.php:438
+msgid "Importing data..."
+msgstr ""
+
+#: htdocs/_setup.php:457
+msgid "Data imported."
+msgstr ""
+
+#: htdocs/_setup.php:464
+msgid "SQL File"
+msgstr ""
+
+#: htdocs/_setup.php:465
+msgid "Import"
+msgstr ""
+
+#: htdocs/board/index.php:8 htdocs/board/postings.php:5
+#: htdocs/board/show.php:5 htdocs/board/smilies.php:5
+msgid "Board Overview"
+msgstr ""
+
+#: htdocs/board/index.php:38 htdocs/board/show.php:82
+msgid "Last Posting"
+msgstr ""
+
+#: htdocs/board/index.php:44 modules/board/info.inc:8
+#: modules/board/info.inc:13
+msgid "Board"
+msgstr ""
+
+#: htdocs/board/index.php:46
+msgid "No Description"
+msgstr ""
+
+#: htdocs/board/index.php:51
+#, c-format
+msgid "%s from %s"
+msgstr ""
+
+#: htdocs/board/index.php:53 htdocs/board/show.php:134
+#: htdocs/tourney/index.php:67 htdocs/tourney/match_details.php:52
+#: htdocs/tourney/team_detail.php:42 htdocs/tourney/teams.php:96
+#: htdocs/tourney/teams.php:98 includes/ls_printing.inc:527
+#: includes/tourney/match.class.inc:148 includes/tourney/tourney.class.inc:162
+msgid "Unknown"
+msgstr ""
+
+#: htdocs/board/postings.php:18
+#, c-format
+msgid "Board: %s: %s"
+msgstr ""
+
+#: htdocs/board/postings.php:59
+#, c-format
+msgid "This topic is %d pages long"
+msgstr ""
+
+#: htdocs/board/postings.php:72
+#, c-format
+msgid "This Thread has been viewed %d times."
+msgstr ""
+
+#: htdocs/board/postings.php:79
+msgid "Open Thread"
+msgstr ""
+
+#: htdocs/board/postings.php:79
+msgid "Close Thread"
+msgstr ""
+
+#: htdocs/board/postings.php:85 htdocs/board/postings.php:179
+msgid "Post Reply"
+msgstr ""
+
+#: htdocs/board/postings.php:92 htdocs/orga/index.php:61
+msgid "Author"
+msgstr ""
+
+#: htdocs/board/postings.php:93 htdocs/board/show.php:79
+msgid "Topic"
+msgstr ""
+
+#: htdocs/board/postings.php:121 htdocs/ims/index.php:89
+#: htdocs/ims/index.php:169
+msgid "From"
+msgstr ""
+
+#: htdocs/board/postings.php:127 htdocs/orga/guest_detail.php:77
+#: htdocs/party/details.php:72 htdocs/party/guests.php:177
+#: htdocs/tourney/match_details.php:56 htdocs/tourney/team_detail.php:33
+#: htdocs/tourney/team_detail.php:73 htdocs/tourney/teams.php:65
+#: includes/guest_list.inc:153 includes/seat_util.inc:182
+#: includes/seat_util.inc:201 includes/user_form_new.inc:137
+msgid "Clan"
+msgstr ""
+
+#: htdocs/board/postings.php:136 htdocs/ims/index.php:171
+#: htdocs/orga/index.php:60 htdocs/orga/news.php:89
+msgid "Date"
+msgstr ""
+
+#: htdocs/board/postings.php:141
+msgid "Edit"
+msgstr ""
+
+#: htdocs/board/postings.php:143 htdocs/board/topic.php:284
+#: htdocs/board/topic.php:316 htdocs/ims/buddy_list.php:59
+#: htdocs/ims/index.php:196 htdocs/orga/board/edit.php:115
+#: htdocs/orga/guest_detail.php:152 htdocs/orga/index.php:150
+#: htdocs/orga/member.php:73 htdocs/orga/news.php:115
+#: htdocs/tourney/match_comments.php:64 htdocs/tourney/match_files.php:91
+#: htdocs/tourney/orga/admins.php:95 htdocs/tourney/orga/edit.php:364
+#: htdocs/tourney/orga/group.php:73 htdocs/tourney/team_detail.php:148
+#: includes/guest_list.inc:19 includes/ls_printing.inc:500
+msgid "Remove"
+msgstr ""
+
+#: htdocs/board/postings.php:151 htdocs/board/show.php:120
+msgid "New"
+msgstr ""
+
+#: htdocs/board/show.php:12
+#, c-format
+msgid "Board: %s"
+msgstr ""
+
+#: htdocs/board/show.php:73
+msgid "New Topic"
+msgstr ""
+
+#: htdocs/board/show.php:80
+msgid "Postings"
+msgstr ""
+
+#: htdocs/board/show.php:81
+msgid "Pages"
+msgstr ""
+
+#: htdocs/board/show.php:136
+msgid "Thread Closed"
+msgstr ""
+
+#: htdocs/board/show.php:147
+msgid "Remove this topic"
+msgstr ""
+
+#: htdocs/board/show.php:147
+msgid "Del"
+msgstr ""
+
+#: htdocs/board/show.php:160
+msgid "Newer Topics"
+msgstr ""
+
+#: htdocs/board/show.php:168
+msgid "Older Topics"
+msgstr ""
+
+#: htdocs/board/show.php:179
+msgid "Pages with older topics"
+msgstr ""
+
+#: htdocs/board/smilies.php:6
+msgid "Smilies"
+msgstr ""
+
+#: htdocs/board/topic.php:24
+msgid "Boards"
+msgstr ""
+
+#: htdocs/board/topic.php:51
+msgid "News Item"
+msgstr ""
+
+#: htdocs/board/topic.php:57
+msgid "Edit Posting"
+msgstr ""
+
+#: htdocs/board/topic.php:61
+msgid "Create Comment"
+msgstr ""
+
+#: htdocs/board/topic.php:63
+msgid "Create Posting"
+msgstr ""
+
+#: htdocs/board/topic.php:66
+msgid "Remove Posting"
+msgstr ""
+
+#: htdocs/board/topic.php:78
+msgid "Remove Topic"
+msgstr ""
+
+#: htdocs/board/topic.php:80
+msgid "Create Topic"
+msgstr ""
+
+#: htdocs/board/topic.php:91
+msgid "This topic is currently closed"
+msgstr ""
+
+#: htdocs/board/topic.php:100
+msgid "Invalid User."
+msgstr ""
+
+#: htdocs/board/topic.php:117 htdocs/orga/news.php:39
+msgid "The title may not be empty"
+msgstr ""
+
+#: htdocs/board/topic.php:120
+msgid "You must specify a name or log in before using this function"
+msgstr ""
+
+#: htdocs/board/topic.php:123
+msgid "The message must contain text"
+msgstr ""
+
+#: htdocs/board/topic.php:140
+#, c-format
+msgid "This posting has been edited at %s"
+msgstr ""
+
+#: htdocs/board/topic.php:143 htdocs/party/details_edit.php:32
+msgid "The changes were saved."
+msgstr ""
+
+#: htdocs/board/topic.php:161
+msgid "The posting has been saved."
+msgstr ""
+
+#: htdocs/board/topic.php:215 htdocs/board/topic.php:221
+#: htdocs/orga/guest_detail.php:80 htdocs/party/details.php:74
+#: includes/user_form_new.inc:127
+msgid "Email"
+msgstr ""
+
+#: htdocs/board/topic.php:217
+msgid "Hide my signature"
+msgstr ""
+
+#: htdocs/board/topic.php:224 htdocs/orga/index.php:59 htdocs/orga/news.php:88
+msgid "Title"
+msgstr ""
+
+#: htdocs/board/topic.php:225 htdocs/orga/news.php:91
+msgid "Text"
+msgstr ""
+
+#: htdocs/board/topic.php:227 htdocs/orga/new_guest.php:29
+#: htdocs/tourney/orga/edit.php:97
+msgid "Create"
+msgstr ""
+
+#: htdocs/board/topic.php:236
+msgid ""
+"HTML Code will be ignored.<br>The following commands can be used for "
+"formatting your text:"
+msgstr ""
+
+#: htdocs/board/topic.php:240
+msgid "[b]Text[/b] for <b>bold</b> Text"
+msgstr ""
+
+#: htdocs/board/topic.php:241
+msgid "[i]Text[/i] for <i>italic</i> Text"
+msgstr ""
+
+#: htdocs/board/topic.php:242
+msgid "[u]Text[/u] for <u>underlined</u> Text"
+msgstr ""
+
+#: htdocs/board/topic.php:243
+msgid ""
+"[url=http://www.url.de]Page Title[/url] to display a link.<br>URLs beginning "
+"with ftp:// or http:// are converted to links without this command."
+msgstr ""
+
+#: htdocs/board/topic.php:247
+msgid "Emoticons are converted to graphic"
+msgstr ""
+
+#: htdocs/board/topic.php:249
+msgid "List of all Emoticons"
+msgstr ""
+
+#: htdocs/board/topic.php:275
+#, c-format
+msgid "The topic <i>%s</i> was removed."
+msgstr ""
+
+#: htdocs/board/topic.php:278
+#, c-format
+msgid "Are your sure you want to remove the <b>hole</b> Topic <i>%s</i>?"
+msgstr ""
+
+#: htdocs/board/topic.php:305
+msgid "The posting has been removed."
+msgstr ""
+
+#: htdocs/board/topic.php:309
+msgid "Are you sure you want to <b>remove</b> this posting?"
+msgstr ""
+
+#: htdocs/ims/buddy.php:11
+msgid "LIMS Buddy List"
+msgstr ""
+
+#: htdocs/ims/buddy_list.php:6
+msgid "IMS Buddy List"
+msgstr ""
+
+#: htdocs/ims/buddy_list.php:59
+msgid "Do you really wish to remove this user from your buddy list?"
+msgstr ""
+
+#: htdocs/ims/buddy_list.php:67
+#, c-format
+msgid "You have %d new messages"
+msgstr ""
+
+#: htdocs/ims/buddy_list.php:69
+msgid "View Inbox"
+msgstr ""
+
+#: htdocs/ims/buddy_toolbar.php:6
+msgid "LIMS Toolbar"
+msgstr ""
+
+#: htdocs/ims/buddy_toolbar.php:18
+msgid "Add Buddy"
+msgstr ""
+
+#: htdocs/ims/index.php:10 htdocs/ims/index.php:93
+#: htdocs/ims/send_content.php:52
+msgid "Message"
+msgstr ""
+
+#: htdocs/ims/index.php:29
+msgid "Invalid message id."
+msgstr ""
+
+#: htdocs/ims/index.php:61 htdocs/ims/index.php:62
+msgid "RE:"
+msgstr ""
+
+#: htdocs/ims/index.php:78
+msgid "Previous Message"
+msgstr ""
+
+#: htdocs/ims/index.php:84
+msgid "Next Message"
+msgstr ""
+
+#: htdocs/ims/index.php:92 htdocs/ims/index.php:167
+#: htdocs/ims/send_content.php:51
+msgid "Subject"
+msgstr ""
+
+#: htdocs/ims/index.php:93
+msgid "(Empty Message)"
+msgstr ""
+
+#: htdocs/ims/index.php:96
+msgid "Reply"
+msgstr ""
+
+#: htdocs/ims/index.php:124
+msgid "Send message to another guest"
+msgstr ""
+
+#: htdocs/ims/index.php:126
+msgid "Open Buddy List"
+msgstr ""
+
+#: htdocs/ims/index.php:131
+msgid "Sent Items"
+msgstr ""
+
+#: htdocs/ims/index.php:169 htdocs/ims/send_content.php:40
+msgid "To"
+msgstr ""
+
+#: htdocs/ims/index.php:196
+msgid "Do you really wish to remove this message?"
+msgstr ""
+
+#: htdocs/ims/send.php:11 htdocs/ims/send_content.php:6
+#: htdocs/ims/send_history.php:6
+msgid "Send Message"
+msgstr ""
+
+#: htdocs/ims/send_content.php:12
+msgid "Invalid destination."
+msgstr ""
+
+#: htdocs/ims/send_content.php:16
+msgid "The subject may not be empty"
+msgstr ""
+
+#: htdocs/ims/send_content.php:25
+msgid "Message sent."
+msgstr ""
+
+#: htdocs/ims/send_content.php:46
+msgid "Add to buddy list"
+msgstr ""
+
+#: htdocs/ims/send_content.php:54
+msgid "Send"
+msgstr ""
+
+#: htdocs/orga/guests.php:7 includes/navbase.inc:7 modules/_base/info.inc:19
+msgid "Guest list"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:18 htdocs/orga/new_guest.php:20
+#: includes/navbase.inc:8
+msgid "Guest Details"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:32
+msgid "You are now logged in as this guest."
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:78 htdocs/party/details.php:73
+#: includes/guest_list.inc:154 includes/user_form_new.inc:128
+msgid "First Name"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:79 includes/guest_list.inc:155
+#: includes/user_form_new.inc:129
+msgid "Last Name"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:81 includes/user_form_new.inc:142
+msgid "Birth year"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:81 htdocs/tourney/match_details.php:57
+#: htdocs/tourney/team_detail.php:34
+msgid "None"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:82 htdocs/party/guests.php:195
+#: htdocs/tourney/match_details.php:48 htdocs/tourney/team_detail.php:38
+msgid "Seat"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:89
+msgid "Noted"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:93
+msgid "Reserved"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:97
+#, c-format
+msgid "Row: %s Seat: %d"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:101
+msgid "Assign seat"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:103
+msgid "Note seat"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:106
+msgid "Clear seat"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:110
+msgid "Clear notes"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:121 includes/user_form_new.inc:100
+msgid "Password required"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:123 includes/user_form_new.inc:102
+msgid "The passwords do not match"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:126
+msgid "Password saved."
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:136
+msgid "New Password"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:137
+msgid "New Password (once again)"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:145
+msgid "The guest has been removed from the guest list."
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:147
+msgid ""
+"Are you sure you really want to <b>remove</b> this guest from the guest list?"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:156
+msgid "Set New Password"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:158
+msgid "Login as this guest"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:165 htdocs/party/guests.php:197
+msgid "Not Paid"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:166 htdocs/orga/guest_stat.php:29
+#: htdocs/party/guests.php:197 includes/guest_list.inc:185
+msgid "Paid"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:167 includes/guest_list.inc:179
+msgid "VIP"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:168 htdocs/orga/guest_stat.php:37
+#: includes/guest_list.inc:181
+msgid "Evening Checkout"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:169 htdocs/orga/guest_stat.php:33
+#: includes/guest_list.inc:183
+msgid "Payment Noted"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:171 htdocs/orga/guest_stat.php:44
+#: includes/guest_list.inc:157
+msgid "On Location"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:179 includes/tourney/tabutil.inc:75
+msgid "Comments"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:189
+msgid "Comment field may not empty."
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:234 htdocs/tourney/match_comments.php:76
+msgid "Comment"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:236 htdocs/orga/team.php:28
+#: htdocs/tourney/orga/admins.php:33 htdocs/tourney/orga/debug.php:50
+#: htdocs/tourney/register.php:26 htdocs/tourney/team_detail.php:188
+msgid "Add"
+msgstr ""
+
+#: htdocs/orga/guest_detail.php:239
+msgid "Comment added."
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:11 htdocs/orga/guest_seat.php:15
+msgid "Assign Seat"
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:21
+msgid "Guest"
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:60
+#, c-format
+msgid "The assigned seat was noted by %s."
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:60
+#, c-format
+msgid "The assigned seat was reserved by %s."
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:71
+msgid "The seat has been assign to this guest."
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:82
+msgid "Click on a seat that you whish to assign to this guest:"
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:95
+msgid "Free seat"
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:100
+msgid "The seat has been freed."
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:104
+msgid "Available blocks for this party"
+msgstr ""
+
+#: htdocs/orga/guest_seat.php:107
+msgid "Select the block where you wish to assign the seat"
+msgstr ""
+
+#: htdocs/orga/guest_stat.php:7
+msgid "Current Stats"
+msgstr ""
+
+#: htdocs/orga/guest_stat.php:48
+msgid "Overall"
+msgstr ""
+
+#: htdocs/orga/index.php:7
+msgid "Delete"
+msgstr ""
+
+#: htdocs/orga/index.php:11 includes/navbase.inc:5
+msgid "Orga Team"
+msgstr ""
+
+#: htdocs/orga/index.php:42 htdocs/orga/news.php:24 htdocs/party/news.php:5
+#: modules/_base/info.inc:13
+msgid "News"
+msgstr ""
+
+#: htdocs/orga/index.php:44
+msgid "New message"
+msgstr ""
+
+#: htdocs/orga/index.php:96 htdocs/orga/member.php:10
+msgid "Member"
+msgstr ""
+
+#: htdocs/orga/index.php:99
+msgid "Add member"
+msgstr ""
+
+#: htdocs/orga/index.php:105
+msgid "Permissions"
+msgstr ""
+
+#: htdocs/orga/index.php:138 htdocs/orga/member.php:42
+msgid "Add/Edit/Remove Users"
+msgstr ""
+
+#: htdocs/orga/index.php:140 htdocs/orga/member.php:43
+msgid "Add/Edit/Remove Guests"
+msgstr ""
+
+#: htdocs/orga/index.php:141 htdocs/orga/member.php:44
+msgid "Add/Edit/Remove news"
+msgstr ""
+
+#: htdocs/orga/index.php:142 htdocs/orga/member.php:45
+msgid "Add/Edit/Remove all news"
+msgstr ""
+
+#: htdocs/orga/index.php:144 htdocs/orga/member.php:46
+msgid "Add/Edit/Remove Board"
+msgstr ""
+
+#: htdocs/orga/index.php:145 htdocs/orga/member.php:47
+msgid "Add/Edit/Remove tourneys"
+msgstr ""
+
+#: htdocs/orga/index.php:146 htdocs/orga/member.php:48
+msgid "Catering system admin"
+msgstr ""
+
+#: htdocs/orga/member.php:30
+msgid "The modifications were stored."
+msgstr ""
+
+#: htdocs/orga/member.php:41
+msgid "Intranet permissions"
+msgstr ""
+
+#: htdocs/orga/member.php:50
+msgid "Internet permissions (unused)"
+msgstr ""
+
+#: htdocs/orga/member.php:51
+msgid "Add/Edit/Remove Parties"
+msgstr ""
+
+#: htdocs/orga/member.php:52
+msgid "Add/Edit/Remove Designs"
+msgstr ""
+
+#: htdocs/orga/member.php:61
+msgid "Member removed."
+msgstr ""
+
+#: htdocs/orga/member.php:65
+#, c-format
+msgid "Are you sure you want to remove %s from the team?"
+msgstr ""
+
+#: htdocs/orga/news.php:27 htdocs/party/seat_reserve.php:13
+msgid "Invalid parameter"
+msgstr ""
+
+#: htdocs/orga/news.php:33
+msgid "New Message"
+msgstr ""
+
+#: htdocs/orga/news.php:33
+msgid "Edit Message"
+msgstr ""
+
+#: htdocs/orga/news.php:60
+msgid "The message was stored."
+msgstr ""
+
+#: htdocs/orga/news.php:92
+msgid "Visible on Beamer"
+msgstr ""
+
+#: htdocs/orga/news.php:101
+msgid "The message was removed."
+msgstr ""
+
+#: htdocs/orga/news.php:106
+msgid "The message could not be found."
+msgstr ""
+
+#: htdocs/orga/news.php:108
+#, c-format
+msgid "Do you really want to <b>permantly</b> remove the message <i>%s</i>."
+msgstr ""
+
+#: htdocs/orga/new_guest.php:9
+msgid "Create User/Guest"
+msgstr ""
+
+#: htdocs/orga/new_guest.php:16
+#, c-format
+msgid "User was created (ID: %d)"
+msgstr ""
+
+#: htdocs/orga/new_guest.php:28
+msgid "Create only user"
+msgstr ""
+
+#: htdocs/_test/rcon.php:6 htdocs/orga/rcon.php:6 modules/_base/info.inc:23
+msgid "RCON"
+msgstr ""
+
+#: htdocs/_test/rcon.php:44 htdocs/orga/rcon.php:47
+msgid "Adress"
+msgstr ""
+
+#: htdocs/_test/rcon.php:45 htdocs/orga/rcon.php:48
+msgid "Port"
+msgstr ""
+
+#: htdocs/_test/rcon.php:46 htdocs/orga/rcon.php:49
+#: htdocs/party/details.php:41 includes/user_form_new.inc:130
+msgid "Password"
+msgstr ""
+
+#: htdocs/_test/rcon.php:47 htdocs/orga/rcon.php:50
+msgid "Command"
+msgstr ""
+
+#: htdocs/_test/rcon.php:48 htdocs/orga/rcon.php:51
+msgid "Execute"
+msgstr ""
+
+#: htdocs/orga/team.php:6 htdocs/tourney/team_detail.php:60
+msgid "Add Member"
+msgstr ""
+
+#: htdocs/orga/team.php:12
+msgid "You must specify a Name."
+msgstr ""
+
+#: htdocs/orga/team.php:19
+msgid "Select user"
+msgstr ""
+
+#: htdocs/orga/team.php:30
+msgid "No user with this name could be found."
+msgstr ""
+
+#: htdocs/orga/team.php:40 htdocs/party/guests.php:103
+#: htdocs/tourney/orga/admins.php:33 htdocs/tourney/register.php:26
+#: htdocs/tourney/team_detail.php:188 includes/guest_list.inc:127
+#: includes/guest_list.inc:128
+msgid "Search"
+msgstr ""
+
+#: htdocs/orga/team.php:47
+msgid "The user has been added to the team."
+msgstr ""
+
+#: htdocs/orga/board/edit.php:6 htdocs/orga/board/edit.php:8
+#: htdocs/orga/board/index.php:6 modules/board/info.inc:17
+msgid "Board Configuration"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:29
+msgid "You have to specify a name"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:50
+msgid "The board has been saved/created."
+msgstr ""
+
+#: htdocs/orga/board/edit.php:70 htdocs/tourney/match_files.php:81
+#: htdocs/tourney/match_files.php:104
+msgid "Description"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:73
+msgid "Private Board (will not be shown in overview pages)"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:74
+msgid "Only this OrgaTeam may access the board"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:75
+msgid "Users must login before posting"
+msgstr ""
+
+#: htdocs/orga/board/edit.php:103
+#, c-format
+msgid "The board <i>%s</i> and all contained topics were deleted."
+msgstr ""
+
+#: htdocs/orga/board/edit.php:107
+#, c-format
+msgid ""
+"Do you really wish to delete the board <i>%s</i> and all contained topics?"
+msgstr ""
+
+#: htdocs/orga/board/index.php:13
+msgid "New Board"
+msgstr ""
+
+#: htdocs/party/details.php:11
+msgid "My Details"
+msgstr ""
+
+#: htdocs/party/details.php:33
+msgid "Unknown Email or LANsurfer ID"
+msgstr ""
+
+#: htdocs/party/details.php:35
+msgid "The password is incorrect"
+msgstr ""
+
+#: htdocs/party/details.php:40
+msgid "Email or LANsurfer ID"
+msgstr ""
+
+#: htdocs/party/details.php:58 htdocs/party/details_edit.php:19
+msgid "Change Profile"
+msgstr ""
+
+#: htdocs/party/details.php:109
+msgid "Logout"
+msgstr ""
+
+#: htdocs/party/guests.php:18
+msgid "Subscriber list"
+msgstr ""
+
+#: htdocs/party/guests.php:21
+msgid "Guests"
+msgstr ""
+
+#: htdocs/party/guests.php:24
+msgid "Waiting list"
+msgstr ""
+
+#: htdocs/party/guests.php:86 htdocs/party/guests.php:88
+#: includes/guest_list.inc:107 includes/guest_list.inc:109
+msgid "All"
+msgstr ""
+
+#: htdocs/party/guests.php:99
+#, c-format
+msgid "%d players on the list."
+msgstr ""
+
+#: htdocs/party/guests.php:182
+msgid "IP address"
+msgstr ""
+
+#: htdocs/party/seat.php:11
+msgid "Seat plan"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:8 modules/_base/info.inc:15
+msgid "Seat Plan"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:10
+msgid "Seat reservation"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:20
+msgid ""
+"You have to register for this party and pay the entrance fee in order to "
+"reserve a seat."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:37
+msgid "This seat can not be reserved."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:44 htdocs/party/seat_reserve.php:73
+msgid "The seat is allready reserved."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:48
+#, c-format
+msgid "The seat %s has been reserved for you."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:51
+#, c-format
+msgid ""
+"The seat %s has been noted for you. This specification is obligatory on "
+"nobody and is only meant for orientation."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:61
+msgid "The seat was released."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:67
+msgid "Release"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:69
+#, c-format
+msgid ""
+"The seat %s is reserved for you. If you want you can release it and to take "
+"another seat."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:71
+#, c-format
+msgid "The seat %s is noted for you. If you want you can release it."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:77
+#, c-format
+msgid "The seat %s is still free."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:79
+#, c-format
+msgid "The seat %s is allready noted by another guest."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:83
+msgid "You can note only up to 4 seats."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:84
+msgid "Note Seat"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:85
+msgid "You can note it now."
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:87
+msgid "Reserve"
+msgstr ""
+
+#: htdocs/party/seat_reserve.php:88
+msgid "You can reserve it now for you."
+msgstr ""
+
+#: htdocs/tourney/index.php:6
+msgid "Tournament Overview"
+msgstr ""
+
+#: htdocs/tourney/index.php:10 htdocs/tourney/orga/index.php:8
+#: includes/navbase.inc:12
+msgid "Tournament Administration"
+msgstr ""
+
+#: htdocs/tourney/index.php:44 includes/tourney/tourney.class.inc:144
+msgid "Registration closed"
+msgstr ""
+
+#: htdocs/tourney/index.php:47 includes/tourney/tourney.class.inc:147
+msgid "Registration open"
+msgstr ""
+
+#: htdocs/tourney/index.php:48
+#, c-format
+msgid "%d of %d players registered"
+msgstr ""
+
+#: htdocs/tourney/index.php:48
+#, c-format
+msgid "%d of %d teams registered"
+msgstr ""
+
+#: htdocs/tourney/index.php:52 includes/tourney/tabs.inc:52
+msgid "Pre Match"
+msgstr ""
+
+#: htdocs/tourney/index.php:56 includes/tourney/tourney.class.inc:153
+msgid "Matches are beeing played"
+msgstr ""
+
+#: htdocs/tourney/index.php:60 includes/tourney/tourney.class.inc:156
+msgid "Tournament finished"
+msgstr ""
+
+#: htdocs/tourney/index.php:64 includes/tourney/tourney.class.inc:159
+msgid "Tournament canceled"
+msgstr ""
+
+#: htdocs/tourney/index.php:81
+msgid "A player can only register for one tournament in this group."
+msgstr ""
+
+#: htdocs/tourney/index.php:84
+msgid ""
+"A player registered for a tournament in this group may not register for "
+"<b>any</b> other tournament."
+msgstr ""
+
+#: htdocs/tourney/matches.php:15 includes/tourney/round.class.inc:48
+#: includes/tourney/round.class.inc:55
+#, c-format
+msgid "Round %s"
+msgstr ""
+
+#: htdocs/tourney/matches.php:76 htdocs/tourney/matches.php:82
+#: includes/tourney/team.class.inc:14 includes/tourney/tourney.class.inc:657
+#: includes/tourney/tourney.class.inc:669
+msgid "Die"
+msgstr ""
+
+#: htdocs/tourney/matches.php:102
+msgid "End Time"
+msgstr ""
+
+#: htdocs/tourney/matches.php:107
+msgid "Details"
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:18 htdocs/tourney/match_details.php:79
+#: htdocs/tourney/match_files.php:34
+msgid "Match Details"
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:32
+msgid "Comment text may not be empty."
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:37
+msgid "Comment removed."
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:64
+msgid "Do you really wish to remove this comment?"
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:77
+msgid "Add Comment"
+msgstr ""
+
+#: htdocs/tourney/match_comments.php:83 htdocs/tourney/match_details.php:440
+#: htdocs/tourney/match_files.php:114 htdocs/tourney/team_detail.php:107
+#: htdocs/tourney/team_detail.php:134
+msgid "Close Window"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:60 htdocs/tourney/team_detail.php:48
+#: htdocs/tourney/teams.php:68
+msgid "Members"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:74
+msgid "Ready since"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:87 includes/tourney/tabutil.inc:74
+msgid "Opponents"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:112
+msgid "Scheduled Time"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:123 htdocs/tourney/match_details.php:416
+msgid "Ready to Play"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:131
+#, c-format
+msgid ""
+"The Result has to be submitted until %s.<br>If no result has been submitted "
+"at this time the winner will be choosen randomly."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:138 htdocs/tourney/match_details.php:180
+#: htdocs/tourney/match_details.php:364
+msgid "Submit Result"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:151
+msgid "Undo"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:162
+msgid "Time Settings"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:170
+msgid "Match Start Time"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:171
+msgid "Set this time for all matches in this round"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:172
+msgid "Ignore Time"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:174 htdocs/tourney/orga/admin.php:34
+#: htdocs/tourney/orga/admin.php:103 includes/tourney/tabs.inc:58
+msgid "Set"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:218
+#, c-format
+msgid "Score Type %d not supported."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:310
+msgid "The result has been submitted."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:323
+msgid "The result must be submitted by the loser of this match."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:331 includes/tourney/match.class.inc:55
+msgid "Game"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:333 includes/tourney/match.class.inc:57
+msgid "Map"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:376 htdocs/tourney/match_details.php:388
+msgid "This Function requires you to be logged in as tournament admin."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:382
+msgid "Result Undone"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:389
+msgid "Match Time"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:396
+msgid "New Time:"
+msgstr ""
+
+#: htdocs/tourney/match_details.php:412
+msgid "Time Set."
+msgstr ""
+
+#: htdocs/tourney/match_details.php:431
+msgid ""
+"You have been marked as ready for this match.<br><br>If the score time is "
+"reached and no result<br>has been entered <b>you</b> will get a default win."
+"<br>(Only if the opponent has not been marked as ready)"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:40
+msgid "Description may not be empty."
+msgstr ""
+
+#: htdocs/tourney/match_files.php:42
+msgid "A file must be specified"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:54
+msgid "File Uploaded."
+msgstr ""
+
+#: htdocs/tourney/match_files.php:82
+msgid "Size"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:88
+#, c-format
+msgid "%d KB"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:91
+msgid "Do you really wish to remove this file?"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:105
+msgid "File"
+msgstr ""
+
+#: htdocs/tourney/match_files.php:107
+msgid "Upload"
+msgstr ""
+
+#: htdocs/tourney/ranking.php:25
+#, c-format
+msgid "%d Team(s)."
+msgstr ""
+
+#: htdocs/tourney/ranking.php:25
+#, c-format
+msgid "%d Player(s)."
+msgstr ""
+
+#: htdocs/tourney/ranking.php:32
+msgid "Place"
+msgstr ""
+
+#: htdocs/tourney/orga/debug.php:11 htdocs/tourney/register.php:11
+msgid "Registration"
+msgstr ""
+
+#: htdocs/tourney/register.php:33
+msgid "Register"
+msgstr ""
+
+#: htdocs/tourney/register.php:33
+msgid "Create Team"
+msgstr ""
+
+#: htdocs/tourney/register.php:57
+msgid "You cannot register for this tourney."
+msgstr ""
+
+#: htdocs/tourney/register.php:64
+msgid "You have to specify a team name"
+msgstr ""
+
+#: htdocs/tourney/register.php:68
+#, c-format
+msgid "The specified team name %s is allready in use."
+msgstr ""
+
+#: htdocs/tourney/register.php:73
+msgid "You have to specify a valid WWCL Clan ID"
+msgstr ""
+
+#: htdocs/tourney/register.php:76
+msgid "You have to read and accept the rules"
+msgstr ""
+
+#: htdocs/tourney/register.php:93
+#, c-format
+msgid "The team %s has been created."
+msgstr ""
+
+#: htdocs/tourney/register.php:95
+msgid "You have been registered."
+msgstr ""
+
+#: htdocs/tourney/register.php:118
+msgid "Team Name"
+msgstr ""
+
+#: htdocs/tourney/register.php:120 includes/user_form_new.inc:139
+msgid "WWCL Clan ID"
+msgstr ""
+
+#: htdocs/tourney/register.php:125
+msgid "Default Map"
+msgstr ""
+
+#: htdocs/tourney/register.php:133
+msgid "Default Team Type"
+msgstr ""
+
+#: htdocs/tourney/register.php:142
+msgid "I have read the rules and accepted them"
+msgstr ""
+
+#: htdocs/tourney/rules.php:16
+msgid "View rules (Adobe Acrobat Reader required)"
+msgstr ""
+
+#: htdocs/tourney/rules.php:22
+msgid "No rules are defined for this tournament."
+msgstr ""
+
+#: htdocs/tourney/teams.php:30
+msgid "Create new team"
+msgstr ""
+
+#: htdocs/tourney/teams.php:30
+msgid "Register for this tourney"
+msgstr ""
+
+#: htdocs/tourney/teams.php:35
+msgid "Admin: Create Team"
+msgstr ""
+
+#: htdocs/tourney/teams.php:35
+msgid "Admin: Add User"
+msgstr ""
+
+#: htdocs/tourney/teams.php:37
+msgid "Admin: Debug Teams"
+msgstr ""
+
+#: htdocs/tourney/teams.php:67
+msgid "Leader"
+msgstr ""
+
+#: htdocs/tourney/teams.php:71
+msgid "WWCL ID"
+msgstr ""
+
+#: htdocs/tourney/teams.php:109
+#, c-format
+msgid "%d of %d Team(s) registered."
+msgstr ""
+
+#: htdocs/tourney/teams.php:109
+#, c-format
+msgid "%d of %d Player(s) registered."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:18
+msgid "Player Details"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:18
+msgid "Team Details"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:52
+msgid "Join team"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:57
+msgid "Unregister team from tournament"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:57 htdocs/tourney/team_detail.php:100
+#: htdocs/tourney/team_detail.php:110
+msgid "Unregister from tournament"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:64
+msgid "Leave team"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:113
+msgid "Invalid tournament status."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:116
+msgid "Are you sure you want to unregister?"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:122
+msgid "Unregister"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:131
+msgid "Unregistration successfull."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:141
+msgid "Are you sure you want to remove this team member?"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:152
+msgid "Member successfully removed."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:171
+msgid "Added"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:173
+msgid "Could not be added"
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:199
+msgid "You have been removed from the team."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:201
+msgid "You could not be removed from the team."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:214
+msgid "You have been added to the team."
+msgstr ""
+
+#: htdocs/tourney/team_detail.php:216
+msgid "You could not be added to the team."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:8
+msgid "Tournament Admin"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:15
+msgid "Set Status"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:20
+msgid "Previous Status"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:26 includes/tourney/tabs.inc:51
+msgid "Registration Opened"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:33
+msgid "Remove current registrations?"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:43
+msgid "Removed current registrations."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:46
+msgid "Registration Closed."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:71
+#, c-format
+msgid "%d Teams, %d Slots required."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:94
+msgid "Bracked shuffled."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:102
+msgid "Remove Games?"
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:108
+msgid "Removed current matches."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:113
+msgid "Pre Match Set."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:137
+msgid "Players Moved to Bracket."
+msgstr ""
+
+#: htdocs/tourney/orga/admin.php:142
+msgid "New Tournament status set"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:9 htdocs/tourney/orga/admins.php:11
+msgid "Tournament Admins"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:11
+msgid "Edit Tournament Admin"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:22
+msgid "Administrator added."
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:42
+msgid "Global Tournament Administrators"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:68
+msgid "Administrators for this tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:81
+msgid "Add Tournament Admin"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:95
+msgid "Do you really wish to remove this admin from the tournament?"
+msgstr ""
+
+#: htdocs/tourney/orga/admins.php:101
+msgid "No Administrators for this tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/debug.php:16
+msgid "Adding Teams"
+msgstr ""
+
+#: htdocs/tourney/orga/debug.php:41
+msgid "Players"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:8
+msgid "Edit Tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:36
+msgid "Tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:44
+msgid "Points"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:60
+#, c-format
+msgid "Tournament %s created..."
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:76 htdocs/tourney/orga/edit.php:297
+msgid "Tournament Start"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:77 htdocs/tourney/orga/edit.php:285
+msgid "Group"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:87
+msgid "Default Templates"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:116
+msgid "Name must not be empty"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:118
+msgid "Team Size must be greater or equal to 1"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:121
+msgid "Start time is invalid"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:123
+msgid "Score name must not be empty"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:165
+msgid "Settings saved."
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:222
+msgid "General Settings"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:225
+msgid "Maximum Teams/Player"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:233
+msgid "Double Elimination Limit"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:234
+msgid "Complete Single Elimination"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:237
+msgid "Complete Double Elimination"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:239
+msgid "Loser bracket winner must beat winner bracket winner two times"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:241
+msgid "Players per Team"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:242 includes/tourney/tabs.inc:73
+msgid "Rules"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:243
+msgid "(No Rules)"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:255
+msgid "WWCL Tournament Type"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:256
+msgid "No WWCL Tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:275
+msgid "Icon"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:276
+msgid "(Select icon)"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:294
+msgid "Ignore Group"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:296
+msgid "Times (all Times in Minutes)"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:298
+msgid "Pause per Match"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:299
+msgid "Games"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:300
+msgid "Game Length"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:302
+msgid "Draw winner automaticaly when no result is entered"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:304
+msgid "Options and Settings"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:305
+msgid "Score name (Frags, Wins, ...)"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:307
+msgid "Score Type"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:308
+msgid "Count result relative"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:309
+msgid "Count result absolute"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:312
+msgid "Determine win by won games"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:313
+msgid "Loser has to submit the result"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:315
+msgid "Draw game handling"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:316
+msgid "Single round with full time"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:317
+msgid "Single round with half time"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:318
+msgid "Two rounds with half time"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:329
+msgid "Map list"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:330
+msgid ""
+"Team types<br>(e.g. Red and Blue or<br>Terrorist and Counter)<br>On entry "
+"per line"
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:352
+msgid "Tournament has been removed."
+msgstr ""
+
+#: htdocs/tourney/orga/edit.php:356
+msgid "Are you sure you want to remove this tournament?"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:8 htdocs/tourney/orga/index.php:76
+msgid "Tournament Groups"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:8
+msgid "Edit Group"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:30
+msgid "Group Saved."
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:49
+msgid "Note"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:50
+msgid "Type"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:51
+msgid "Group Exclusive"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:52
+msgid "All Exclusive"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:53
+msgid "No registration restriction"
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:62
+msgid "Group removed."
+msgstr ""
+
+#: htdocs/tourney/orga/group.php:65
+msgid "Are you sure you want to remove this tournament group?"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:20
+msgid "Teamplay Tournaments"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:24
+msgid "1on1 Tournaments"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:30
+msgid "Create from template"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:32
+msgid "Create tournament"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:50
+msgid "Admins"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:52 htdocs/tourney/orga/index.php:55
+msgid "Export"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:69
+msgid "WWCL Export"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:70
+msgid ""
+"If you want to export the tournament results to the WWCL application you "
+"have to dowload all 'Export' links to the party folder of the WWCL "
+"application. Additionally you have to download the unkown players DB below."
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:72
+msgid "Unknown Players Data Base"
+msgstr ""
+
+#: htdocs/tourney/orga/index.php:81
+msgid "Create Group"
+msgstr ""
+
+#: includes/guest_list.inc:191
+msgid "Yes"
+msgstr ""
+
+#: includes/guest_list.inc:191
+msgid "No"
+msgstr ""
+
+#: includes/ls_printing.inc:34
+msgid "There were errors when processing the form:<br>Please check your input."
+msgstr ""
+
+#: includes/ls_printing.inc:268
+msgid "Next Page"
+msgstr ""
+
+#: includes/ls_printing.inc:276
+msgid "Previous Page"
+msgstr ""
+
+#: includes/ls_printing.inc:475
+msgid "Yesterday"
+msgstr ""
+
+#: includes/ls_printing.inc:478
+msgid "Today"
+msgstr ""
+
+#: includes/ls_printing.inc:481
+msgid "Tomorrow"
+msgstr ""
+
+#: includes/navbase.inc:4
+msgid "My Status"
+msgstr ""
+
+#: includes/navbase.inc:6
+msgid "Party Control"
+msgstr ""
+
+#: includes/navbase.inc:9 includes/navbase.inc:11
+#: modules/tournament/info.inc:13
+msgid "Tournaments"
+msgstr ""
+
+#: includes/navbase.inc:10
+msgid "Tourney"
+msgstr ""
+
+#: includes/navbase.inc:13
+msgid "Partcipants"
+msgstr ""
+
+#: includes/seat_util.inc:174
+#, c-format
+msgid "Row %s Seat %d"
+msgstr ""
+
+#: includes/seat_util.inc:180
+#, c-format
+msgid "Reserved by %s"
+msgstr ""
+
+#: includes/seat_util.inc:199
+#, c-format
+msgid "Noted by %s"
+msgstr ""
+
+#: includes/sql_util.inc:91
+msgid "SQL Error"
+msgstr ""
+
+#: includes/user.search.inc:7
+msgid "Search: "
+msgstr ""
+
+#: includes/user.search.inc:13
+msgid "Find User"
+msgstr ""
+
+#: includes/user_form_new.inc:64
+msgid "Empty nickname field"
+msgstr ""
+
+#: includes/user_form_new.inc:70
+msgid "The clan name may not contain special characters"
+msgstr ""
+
+#: includes/user_form_new.inc:74
+msgid "The WWCL Player ID has an invalid format"
+msgstr ""
+
+#: includes/user_form_new.inc:78
+msgid "The WWCL Clan ID has an invalid format"
+msgstr ""
+
+#: includes/user_form_new.inc:82
+msgid "Email address required"
+msgstr ""
+
+#: includes/user_form_new.inc:87
+msgid "A user with this email is already signed up"
+msgstr ""
+
+#: includes/user_form_new.inc:90
+msgid "Email address is invalid"
+msgstr ""
+
+#: includes/user_form_new.inc:96
+msgid "First name required"
+msgstr ""
+
+#: includes/user_form_new.inc:98
+msgid "Last name required"
+msgstr ""
+
+#: includes/user_form_new.inc:124
+msgid "Required"
+msgstr ""
+
+#: includes/user_form_new.inc:126
+msgid "Nick"
+msgstr ""
+
+#: includes/user_form_new.inc:131
+msgid "Password (once again)"
+msgstr ""
+
+#: includes/user_form_new.inc:136
+msgid "Optional"
+msgstr ""
+
+#: includes/user_form_new.inc:138
+msgid "WWCL Player ID"
+msgstr ""
+
+#: includes/user_form_new.inc:140
+msgid "Home town"
+msgstr ""
+
+#: includes/user_form_new.inc:141
+msgid "Homepage"
+msgstr ""
+
+#: includes/user_form_new.inc:143
+msgid "Free Text"
+msgstr ""
+
+#: includes/user_form_new.inc:147
+#, c-format
+msgid "%s Postings"
+msgstr ""
+
+#: includes/user_form_new.inc:150
+msgid "Board Settings"
+msgstr ""
+
+#: includes/user_form_new.inc:151
+msgid "Postings per page"
+msgstr ""
+
+#: includes/user_form_new.inc:158
+msgid "Signature"
+msgstr ""
+
+#: includes/user_util.inc:38
+msgid "You do not have the permission for this operation"
+msgstr ""
+
+#: includes/user_util.inc:60
+msgid ""
+"You must be member of the OrgaTeam and possess the appropriate permissions."
+msgstr ""
+
+#: includes/user_util.inc:66
+msgid "Only tournament admins may use this function"
+msgstr ""
+
+#: includes/tourney/match.class.inc:24
+msgid "Match not found"
+msgstr ""
+
+#: includes/tourney/match.class.inc:91
+msgid "Games Won"
+msgstr ""
+
+#: includes/tourney/match.class.inc:100
+msgid "Score"
+msgstr ""
+
+#: includes/tourney/match.class.inc:122
+msgid "Draw Game, decider Game has to be played."
+msgstr ""
+
+#: includes/tourney/match.class.inc:124
+#, c-format
+msgid "%s won the game"
+msgstr ""
+
+#: includes/tourney/match.class.inc:128
+msgid ""
+"The winner has been choosen because<br>no result was entered at the required "
+"time.<br>If you have another result for this match please<br>report it to a "
+"tournament admin."
+msgstr ""
+
+#: includes/tourney/match.class.inc:136
+msgid "Opponents not yet determined"
+msgstr ""
+
+#: includes/tourney/match.class.inc:139
+msgid "Match may be played"
+msgstr ""
+
+#: includes/tourney/match.class.inc:142
+msgid "Draw Match"
+msgstr ""
+
+#: includes/tourney/match.class.inc:145
+msgid "Match Played"
+msgstr ""
+
+#: includes/tourney/round.class.inc:42 includes/tourney/tourney.class.inc:716
+#: includes/tourney/tourney.class.inc:719
+msgid "Final"
+msgstr ""
+
+#: includes/tourney/round.class.inc:44 includes/tourney/round.class.inc:51
+msgid "Semi Final"
+msgstr ""
+
+#: includes/tourney/round.class.inc:46 includes/tourney/round.class.inc:53
+msgid "Quater Final"
+msgstr ""
+
+#: includes/tourney/tabs.inc:11
+msgid "Administrators"
+msgstr ""
+
+#: includes/tourney/tabs.inc:50
+msgid "Registration Closed"
+msgstr ""
+
+#: includes/tourney/tabs.inc:53 includes/tourney/tabs.inc:75
+msgid "Matches"
+msgstr ""
+
+#: includes/tourney/tabs.inc:54
+msgid "Finish"
+msgstr ""
+
+#: includes/tourney/tabs.inc:55
+msgid "Cancel"
+msgstr ""
+
+#: includes/tourney/tabs.inc:62
+msgid "Admin: Initialize Matches"
+msgstr ""
+
+#: includes/tourney/tabs.inc:74
+msgid "Participants"
+msgstr ""
+
+#: includes/tourney/tabs.inc:76
+msgid "Overview"
+msgstr ""
+
+#: includes/tourney/tabs.inc:77
+msgid "Rankings"
+msgstr ""
+
+#: includes/tourney/tabutil.inc:77
+msgid "Files"
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:65
+msgid "Invalid tournament ID"
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:150
+msgid "Pre Match "
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:243
+msgid "Initializing Matches..."
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:268
+#, c-format
+msgid "Invalid Position Row %d Col %d"
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:713
+msgid "Loser Bracket<br>Winner"
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:725
+msgid "to Final"
+msgstr ""
+
+#: includes/tourney/tourney.class.inc:733
+#, c-format
+msgid "from %s"
+msgstr ""
+
+#: modules/beamer/info.inc:8
+msgid "Beamer Presentation"
+msgstr ""
+
+#: modules/beamer/info.inc:13
+msgid "Start Beamer Presentation"
+msgstr ""
+
+#: modules/beamer/setup.inc:7
+msgid "Beamer news items"
+msgstr ""
+
+#: modules/beamer/setup.inc:8
+msgid "Beamer sponsors"
+msgstr ""
+
+#: modules/board/setup.inc:7
+msgid "Translate Emoticons to graphic"
+msgstr ""
+
+#: modules/catering/info.inc:8 modules/catering/info.inc:13
+msgid "Catering"
+msgstr ""
+
+#: modules/catering/setup.inc:8
+msgid "Currency to use in catering"
+msgstr ""
+
+#: modules/lims/info.inc:8
+msgid "Intranet Messaging System"
+msgstr ""
+
+#: modules/tournament/info.inc:8
+msgid "Tournament System"
+msgstr ""
+
+#: modules/tournament/setup.inc:7
+msgid "Tournament file upload"
+msgstr ""
+
+#: modules/_base/info.inc:8
+msgid "Base Intranet System"
+msgstr ""
+
+#: modules/_base/info.inc:14
+msgid "Guest List"
+msgstr ""
+
+#: modules/_base/info.inc:20
+msgid "Create user/guest"
+msgstr ""
+
+#: modules/_base/info.inc:21
+msgid "Current stats"
+msgstr ""
+
+#: modules/_base/info.inc:22
+msgid "IP Adress Adder"
+msgstr ""
+
+#: modules/_base/setup.inc:7
+msgid "Intranet Language"
+msgstr ""
+
+#: modules/_base/setup.inc:8
+msgid "German"
+msgstr ""
+
+#: modules/_base/setup.inc:9
+msgid "English"
+msgstr ""
+
+#: modules/_base/setup.inc:11
+msgid "SQL user"
+msgstr ""
+
+#: modules/_base/setup.inc:12
+msgid "SQL user password"
+msgstr ""
+
+#: modules/_base/setup.inc:13
+msgid "SQL database"
+msgstr ""
+
+#: modules/_base/setup.inc:14
+msgid "SQL Server"
+msgstr ""
+
+#: modules/_base/setup.inc:15
+msgid "Show IPs on public guest list"
+msgstr ""
+
+#: modules/_base/setup.inc:16
+msgid "Warn user if wrong IP is set"
+msgstr ""

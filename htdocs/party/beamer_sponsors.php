@@ -12,9 +12,7 @@
 <body>
 
 <?
-$res = SQL_Query("SELECT sponsors FROM beamer");
-$row = mysql_fetch_array($res);
-echo $row[sponsors];
+echo LS_BEAMER_SPONSORS;
 ?>
 
 <?

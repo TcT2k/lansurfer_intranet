@@ -33,10 +33,33 @@
 	echo '</p>';
 	echo '<p class=content>';
 	PrintSetupStep('', _("Start"));
+	PrintSetupStep('modules', _("Module Selection"));
 	PrintSetupStep('config', _("Configuration"));
 	PrintSetupStep('database', _("Check/Create Database"));
 	PrintSetupStep('import', _("Import Registration Data"));
 	echo '</p>';
+
+	function LoadModule($s) {
+		
+		include $s.'/info.inc';
+		if (file_exists($s.'/setup.inc'))
+			include $s.'/setup.inc';
+		
+		return $info;
+	}
+
+	$d = dir('../modules');
+	while ($s = $d->read()) {
+		$path = ($d->path.'/'.$s);
+		$info = $path .'/info.inc';
+		if ($s[0] != '.' && is_dir($path) && file_exists($info)) {
+			$mods[$s] = LoadModule($path);
+			
+			$LSModules[$s] = true;
+		}
+	}
+	$d->close();
+	ksort($mods);
 
 	echo '<p class=content>';
 
@@ -44,7 +67,7 @@
 		echo '<p class=content><b>'._("Intranet Version").'</b>: '.LS_INTRANET_VERSION;
 		echo '<br><b>'._("Intranet Build Date").'</b>: '.LS_INTRANET_BUILD_DATE;
 		echo '</p>';
-		
+
 		echo '<p class=content>';
 		echo '<b>'._("PHP Configuration").'</b> (<a href="'.$PHP_SELF.'?action=phpinfo">'._("More...").'</a>)<br>';
 		echo _("Magic Quotes").': <b>';
@@ -59,33 +82,120 @@
 		} else {
 			echo '<b>'._("Off").'</b> '._("Workaround enabled (only english language available)");
 		}
-		echo '<p class=content><a href="'.$PHP_SELF.'?action=config">'._("Next").' &gt;&gt;</a></p>';
-	} elseif ($action == 'config') {
-	
-		$cfgParams = array(
-			'LS_LANGUAGE' => array('caption' => _("Intranet Language"), 'default' => array(
-				'de_DE' => _("German"),
-				'en_EN' => _("English"),
-				)), 
-			'SQL_USER' => array('caption' => _("SQL user"), 'default' => 'root'), 
-			'SQL_PASSWORD' => array('caption' => _("SQL user password"), 'default' => 'root', 'type' => 'password'), 
-			'SQL_DB' => array('caption' => _("SQL database"), 'default' => 'db_intra2'), 
-			'SQL_HOST' => array('caption' => _("SQL Server"), 'default' => 'localhost'),
-			'LS_IP_PUBLIC' => array('caption' => _("Show IPs on public guest list"), 'default' => false, 'type' => 'bool'), 
-			'LS_IP_WARN' => array('caption' => _("Warn user if wrong IP is set"), 'default' => false, 'type' => 'bool'), 
+		echo '<p class=content><a href="'.$PHP_SELF.'?action=modules">'._("Next").' &gt;&gt;</a></p>';
+	} elseif ($action == 'phpinfo') {
+		phpinfo();
+		echo '<p class=content><a href='.$PHP_SELF.'>'._("Back").'</a></p>';
+	} elseif ($action == 'modules') {
+
+		echo '<b>'._("Module Selection").':</b><br>';
+
+		if ($submitted) {
+			echo '<hr>';
+			echo '<p class=content>';
+
+			$LoadMods['_base'] = true;
+			
+			$fp = fopen($LS_BASEPATH.'../conf/modules.inc', 'w');
+			if ($fp) {
+				fwrite($fp, "<?\r\n");
+
+				foreach ($LSModules as $key => $value) {
+					fwrite($fp, "  \$LSModules['".$key."'] = ");
+					fwrite($fp, (isset($LoadMods[$key])) ? 'true' : 'false');
+					fwrite($fp, ";\r\n");
+				}
+				
+				fwrite($fp, "?>");
+				fclose($fp);
+				echo _("Module selection saved.");
+			} else {
+				echo '<b>'._("Error").':</b> '.sprintf(_("Module selection could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../conf/modules.inc');
+			}
+			include $LS_BASEPATH.'../conf/modules.inc';
+
+			echo '</p>';
+			echo '<hr>';
+		} else {
+			if (file_exists($LS_BASEPATH.'../conf/modules.inc'))
+				include $LS_BASEPATH.'../conf/modules.inc';
+		}
 		
-			'LS_CATERING' => array('caption' => _("Show catering in navigation"), 'default' => true, 'type' => 'bool'), 
-			'LS_CATERING_CURRENCY' => array('caption' => _("Currency to use in catering"), 'default' => 'EUR'), 
-			'LS_TOURNEY_UPLOAD' => array('caption' => _("Tournament file upload"), 'default' => true, 'type' => 'bool'),
-			'LS_USE_EMOTICONS' => array('caption' => _("Translate Emoticons to graphic"), 'default' => false, 'type' => 'bool')
-		);
+		echo '<form action="'.$PHP_SELF.'" method="post">';
+		FormValue('action', $action);
+		FormValue('submitted', 1);
+		
+		echo '<p class=content>';
+
+		echo '<table class=liste>';
+
+		echo '<tr>';
+		echo '<th class=liste width=200>'._("Name").'</th>';
+		echo '<th class=liste width=80>'._("Version").'</th>';
+		echo '<th class=liste width=120>'._("Build Date").'</th>';
+		echo '<th class=liste width=180>'._("Vendor").'</th>';
+		echo '</tr>';
+		
+		foreach ($mods as $key => $mod) {
+			echo '<tr>';
+			
+			echo '<td class=liste>';
+			if ($key != '_base') {
+				echo '<input name="LoadMods['.$key.']" value=1 type=checkbox ';
+				if ($LSModules[$key])
+					echo ' checked';
+				echo '> ';
+			} else {
+				echo '<input type=checkbox checked disabled> ';
+			}
+
+			echo $mod['displayname'];
+			echo '</td>';
+
+			echo '<td class=liste>';
+			echo (!$mod['version']) ? _("N/A") : $mod['version'];
+			echo '</td>';
+
+			echo '<td class=liste>';
+			echo (!$mod['builddate']) ? _("N/A") : $mod['builddate'];
+			echo '</td>';
+
+			echo '<td class=liste>';
+			if ($mod['vendorURL'])
+				echo '<a target=_new href="'.$mod['vendorURL'].'">'.$mod['vendor'].'</a>';
+			else
+				echo $mod['vendor'];
+			echo '</td>';
+			echo '</tr>';
+		}
+		echo '</table>';
+		echo '<input type=submit class=form_btn value='._("Save").'>';
+		echo '</p>';
+
+		echo '</form>';
+
+		echo '<p class=content><a href="'.$PHP_SELF.'">&lt;&lt;'._("Back").'</a> | <a href="'.$PHP_SELF.'?action=config">'._("Next").' &gt;&gt;</a></p>';
+	} elseif (!file_exists($LS_BASEPATH.'../conf/modules.inc')) {
+		echo _("No module selection saved.");
+		echo '<br>';
+		echo '<a href="'.$PHP_SELF.'?action=modules">'._("Module Selection").'</a>';
+		echo '</p>';
+	} elseif ($action == 'config') {
+		include $LS_BASEPATH.'../conf/modules.inc';
+		
+		$cfgParams = array();
+		foreach ($mods as $key => $mod) {
+			if ($LSModules[$key] && isset($mod['setup']))
+				$cfgParams = array_merge($cfgParams, $mod['setup']);
+		}
 		
 		echo '<b>'._("Configuration").':</b>';
 		
 		if ($submitted) {
+			$fwerror = false;
 			echo '<hr>';
 			echo '<p class=content>';
-			$fp = fopen($LS_BASEPATH.'../includes/ls_conf.inc', 'w');
+			$fp = fopen($LS_BASEPATH.'../conf/base.inc', 'w');
 			if ($fp) {
 				fwrite($fp, "<?\r\n  define('LS_CONFIGURED', TRUE);\r\n");
 				
@@ -94,8 +204,12 @@
 					
 					if ($cfg['type'] == 'bool') {
 						$value = ($newValue) ? 'TRUE' : 'FALSE';
-					} else
-						$value = "'".$newValue."'";
+					} else {
+						$escChars = "\0..\37!@\177..\377";
+						if (!get_cfg_var("magic_quotes_gpc"))
+							$escChars .= '"';
+						$value = '"'.addcslashes($newValue, $escChars).'"';
+					}
 					fwrite($fp, "  define('".$name."', ".$value.");");
 					if ($cfg['caption']) {
 						fwrite($fp, " // ".$cfg['caption']);
@@ -106,50 +220,68 @@
 				fclose($fp);
 				echo _("Configuration Saved.");
 			} else {
-				echo '<b>'._("Error").':</b> '.sprintf(_("Configuration file could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../includes/ls_conf.inc');
+				echo '<b>'._("Error").':</b> '.sprintf(_("Configuration file could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../conf/base.inc');
+				$fwerror = true;
 			}
 			echo '</p>';
 			echo '<hr>';
 		}
 		
-		FormStart();
-			FormValue('action', $action);
-			FormValue('submitted', 1);
-
-			foreach ($cfgParams as $name => $cfg) {
-				$caption = ($cfg['caption']) ? $cfg['caption'] : $name;
-				
-				switch ($cfg['type']) {
-					case 'bool':
-						$value = 1;
-						$type = 'checkbox';
-						$params = (constant($name)) ? ' checked' : '';
-						break;
-					case 'password':
-						$value = constant($name);
-						$params = '';
-						$type = 'password';
-						break;
-					default:
-						$value = constant($name);
-						$params = '';
-						$type = 'text';
-						break;
+		if (!$submitted || $fwerror) {
+			FormStart();
+				FormValue('action', $action);
+				FormValue('submitted', 1);
+	
+				foreach ($cfgParams as $name => $cfg) {
+					$caption = ($cfg['caption']) ? $cfg['caption'] : $name;
+					
+					switch ($cfg['type']) {
+						case 'bool':
+							$value = 1;
+							$type = 'checkbox';
+							if (!defined($name))
+								$params = ($cfg['default']) ? ' checked' : '';
+							else
+								$params = (constant($name)) ? ' checked' : '';
+								
+							break;
+						case 'password':
+							$value = (!defined($name)) ? $cfg['default'] : constant($name);
+							$params = '';
+							$type = 'password';
+							break;
+						case 'textarea':
+							$value = (!defined($name)) ? $cfg['default'] : constant($name);
+							$params = ' cols=40 rows=8';
+							$type = 'textarea';
+							break;
+						default:
+							$value = (!defined($name)) ? $cfg['default'] : constant($name);
+							$params = '';
+							$type = 'text';
+							break;
+					}
+					if (is_array($cfg['default'])) {
+						FormSelectStart('newCfg['.$name.']', $caption, $value);
+							foreach($cfg['default'] as $defvalue => $caption)
+								FormSelectItem($caption, $defvalue);
+						FormSelectEnd();
+					} else
+						FormElement('newCfg['.$name.']', $caption, $value, $type, $params);
 				}
-				if (is_array($cfg['default'])) {
-					FormSelectStart('newCfg['.$name.']', $caption, $value);
-						foreach($cfg['default'] as $defvalue => $caption)
-							FormSelectItem($caption, $defvalue);
-					FormSelectEnd();
-				} else
-					FormElement('newCfg['.$name.']', $caption, $value, $type, $params);
-			}
+			
+				FormElement('', '', _("Save"), 'submit');
+			FormEnd();
+		}
 		
-			FormElement('', '', _("Save"), 'submit');
-		FormEnd();
-		
-		echo '<p class=content><a href="'.$PHP_SELF.'">&lt;&lt;'._("Back").'</a> | <a href="'.$PHP_SELF.'?action=database">'._("Next").' &gt;&gt;</a></p>';
+		echo '<p class=content><a href="'.$PHP_SELF.'?action=modules">&lt;&lt;'._("Back").'</a> | <a href="'.$PHP_SELF.'?action=database">'._("Next").' &gt;&gt;</a></p>';
+	} elseif (defined('LS_CONFIGURED') && !constant('LS_CONFIGURED')) {
+		echo _("No configuration saved.");
+		echo '<br>';
+		echo '<a href="'.$PHP_SELF.'?action=config">'._("Configuration").'</a>';
+		echo '</p>';
 	} elseif ($action == 'database') {
+		include $LS_BASEPATH.'../conf/modules.inc';
 ?>
 </p>
 <p class=content>
@@ -242,344 +374,14 @@
    		return $exists;
    }
 
-// General Tables
-
-CreateTable("forum_posting", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  text text,
-  ls_id int(11) DEFAULT '0',
-  name varchar(100) DEFAULT '0',
-  email varchar(200) DEFAULT '0',
-  topic int(11) DEFAULT '0' NOT NULL,
-  flags int(11) DEFAULT '0',
-  PRIMARY KEY (id),
-  KEY date_index (date)
-");
-
-CreateTable("forum_topic", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  forum int(11) DEFAULT '0' NOT NULL,
-  title varchar(255) DEFAULT '',
-  pcount int(11) DEFAULT '0',
-  PRIMARY KEY (id)
-");
-
-CreateTable("guest", "
-  id int(11) unsigned DEFAULT '0' NOT NULL auto_increment,
-  user int(11),
-  flags int(11),
-  PRIMARY KEY (id)
-");
-
-CreateTable("beamer", "
-  msg_no tinytext NOT NULL,
-  sponsors longtext NOT NULL
-");
-SQL_Query ("INSERT INTO `beamer` (`msg_no`, `sponsors`) VALUES ('3', '<CENTER>\n<FONT FACE=\"Verdana\" COLOR=\"#99CCFF\" SIZE=\"5\"><B>Hier kommen die Sponsoren rein ...</B></FONT>\n<\/CENTER>');");
-
-CreateTable("news", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  author int(11) DEFAULT '0' NOT NULL,
-  title varchar(255) DEFAULT '' NOT NULL,
-  msg text,
-  date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  options int(11) DEFAULT '0' NOT NULL,
-  PRIMARY KEY (id)
-");
-
-CreateTable("orga", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  user int(11) DEFAULT '0' NOT NULL,
-  rights int(11) DEFAULT '0' NOT NULL,
-  date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-  PRIMARY KEY (id)
-");
-
-CreateTable("seat_block", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  party int(11) DEFAULT '0',
-  rows int(11) DEFAULT '0',
-  cols int(11) DEFAULT '0',
-  orientation int(11) DEFAULT '0',
-  name varchar(255) DEFAULT '',
-  text_tl varchar(255) DEFAULT '',
-  text_tc varchar(255) DEFAULT '',
-  text_tr varchar(255) DEFAULT '',
-  text_lt varchar(255) DEFAULT '',
-  text_lc varchar(255) DEFAULT '',
-  text_lb varchar(255) DEFAULT '',
-  text_rt varchar(255) DEFAULT '',
-  text_rc varchar(255) DEFAULT '',
-  text_rb varchar(255) DEFAULT '',
-  text_bl varchar(255) DEFAULT '',
-  text_bc varchar(255) DEFAULT '',
-  text_br varchar(255) DEFAULT '',
-  color varchar(100) DEFAULT '0',
-  PRIMARY KEY (id)
-");
-
-CreateTable("seat_sep", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  block int(11) DEFAULT '0',
-  orientation int(11) DEFAULT '0',
-  value int(11) DEFAULT '0',
-  PRIMARY KEY (id)
-");
-
-CreateTable("seats", "
-  id int(11) DEFAULT '0' NOT NULL auto_increment,
-  block int(11) DEFAULT '0' NOT NULL,
-  col int(11) DEFAULT '0' NOT NULL,
-  row int(11) DEFAULT '0' NOT NULL,
-  status int(11) DEFAULT '0' NOT NULL,
-  guest int(11) DEFAULT '0',
-  PRIMARY KEY (id)
-");
-
-CreateTable("user", "
-  id int(11) unsigned DEFAULT '0' NOT NULL auto_increment,
-  clan varchar(255),
-  name varchar(255),
-  email varchar(255),
-  pwd varchar(255) binary,
-  realname1 varchar(255),
-  realname2 varchar(255),
-  homepage varchar(255),
-  hometown varchar(255),
-  birthyear int(11),
-  flags int(11) DEFAULT '0',
-  infotext varchar(255),
-  forum_pagecount int(11) DEFAULT '0' NOT NULL,
-  forum_signature text NOT NULL,
-  wwclid int(10) unsigned NOT NULL default '0',
-  wwclclanid int(10) unsigned NOT NULL default '0',
-
-  ip_address VARCHAR (15),
-  kontostand double(16,4) DEFAULT '0.0000' NOT NULL,
-  PRIMARY KEY (id)
-");
-
-// Catering Tables
-
-CreateTable("CatHistory", "
-   id int(11) NOT NULL auto_increment,
-   zeit text,
-   group_id int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("CatHistoryItems", "
-   id int(11) NOT NULL auto_increment,
-   group_id int(11) DEFAULT '0' NOT NULL,
-   name text,
-   size text,
-   anzahl int(11),
-   bestellung_id int(11),
-   PRIMARY KEY (id)
-");
-
-CreateTable("CatOrder", "
-   id int(11) NOT NULL auto_increment,
-   user_id int(11) DEFAULT '0' NOT NULL,
-   angebot_id int(11) DEFAULT '0' NOT NULL,
-   eingetroffen int(11) DEFAULT '0' NOT NULL,
-   ausgeliefert int(11) DEFAULT '0' NOT NULL,
-   anzahl int(11) DEFAULT '0' NOT NULL,
-   bearbeitet int(11) DEFAULT '0' NOT NULL,
-   time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   wagen int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("CatProduct", "
-   id int(11) NOT NULL auto_increment,
-   name varchar(255) NOT NULL,
-   beschreibung text NOT NULL,
-   preis double(16,2) DEFAULT '0.00' NOT NULL,
-   vorhanden int(11) DEFAULT '0' NOT NULL,
-   lieferant int(11) DEFAULT '0' NOT NULL,
-   size int(11) DEFAULT '0' NOT NULL,
-   nummer int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("CatSupplier", "
-   id int(11) NOT NULL auto_increment,
-   name varchar(255) NOT NULL,
-   telefon varchar(255) NOT NULL,
-   knr varchar(255) NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("CatStats", "
-   id int(11) NOT NULL auto_increment,
-   angebot_id int(11) DEFAULT '0' NOT NULL,
-   anzahl_id int(11) DEFAULT '0' NOT NULL,
-   anzahl int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-// Tourney Tables
-
-CreateTable("Tourney", "
-   id int(11) NOT NULL auto_increment,
-   MaxTeams smallint(5) unsigned DEFAULT '0' NOT NULL,
-   DELimit int(11) DEFAULT '0' NOT NULL,
-   status tinyint(3) unsigned DEFAULT '0' NOT NULL,
-   name varchar(255) NOT NULL,
-   rules varchar(255) NOT NULL,
-   icon varchar(255) NOT NULL,
-   TeamSize tinyint(3) unsigned DEFAULT '0' NOT NULL,
-   grp smallint(5) unsigned DEFAULT '0' NOT NULL,
-   StartTime datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   MatchPause int(10) unsigned DEFAULT '0' NOT NULL,
-   Games int(10) unsigned DEFAULT '0' NOT NULL,
-   GameLength int(10) unsigned DEFAULT '0' NOT NULL,
-   ScoreName varchar(255) NOT NULL,
-   DrawHandling tinyint(3) unsigned DEFAULT '0' NOT NULL,
-   MatchSettings tinyint(3) unsigned DEFAULT '0' NOT NULL,
-   MapList text NOT NULL,
-   TeamType text NOT NULL,
-   ScoreType int(11) DEFAULT '0' NOT NULL,
-   GroupSize int(11) DEFAULT '0' NOT NULL,
-   GroupRanks int(11) DEFAULT '0' NOT NULL,
-   options int(10) unsigned DEFAULT '0' NOT NULL,
-   WWCLType int(10) unsigned DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("TourneyAdmin", "
-  id int(11) NOT NULL auto_increment,
-  tourney int(11) NOT NULL default '0',
-  user int(11) NOT NULL default '0',
-  rights int(11) NOT NULL default '0',
-  PRIMARY KEY  (id)
-");
-
-CreateTable("TourneyTempPlayer", "
-  id int(11) NOT NULL auto_increment,
-  type tinyint(3) unsigned NOT NULL default '0',
-  name char(100) NOT NULL default '',
-  email char(100) NOT NULL default '',
-  PRIMARY KEY  (id)
-");
-
-CreateTable("TourneyMatchComment", "
-  id int(10) unsigned NOT NULL auto_increment,
-  tourney int(11) DEFAULT '0' NOT NULL,
-  mtch int(10) unsigned NOT NULL default '0',
-  date datetime NOT NULL default '0000-00-00 00:00:00',
-  user int(10) unsigned NOT NULL default '0',
-  text text NOT NULL,
-  PRIMARY KEY  (id)
-");
-
-CreateTable("TourneyMatchFile", "
-  id int(10) unsigned NOT NULL auto_increment,
-  tourney int(11) DEFAULT '0' NOT NULL,
-  mtch int(10) unsigned NOT NULL default '0',
-  date datetime NOT NULL default '0000-00-00 00:00:00',
-  user int(10) unsigned NOT NULL default '0',
-  filename varchar(255) NOT NULL default '',
-  dsc varchar(100) NOT NULL default '',
-  size int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (id)
-");
-
-CreateTable("TourneyBracket", "
-   id int(11) NOT NULL auto_increment,
-   tourney int(11) DEFAULT '0' NOT NULL,
-   team int(11) DEFAULT '0' NOT NULL,
-   position int(11) DEFAULT '0' NOT NULL,
-   options int(11) DEFAULT '0' NOT NULL,
-   phase int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("TourneyGroup", "
-   id int(11) NOT NULL auto_increment,
-   name varchar(255) NOT NULL,
-   type int(11) DEFAULT '0' NOT NULL,
-   note varchar(255) NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("TourneyMatch", "
-   id int(11) NOT NULL auto_increment,
-   tourney int(11) DEFAULT '0' NOT NULL,
-   op1 int(11) DEFAULT '0' NOT NULL,
-   op2 int(11) DEFAULT '0' NOT NULL,
-   row int(11) DEFAULT '0' NOT NULL,
-   col int(11) DEFAULT '0' NOT NULL,
-   date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   status int(11) DEFAULT '0' NOT NULL,
-   options int(11) DEFAULT '0' NOT NULL,
-   score1 int(11) DEFAULT '0' NOT NULL,
-   score2 int(11) DEFAULT '0' NOT NULL,
-	 ready1 datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   ready2 datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   flags int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("TourneyMatchResult", "
-   id int(11) NOT NULL auto_increment,
-   tourney int(11) DEFAULT '0' NOT NULL,
-   mtch int(11) DEFAULT '0' NOT NULL,
-   time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-   score1 int(11) DEFAULT '0' NOT NULL,
-   score2 int(11) DEFAULT '0' NOT NULL,
-   map varchar(255) NOT NULL,
-   options int(11) DEFAULT '0' NOT NULL,
-   rel1 int(11) DEFAULT '0' NOT NULL,
-   rel2 int(11) DEFAULT '0' NOT NULL,
-   point1 int(11) DEFAULT '0' NOT NULL,
-   point2 int(11) DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-CreateTable("TourneyTeam", "
-	id int(10) unsigned NOT NULL auto_increment,
-	tourney int(10) unsigned DEFAULT '0' NOT NULL,
-	leader int(10) unsigned DEFAULT '0' NOT NULL,
-	name varchar(255) NOT NULL,
-	DefMap varchar(255) NOT NULL,
-	DefTeam varchar(255) NOT NULL,
-	type smallint(5) unsigned DEFAULT '0' NOT NULL,
-	wwclid int(10) unsigned NOT NULL default '0',
-	PRIMARY KEY (id)
-");
-
-CreateTable("TourneyTeamMember", "
-   id int(10) unsigned NOT NULL auto_increment,
-   team int(10) unsigned DEFAULT '0' NOT NULL,
-   user int(10) unsigned DEFAULT '0' NOT NULL,
-   PRIMARY KEY (id)
-");
-
-// IMS
-
-CreateTable("ims", "
-  id int(10) unsigned NOT NULL auto_increment,
-  date datetime NOT NULL default '0000-00-00 00:00:00',
-  type tinyint(4) NOT NULL default '0',
-  src int(11) NOT NULL default '0',
-  dst int(11) NOT NULL default '0',
-  subject varchar(100) NOT NULL default '',
-  msg text NOT NULL,
-  flags int(11) NOT NULL default '0',
-  PRIMARY KEY  (id)
-");
-
-CreateTable("imsUsers", "
-  id int(10) unsigned NOT NULL auto_increment,
-  owner int(10) unsigned NOT NULL default '0',
-  user int(10) unsigned NOT NULL default '0',
-  type tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (id)
-");
-
+	foreach ($mods as $key => $mod) {
+		if ($LSModules[$key] && $mod['sql']) {
+			foreach ($mod['sql'] as $table) {
+				if (!CreateTable($table['name'], $table['fields']) && $table['firsttimequery'])
+					SQL_Query($table['firsttimequery']);
+			}
+		}
+	}
 
 ?>
 	</table>
@@ -667,10 +469,8 @@ CreateTable("imsUsers", "
 			FormElement('', '', _("Import"), 'submit');
 		FormEnd();
 		echo '<p class=content><a href="'.$PHP_SELF.'?action=database">&lt;&lt;'._("Back").'</a></p>';
-	} elseif ($action == 'phpinfo') {
-		phpinfo();
-		echo '<p class=content><a href='.$PHP_SELF.'>'._("Back").'</a></p>';
 	}
+	
 	die;
 ?>
 -->

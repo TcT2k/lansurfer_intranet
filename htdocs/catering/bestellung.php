@@ -1,13 +1,8 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Catering");
 
-	//Checken ob user eingelogged ist.
-
-	//User id ermitteln 
 	$user_id=$user_current[id];
 	
 	if ($mode=="del") {

@@ -1,12 +1,9 @@
 <?
-// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Angebote importieren ...");
 	
 	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {	
-		//Dateiauswahlfeld
 		if ($action=="") {
 			?>
 			Die einzelnen Datenelemente müssen in der folgenden Reihenfolge stehen :<br>
@@ -32,9 +29,7 @@
 			</form>
 			<?
 		}	
-		//Importieren starten
 		if ($action=="do_insert") {
-			//Debug :
 			echo "DEBUG : csvdatei : $csvdatei<br>";
 			echo "DEBUT : Trennzeichen : $separator<br>";
 			

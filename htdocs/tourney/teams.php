@@ -10,20 +10,6 @@
 
 	PrintTabs();
 
-?>
-<script language="JavaScript">
-<!--
-
-	function ShowTeam(id) {
-		var left =  (screen.availHeight - 500) / 2;
-		var top =  (screen.availHeight - 520) / 2;
-		window.open("team_detail.php?id=" + id, "TeamDetail", "height=500,width=520,left="+left+",top="+top+",locationbar=0,menubar=0,resizable=1,scrollbars=1,status=0");
-	}
-
-// -->
-</script>
-<?
-
 	echo '<p class=content>';
 	if ($user_valid && $tourney->Status == TS_REGISTRATION) {
 		if ($tourney->UserCanRegister($user_current['id'])) {

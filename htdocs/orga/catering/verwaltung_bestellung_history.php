@@ -1,15 +1,12 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Bestellungen Verwalten");
 	
 	user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, True);
 	
 
-	//Log Datei Festlegen :
-	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.log","a");
+	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.txt","a");
 
 	$orga=$user_current[name];	
 	?>
@@ -38,17 +35,14 @@
 	<br>
 	<?
 	if ($mode=="del") {
-		//Die Entsprechenden Einträge der Gruppe löschen
 		SQL_Query("DELETE FROM CatHistory WHERE group_id='$id'");
 		SQL_Query("DELETE FROM CatHistoryItems WHERE group_id='$id'");
 	}
 	if ($mode=="undo_single") {
-		//einen einzelnen Eintrag wieder auf bearbeitet=0 setzen
 		SQL_Query("UPDATE CatOrder SET bearbeitet=0 WHERE id='$id'");
 		SQL_Query("DELETE FROM CatHistoryItems WHERE bestellung_id='$id'");
 	}
 	if ($mode=="undo") {
-		//alle Einträge einer Gruppenbestellung wieder auf bearbeitet=0 setzen
 		$res=SQL_Query("SELECT bestellung_id FROM CatHistoryItems WHERE group_id='$id'");
 		if ($row=mysql_fetch_array($res)) {
 			do {
@@ -60,7 +54,6 @@
 		SQL_Query("DELETE FROM CatHistory WHERE group_id='$id'");
 	}
 	if (($mode=="info")||($mode=="undo_single")) {
-		//Die Details der Bestellung anzeigen ...
 		?>
 		<br>
 		<br>
@@ -135,7 +128,6 @@
 	<?
 	}
 
-	//Log Datei schliessen
 	fclose($fp);
 
 EndPage();

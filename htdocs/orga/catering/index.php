@@ -1,12 +1,10 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 
 	StartPage("Catering Administration");
 
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	
 	?>
 	<div align="center">
@@ -34,7 +32,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	<br>
 	<?
 	if ($action=="insert_intern") {
-		//Die Gewählten Produkte zur Statistik hinzufügen
 		for($i=0;$i<=$idcount;$i++) {
 			if ($anzahl[$i]>0) {
 				$gesamtpreis+=($preis[$i]*$anzahl[$i]);
@@ -42,12 +39,10 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 				$anz=$anzahl[$i];
 				$res=SQL_Query("SELECT anzahl FROM CatStats WHERE angebot_id='$angebot_id'");
 				if ($row=mysql_fetch_array($res)) {
-					//Produkt schon vorhanden : aufadieren der neuen anzahl
 					$newanzahl=$anz+$row[anzahl];
 					SQL_Query("UPDATE CatStats SET anzahl='$newanzahl' WHERE angebot_id='$angebot_id'");
 				}
 				else {
-					//Produkt noch nicht in Statistik vorhanden : neu anlegen
 					SQL_Query("INSERT INTO CatStats (angebot_id,anzahl) VALUES ('$angebot_id','$anz')");
 				}
 			}
@@ -110,7 +105,6 @@ else {
 	<a href="../party/details.php">Login</a>
 	<br>
 	<?
-	//Log Datei schliessen
 	fclose($fp);
 }
 EndPage();

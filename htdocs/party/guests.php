@@ -1,6 +1,6 @@
 <?
 	$LS_BASEPATH = "../";
-	include $LS_BASEPATH."../includes/lsi_base.inc";
+	include $LS_BASEPATH."../includes/ls_base.inc";
 	
 	/*
 			format:

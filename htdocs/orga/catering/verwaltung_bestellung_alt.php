@@ -1,19 +1,14 @@
 <?
-	// Copyright (c) 2001 Henrik 'Hotkey' Brinkmann  Email: hotkey@cncev.de
-
 	$LS_BASEPATH = '../../';
-	include $LS_BASEPATH.'../includes/lsi_base.inc';
+	include $LS_BASEPATH.'../includes/ls_base.inc';
 	StartPage("Bestellungen Verwalten");
 
-if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
-	//Log Datei Festlegen :
-	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.log","a");
+	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
+	$fp=fopen($LS_BASEPATH."../includes/logs/catering_orga.txt","a");
 
 	$orga=$user_current[name];	
 
 	if ($mode=="change_bearbeitet") {
-		// Setzt die entsprechende Bestellung auf den Status Bearbeitet oder "nicht bearbeitet"
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		if ($old==1) $new=0;
 		else $new=1;
 		SQL_Query("UPDATE CatOrder SET bearbeitet=$new WHERE id='$id'");
@@ -21,14 +16,10 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		$month=date(m);
 		$hour=date(H);
 		$minute=date(i);
-		//$orga=
-		// In Log Datei schreiben 
 		if ($new==1) fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf Bearbeitet gestellt von $orga\n");
 		else fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf nicht Bearbeitet gestellt von $orga\n");	
 	}	
 	if ($mode=="change_eingetroffen") {
-		// Setzt die entsprechende Bestellung auf den Status Eingetroffen oder "nicht eingetroffen"
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		if ($old==1) $new=0;
 		else $new=1;
 		SQL_Query("UPDATE CatOrder SET eingetroffen=$new WHERE id='$id'");
@@ -36,26 +27,18 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		$month=date(m);
 		$hour=date(H);
 		$minute=date(i);
-		//$orga=
-		// In Log Datei schreiben :
 		if ($new==1) fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf eingetroffen gestellt von $orga\n");
 		else  fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user auf nicht eingetroffen gestellt von $orga\n");	
 	}	
 	if ($mode=="del") {
-		// Loescht eine Bestellung aus der Datenbank unabhängig davon ob die Bestellung Eingetroffen ist oder nicht.
-		// Zusätzlich wird ein Vermerk in der Log Datei gemacht.
 		mysql_query ("DELETE FROM CatOrder WHERE id='$id'");
 		$day=date(d);
 		$month=date(m);
 		$hour=date(H);
 		$minute=date(i);
-		//$orga=
-		//In Log Datei schreiben:
 		fputs($fp, date('Y-m-d H:i:s')." Bestellung von $user wurde von $orga gelöscht\n");
 	}
 	if ($mode=="do_ausgeliefert") {
-		//Setzt den Status auf Ausgeliefert.
-		//Es wird zusätzlich ein Eintrag in der Log Datei gemacht.
 		if ($old==1) {
 			SQL_Query("UPDATE CatOrder SET ausgeliefert=0 WHERE id='$id'");
 		}
@@ -94,7 +77,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	<br>
 	<br>
 	<?
-	// Suchen ...
 	if ($suche=="") {
 		?>
 		<form action="verwaltung_bestellung_alt.php" method=POST>
@@ -109,9 +91,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<a href="verwaltung_bestellung_alt.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&filter=<?echo"$filter";?>">Alle User</a> zeigen<br>
 		<?
 	}
-	// Ende suchen !
-	
-	// Filtern :
 	if ($filter=="") {
 		$res=SQL_Query("SELECT * FROM CatSupplier");
 		?>
@@ -139,9 +118,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<p class="content"><a href="verwaltung_bestellung_alt.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen</p>
 		<?
 	}
-	// ENDE Filtern!
-	
-	// Suchrichtung:
 	if ($direction=="ASC") $direction="DESC";
 	else $direction="ASC";
 	if ($direction=="") $direction="ASC";
@@ -156,7 +132,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 				<table width="100%" border="0">
 					<tr>
 						<th class="liste"><a href="verwaltung_bestellung_alt.php?order=user_id&suche=<?echo"$suche";?>&direction=<?echo"$direction";?>">Nick</a></th>
-						<th class="liste"><a href="verwaltung_bestellung_alt.php?order=date,hour,minute&suche=<?echo"$suche";?>&direction=<?echo"$direction";?>">Zeit</a></th>
+						<th class="liste"><font color="#0000FF">Zeit</font></th>
 						<th class="liste"><a href="verwaltung_bestellung_alt.php?order=angebot.nummer&suche=<?echo"$suche";?>&direction=<?echo"$direction";?>">No</a></th>
 						<th class="liste"><a href="verwaltung_bestellung_alt.php?order=angebot.name,angebot.size&suche=<?echo"$suche";?>&direction=<?echo"$direction";?>">Bestellung</a></th>
 						<th class="liste"><a href="verwaltung_bestellung_alt.php?order=preis&suche=<?echo"$suche";?>&direction=<?echo"$direction";?>">Preis</a></th>
@@ -361,7 +337,6 @@ else {
 	<a href="../party/details.php">Login</a>
 	<br>
 	<?
-	//Log Datei schliessen
 	fclose($fp);
 }
 EndPage();
