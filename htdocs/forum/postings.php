@@ -22,37 +22,6 @@
 
 	$PageCount = 0;
 	
-
-	function make_clickable($text)
-	{
-    $ret = eregi_replace("[^=](http|ftp|https)://([^[:space:]]*)([[:alnum:]#?/&=])", " <a href=\"\\1://\\2\\3\" target=\"_blank\" target=\"_new\">\\1://\\2\\3</a>", $text);
-//    $ret = eregi_replace("[^=]?(([a-z0-9_]|\\-|\\.)+@([^[:space:]]*)([[:alnum:]-]))]", "<a href=\"mailto:\\1\" target=\"_new\">\\1</a>", $ret);
-
-//    $ret = eregi_replace("([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", "<a href=\"\\1://\\2\\3\" target=\"_blank\" target=\"_new\">\\1://\\2\\3</a>", $text);
-//    $ret = eregi_replace("(([a-z0-9_]|\\-|\\.)+@([^[:space:]]*)([[:alnum:]-]))", "<a href=\"mailto:\\1\" target=\"_new\">\\1</a>", $ret);
-    return($ret);
-	}
-	
-	function UBB2HTML($text) {
-		$codes = array("b", "i", "u");
-
-		$text = make_clickable($text);
-
-		
-		for ($i = 0; $i < count($codes); $i++) {
-			$ch = $codes[$i];
-			$text = str_replace ("[$ch]", "<$ch>", $text);
-			$text = str_replace ("[/$ch]", "</$ch>", $text);
-		}
-		
-		$text = eregi_replace("\\[url\\=([[:alnum:]:@._/#?&=-]+)\\]([^\\[]*)\\[/url\\]", "<a href=\"\\1\" target=\"_new\">\\2</a>",$text);
-//		$text = eregi_replace("\\[img\\=([[:alnum:]:@._/#?&=]+)\\]", "<img src=\"\\1\">",$text);
-
-
-		return $text;
-	}
-
-
 	?>
 	<p>
 	<?
@@ -131,7 +100,7 @@
 				 ?>
 			</td>
 			<td class="liste" valign="top"><? 
-				$htmltext= UBB2HTML(nl2br(htmlspecialchars($row[text])));
+				$htmltext= Text2HTML($row[text]);
 				echo $htmltext;
 			?></td>
 		</tr>

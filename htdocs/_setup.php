@@ -67,7 +67,9 @@
 	echo '<p class=content>';
 
 	if (!$action) {
-		echo '<p class=content><b>'._("Intranet Version").'</b>: '.LS_INTRANET_VERSION.'</p>';
+		echo '<p class=content><b>'._("Intranet Version").'</b>: '.LS_INTRANET_VERSION;
+		echo '<br><b>'._("Intranet Build Date").'</b>: '.LS_INTRANET_BUILD_DATE;
+		echo '</p>';
 		
 		echo '<p class=content>';
 		echo '<b>'._("PHP Configuration").'</b> (<a href="'.$PHP_SELF.'?action=phpinfo">'._("More...").'</a>)<br>';
@@ -297,6 +299,15 @@ CreateTable("guest", "
   user int(11),
   flags int(11),
   PRIMARY KEY (id)
+");
+
+CreateTable("guest_comment", "
+	id int(10) unsigned NOT NULL auto_increment,
+  guest int(10) unsigned NOT NULL default '0',
+  author int(10) unsigned NOT NULL default '0',
+  date datetime NOT NULL default '0000-00-00 00:00:00',
+  text text NOT NULL,
+  PRIMARY KEY  (id)
 ");
 
 CreateTable("news", "

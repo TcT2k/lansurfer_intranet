@@ -439,6 +439,37 @@
 			return str_replace('.', $LS_locale_info['decimal_point'], sprintf('%.2f %s', str_replace('.', $LS_locale_info['decimal_point'], $value), LS_CATERING_CURRENCY));
 	}
 
+	define("TH_NOUBB", 		1);			// Kein UBB Code
+	define("TH_NOBR", 		2);			// nl nicht in <br> umwandeln
+
+	function Text2HTML($text, $options = 0) {
+		global $LS_BASEPATH;
+		
+		$text = HTMLSpecialChars($text);
+		
+		if (!($options & TH_NOBR))
+			$text = nl2br($text);
+		
+		$search = array(
+			"'\\[i\\](.*?)\\[\\/i\\]'is",
+			"'\\[b\\](.*?)\\[\\/b\\]'is",
+			"'\\[u\\](.*?)\\[\\/u\\]'is",
+			"'([^=])(http|ftp|https)://([A-Za-z0-9#?/.&=_-]*)'i",
+			"'\\[url\\=(.*?)\\](.*?)\\[\\/url\\]'is");
+		$replace = array(
+			"<i>\\1</i>",
+			"<b>\\1</b>",
+			"<u>\\1</u>",
+			"\\1<a target=_blank href=\"\\2://\\3\">\\2://\\3</a>",
+			"<a target=_blank href=\"\\1\">\\2</a>");
+
+    return preg_replace($search, $replace, $text);
+	}
+	
+	function PrintText2HTML($text, $options = 0) {
+		echo Text2HTML($text, $options);
+	}
+
 	$LS_locale_info = false;
 
 	

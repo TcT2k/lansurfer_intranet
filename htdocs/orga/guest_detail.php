@@ -174,6 +174,73 @@
 	}
 	echo "</p>";
 
+	echo '<table>';
+
+	echo '<p class=content><b>'._("Comments").':</b></p>';
+		
+		if ($action == 'addcomment') {
+			if ($f_comment) {
+				SQL_Query("INSERT INTO guest_comment SET date=NOW(),".SQL_QueryFields(array(
+					'guest' => $id,
+					'author' => $user_current['id'],
+					'text' => $f_comment
+					)));
+			} else {
+				FormErrorEx('f_comment', _("Comment field may not empty."));	
+			}
+		} elseif ($action == 'delcomment') {
+			$res = SQL_Query("SELECT author, guest FROM guest_comment WHERE id=".SQL_Quot($comment));
+			if ($row = mysql_fetch_array($res)) {
+				if ($row['guest'] == $id && $row['author'] == $user_current['id'])
+					SQL_Query("DELETE FROM guest_comment WHERE id=".SQL_Quot($comment));
+			}
+		}
+
+		$res = SQL_Query("SELECT
+				gc.id,
+				UNIX_TIMESTAMP(gc.date) date,
+				a.name aname,
+				a.id aid,
+				gc.text
+			FROM 
+				guest_comment gc
+				LEFT JOIN user a ON gc.author=a.id
+			WHERE
+				guest=".SQL_Quot($id)."
+			ORDER BY gc.date");
+		echo '<table class=liste>';
+		while ($row = mysql_fetch_array($res)) {
+			echo '<tr>';
+			echo '<th class=liste width=200>'.HTMLStr($row['aname']).'</th>';
+			echo '<td class=liste width=160 align=right>'.DisplayDate($row['date']).'</td>';
+			if ($row['aid'] == $user_current['id']) {
+				echo '<td class=content>';
+				NavPrintDel($PHP_SELF.'?action=delcomment&id='.$id.'&comment='.$row['id']);
+				echo '</td>';
+			}
+			
+			echo '</tr><tr>';
+			echo '<td class=liste colspan=2>'.Text2HTML($row['text']).'</td>';
+			
+			echo '</tr>';
+		}
+		
+		echo '</table>';
+
+		if ($action != 'addcomment') {
+			FormStart();
+				FormValue('id', $id);
+				FormValue('action', 'addcomment');
+				FormElement('f_comment', _("Comment"), $f_comment, 'textarea', 'cols=40 rows=5');
+				
+				FormElement("", "", _("Add"), "submit");
+			FormEnd();
+		} else {
+			echo '<b>'._("Comment added.").'</b><br>';
+		}
+	echo '</p>';
+
+
 	NavPrintBack();
 	
 	EndPage();
