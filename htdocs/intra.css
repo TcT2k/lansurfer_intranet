@@ -1,5 +1,5 @@
 A {
-	FONT: 11px Verdana, Helvetica; COLOR: #0000FF; TEXT-DECORATION: none
+	COLOR: #0000FF; TEXT-DECORATION: none
 }
 A:visited {
 	COLOR: #0000FF
@@ -120,15 +120,6 @@ A.TMatch:hover {
 #MatchVs {
 	COLOR: #000000;
 	FONT-SIZE: 9px;
-}
-#MatchWinner {
-	COLOR: white;
-}
-#MatchLoser {
-	COLOR: #555555;
-}
-#MatchPlayer {
-	color: #555555;
 }
 
 TD.TourneyLabel {

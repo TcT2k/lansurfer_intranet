@@ -36,9 +36,7 @@ document.GuestSearch.f_search.focus();
 // -->
 </SCRIPT>
 <?
-	echo "<p>";
 	NavPrintBack();
-	echo "</p>";
 
 	EndPage();
 ?>

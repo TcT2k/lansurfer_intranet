@@ -71,7 +71,7 @@
 			}
 			$this->MaxMatches = $this->StartTeams / 2;
 			
-			$this->WinnerRounds = (int) (log($this->MaxMatches) / log(2));
+			$this->WinnerRounds = log($this->MaxMatches) / log(2);
 			if ($this->DoubleLimit > 0) {
 				$this->LoserRounds = $this->WinnerRounds * 2;
 				$this->WinnerRounds++;
@@ -322,6 +322,8 @@
 					if ($match['status'] == MS_PLAYED || $match['flags'] & MF_UNDO) {
 						if ($match['flags'] & MF_UNDO) {
 							SQL_Query("DELETE FROM TourneyMatchResult WHERE mtch=".$match['id']);
+							SQL_Query("DELETE FROM TourneyMatchFile WHERE mtch=".$match['id']);
+							SQL_Query("DELETE FROM TourneyMatchComment WHERE mtch=".$match['id']);
 							$winner = 0;
 							$loser = 0;
 						} elseif ($match['flags'] & MF_OP2WON) {
@@ -483,7 +485,6 @@
 					tm.id,
 					tm.op1 'team1',
 					tm.op2 'team2',
-					tm.flags,
 					tm.status,
 					$SQLFields
 				FROM 
@@ -644,7 +645,7 @@
 									$op1name = '<i>'._("Die").'<i>';
 									break;
 								default:
-									$op1name = HTMLStr($currentMatch['op1name'], 11);
+									$op1name = HTMLStr($currentMatch['op1name'], 12);
 									break;
 							}
 							
@@ -656,25 +657,12 @@
 									$op2name = '<i>'._("Die").'<i>';
 									break;
 								default:
-									$op2name = HTMLStr($currentMatch['op2name'], 11);
+									$op2name = HTMLStr($currentMatch['op2name'], 12);
 									break;
 							}
-							if ($currentMatch['status'] >= MS_PLAYED) {
-								if ($currentMatch['flags'] & MF_OP2WON) {
-									$op1CSS = 'Loser';
-									$op2CSS = 'Winner';
-								} else {
-									$op2CSS = 'Loser';
-									$op1CSS = 'Winner';
-								}
-							} else {
-								$op2CSS = 'Player';
-								$op1CSS = 'Player';
-							}
-							
 							if ($matchActive)
 								echo '<a class=TMatch href="javascript:ShowMatch('.$currentMatch['id'].')">';
-							echo '<span id=Match'.$op1CSS.'>'.$op1name.'</span><br><span id=MatchVs>vs</span><br><span id=Match'.$op2CSS.'>'.$op2name.'</span>';
+							echo $op1name.'<br><span id=MatchVs>vs</span><br>'.$op2name;
 							if ($matchActive)
 								echo '</a>';
 						} else {

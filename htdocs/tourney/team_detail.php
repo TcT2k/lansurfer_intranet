@@ -22,7 +22,12 @@
 		echo '<h3 class=content>'.$title.'</h3>';
 		
 		echo '<p class=content>';
-		echo '<b>'._("Name").'</b>: '.$Team->name.'<br>';
+		echo '<b>'._("Name").'</b>: ';
+		if ($Tourney->TeamSize == 1)
+			PrintIMSContactLink($Team->leader, $Team->name);
+		else
+			echo HTMLStr($Team->name);
+		echo '<br>';
 
 		if ($Tourney->TeamSize == 1) {
 			echo '<b>'._("Clan").'</b>: ';
@@ -71,11 +76,12 @@
 			foreach ($Team->member as $m) {
 				echo '<tr>';
 				echo '<td class=liste>';
+				
 				if ($m['uid'] == $Team->leader)
-					echo '<b>';
-				echo $m['name'];
-				if ($m['uid'] == $Team->leader)
-					echo '</b>';
+					$name = '<b>'.$m['name'].'</b>';
+				else
+					$name = $m['name'];
+				PrintIMSContactLink($m['uid'], $name);
 				echo '</td>';
 				echo '<td class=liste>'.$m['clan'].'</td>';
 				if ($TeamAdmin && $m['uid'] != $Team->leader) {

@@ -104,7 +104,7 @@
 	<p class="content">
   <font color="red">Bitte beachten:</font> Ihr müßt Cookies aktiviert haben um korrekt eingeloggt zu sein!
   </p>
-	<p>&nbsp;</p>
+	<p class=content>&nbsp;</p>
 	<p class="content">
 	<? NavPrintAction($PHP_SELF."?action=logout&party=$party", _("Logout")); ?><br>
 	</p>

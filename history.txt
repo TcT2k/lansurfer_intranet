@@ -1,28 +1,9 @@
 Versions Änderungen
 ===================
-Version 1.6.4
-- Fix: conf/base.inc wird nun korrekt durch das setup erzeugt
-
-Version 1.6.3
-- Add: Guest comments in guest details
-
-Version 1.6.2
-- Fix: Anzahl der Spiele im Halb-/Viertel- und Endfinale wurde falsch berechnet auf grund eines "Rundungsfehlers"
-       dieser Fehler ist auch als "Fehler -1" bekannt
-
-Version 1.61a
-- Fix: Inkompatibilität mit PHP 4.1.0 RC1 (bei Formularen)
-- Fix: Turnier Loeschen (SQL Error)
-- Fix: Catering: Loeschen (Fehlendes ? in URL)
-
-Version 1.61
-- Fix: Turnier Spiel rückgängig machen
-- Add: Gewinner/Verlierer Anzeige in der Turnier Spiel Übersicht
-- Fix: WWCL Export: Single Elimination Turniere
-- Fix: WWCL Export: Ergebnis Anzeige im WWCL Programm
-
-Version 1.6a
-- Fix: Turnier Loeschen
+Version 1.7 Preview 1 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDACHT)
+- Add: Intranet Message System
+- Add: Kommentare für einzelne Turnier Spiele
+- Add: Datei Upload für einzelne Turnier Spiele (nur von den Gegnern und Turnier Admins)
 
 Version 1.6
 - Fix: Einige HTML Fehler (falsche/fehlende CSS Anweisungen)

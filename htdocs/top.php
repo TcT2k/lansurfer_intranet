@@ -22,7 +22,22 @@
 	
 	$fp = fopen($LS_BASEPATH.'../includes/design/top.html', 'r');
 	if ($fp) {
+		
+		if ($user_valid) {
+			$res = SQL_Query("SELECT COUNT(*) FROM ims WHERE dst=".$user_current['id']." AND NOT flags & ".IMS_READ);
+			if ($cnt = mysql_result($res, 0, 0))
+				$msgstr = sprintf(_("Inbox (%d)"), $cnt);
+			else
+				$msgstr = _("Inbox");
+			$msgstr = '<a class=NavModule href="ims/">'.$msgstr.'</a>';
+
+			Header('refresh: 120; URL='.$PHP_SELF.'?prevcnt='.$cnt);
+		} else {
+			$msgstr = _("Messages");
+		}
+		
 		$des = fread($fp, filesize($LS_BASEPATH.'../includes/design/top.html'));
+		$des = str_replace('%IMS%', $msgstr, $des);
 		$des = str_replace('%DATE%', HTMLStr(strftime('%a, %X'), 15), $des);
 		$usrstring = ($user_valid) ? $user_current['name'] : _("Login");
 		$usrstring = '<a class=NavModule href="party/details.php">'.$usrstring.'</a>';
@@ -43,6 +58,24 @@
 		$des = str_replace('%MODULES%', $modstr, $des);
 		
 		echo $des;
+		if ($user_valid && isset($prevcnt) && $cnt > $prevcnt) {
+?>
+<embed name="notify" src="sound/notify.wav" loop=false autostart=true mastersound hidden=true></embed>
+<script language="JavaScript">
+<!--
+	window.open ("ims/notify.php?prev=<? echo $prevcnt; ?>&cnt=<? echo $cnt; ?>", "ims_notify", 
+		"width=300, height=30, top=" + (screen.availHeight - 180) + ",left = "+(screen.availWidth-350)+",scrollbars=no", true);
+
+  var main_frame = parent.frames["main"];
+  if (main_frame.location.pathname.indexOf('ims/index.php') >= 0) {
+  	main_frame.location.reload();
+  }
+
+//-->
+</script>
+<?
+		} 
+		
 		fclose($fp);
 	}
 ?>

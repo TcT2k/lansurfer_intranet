@@ -424,6 +424,8 @@
 				SQL_Query("DELETE FROM TourneyTeamMember WHERE team=".$row['id']);
 			SQL_Query("DELETE FROM TourneyTeam WHERE tourney=".$id);
 			SQL_Query("DELETE FROM TourneyMatchResult WHERE tourney=".$id);
+			SQL_Query("DELETE FROM TourneyMatchComment WHERE tourney=".$id);
+			SQL_Query("DELETE FROM TourneyMatchFile WHERE tourney=".$id);
 			SQL_Query("DELETE FROM TourneyMatch WHERE tourney=".$id);
 			SQL_Query("DELETE FROM TourneyBracket WHERE tourney=".$id);
 			SQL_Query("DELETE FROM Tourney WHERE id=".$id);
@@ -446,8 +448,6 @@
 		}
 	}
 	
-	echo '<p class=content>';
 	NavPrintBack();
-	echo '</p>';
 	EndPage();
 ?>

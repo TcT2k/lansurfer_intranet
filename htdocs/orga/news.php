@@ -31,7 +31,7 @@ Parameter:
 	if ($action == "new" || $action == "edit") {
 	
 	?><h3 class="content"><? echo ($action == "new") ? _("New Message") : _("Edit Message");  ?></h3>
-	<p><?
+	<p class=content><?
 	
 		FormStart("action=\"".$PHP_SELF."\" method=\"post\"");
 			if ($submited) {

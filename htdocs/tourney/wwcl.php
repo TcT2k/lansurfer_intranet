@@ -41,7 +41,6 @@
 		
 		$idPrefix = ($tourney->TeamSize == 1) ? 'P' : 'C';
 		
-		$ini['INFO']['ExporterVersion'] = 'LANsurfer Intranet '.LS_INTRANET_VERSION.' http://www.lansurfer.com/';
 		$ini['INFO']['LastEdit'] = date('m.d.Y G:i:s');
 		$ini['INFO']['MaxPlayer'] = $tourney->StartTeams;
 		$ini['INFO']['Modus'] = ($tourney->DoubleLimit) ? 1 : 0;
@@ -64,7 +63,6 @@ LGrenze=0*/
 				tm.col,
 				tm.op1,
 				tm.op2,
-				tm.flags,
 				tt1.name as 'Team1Name',
 				tt1.wwclid as 'Team1WWCLid',
 				tt2.name as 'Team2Name',
@@ -87,7 +85,7 @@ LGrenze=0*/
 		$players = array();
 		
 		while ($row = mysql_fetch_array($res)) {
-			if ($row['col'] >= $tourney->WinnerRounds && $tourney->DoubleLimit)
+			if ($row['col'] >= $tourney->WinnerRounds)
 				$colName = 'Looser'.($tourney->LoserRounds +1);
 			else
 				$colName = ($row['col'] < 0) ? 'Looser'.abs($row['col']) : 'Winner'.$row['col'];
@@ -130,7 +128,7 @@ LGrenze=0*/
 			$ini[$colName][$row['row'].'_m_closed'] = 1;
 			$ini[$colName][$row['row'].'_m_IsFinished'] = 1;
 
-			if ($row['col'] >= $tourney->WinnerRounds && $tourney->DoubleLimit)
+			if ($row['col'] >= $tourney->WinnerRounds)
 				$ini['Winner'.($tourney->WinnerRounds)] = $ini[$colName];
 		}
 
@@ -159,7 +157,7 @@ LGrenze=0*/
 		function GetRanking($tid) {
 			global $Rankings;
 			
-			//echo 'RC: '.count($Rankings)."\r\n";
+			echo 'RC: '.count($Rankings)."\r\n";
 			
 			foreach ($Rankings as $rank => $teams) {
 				foreach ($teams as $team) {

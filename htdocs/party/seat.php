@@ -48,7 +48,7 @@
 		if (!isset($col))
 			$col = -1;
 		
-		echo "<p><div align=center>";
+		echo "<p class=content><div align=center>";
 		RenderBlock($Block, false, true, $row, $col);
 		echo "</div></p>";
 	}

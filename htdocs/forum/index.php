@@ -22,7 +22,7 @@
 	NavPrintAction("topic.php?action=new", _("New Topic"));
 ?>	
 	<br>
-	<p>
+	<p class=content>
 	<table class="liste" width="96%">
 		<tr class="liste">
 			<th class="liste" width=200><? echo _("Title"); ?></th>
@@ -107,7 +107,7 @@
 	</p>
 <?	
 	if ($PageCount > 1) {
-		echo "<p class=\"contentpanel\">"._("Pages with older topics")." ";
+		echo "<p class=\"content\">"._("Pages with older topics")." ";
 		for ($i = 0; $i < $PageCount; $i++)
 			if ($i == $page)
 				echo ($i + 1)." ";

@@ -5,6 +5,9 @@
 		Header('Location: _setup.php');
 		die;
 	}
+	
+	// Prevents browser from reloading hole frameset on refresh
+	Header('Last-Modified: Thu, 13 Jan 2000 00:00:00 GMT');
 ?>
 <html>
 <head>

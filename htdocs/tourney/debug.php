@@ -63,7 +63,5 @@
 		}	
 	}
 
-	echo '<p class=contentpanel>';
 	NavPrintBack();
-	echo '</p>';
 ?>

@@ -186,7 +186,7 @@
 		while ($row=mysql_fetch_array($res)) {
 	?>
 		<tr class="liste">
-			<td class="liste"><? PrintHTMLStr($row[name]); ?></td>
+			<td class="liste"><? PrintIMSContactLink($row['id'], HTMLStr($row[name])); ?></td>
 			<td class="liste"><? echo ($row[clan] == "") ? "&nbsp;" : HTMLStr($row[clan]); ?></td>
 			<? if ($format==1): ?>
 			<td class="liste"><? 

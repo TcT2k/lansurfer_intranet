@@ -75,9 +75,7 @@
 		}
 	}
 
-	echo '<p class=content>';
 	NavPrintBack();
-	echo '</p>';
 
 	EndPage();
 ?>

@@ -6,14 +6,14 @@
 	StartPage(_("Tournament Overview"));
 	
 	if (user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE)) {
-		echo '<p class=contentpanel>';
+		echo '<p class=content>';
 		NavPrintAction("edit.php", _("Tournament Administration"));
 		echo '</p>';
 	}
 	
 	$tourneyAdmin = user_auth_ex(ADMIN_TOURNEY, -1, 0, FALSE);
 	
-	echo '<p class=contentpanel>';
+	echo '<p class=content>';
 	$res = SQL_Query("SELECT 
 			t.id,
 			t.name,

@@ -2,6 +2,7 @@
 	$LS_BASEPATH = '../';
 	require $LS_BASEPATH.'../includes/ls_base.inc';
   require $LS_BASEPATH."../includes/tourney/base.inc";
+  require $LS_BASEPATH."../includes/tourney/tabutil.inc";
 
 	if (!isset($action)) $action = "show";
 	
@@ -79,6 +80,8 @@
 	
 	$match->Load($tourney->TeamSize);
 	$teamAdmin = $user_valid && ($match->team1->leader == $user_current['id'] || $match->team2->leader == $user_current['id'] || $tourneyAdmin);
+
+	PrintMatchTabs();
 	
 	echo '<table width=100%>';
 	echo '<tr><th colspan=2 class=liste>'._("Opponents").'</th></tr>';

@@ -244,7 +244,7 @@ Angebote :
 							}						
 						?>
 						</td>
-						<td><? NavPrintDel($PHP_SELF.'?mode=del&id='.$row['id']);	?></td>
+						<td><? NavPrintDel($PHP_SELF.'mode=del&id='.$row['id']);	?></td>
 					</tr>
 					<?
 					}

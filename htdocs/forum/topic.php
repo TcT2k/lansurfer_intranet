@@ -152,7 +152,7 @@
 
 		if (!$submited || $FormErrorCount) {
 ?>
-	<p class="contentpanel">
+	<p class="content">
 	<?
 		echo _("HTML Code will be ignored.<br>The following commands can be used for formatting your text:");
 	?><br>

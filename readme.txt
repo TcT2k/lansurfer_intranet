@@ -1,6 +1,6 @@
 LANsurfer Intranet Readme
 =========================
-Copyright (c) 2000-2002 Tobias 'TcT' Taschner
+Copyright (c) 2000-2001 Tobias 'TcT' Taschner
 Email: tct@lansurfer.com
 
 Installation

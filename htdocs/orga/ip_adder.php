@@ -71,8 +71,8 @@ $netmask = 0;
   </TR>-->
 </TABLE>
 
-<p><input type="BUTTON" class=form_btn NAME="CALC" VALUE="Berechnen" onClick="javascript:calc();">
-<P>
+<p class=content><input type="BUTTON" class=form_btn NAME="CALC" VALUE="Berechnen" onClick="javascript:calc();">
+<P class=content>
 <table>
     <tr class="liste">
       <th class="liste" width=180>Blockname</th>
@@ -231,7 +231,7 @@ $netmask = 0;
 
     ?>
 </table>
-<p> Errechnete Netmask:
+<p class=content> Errechnete Netmask:
 <?
 if ($round ==1)
   $netmask--;
@@ -259,7 +259,7 @@ if ($round ==1)
   }
 
 </SCRIPT>
-<p>
+<p class=content>
 <? if ($ACTION=="Calc")
 {
   echo "<INPUT TYPE=\"BUTTON\" class=form_btn onClick=\"javascript:submitQuestion();\" VALUE=\"Neu vergeben\">";

@@ -51,9 +51,7 @@
 		
 	</table>
 <?	
-	echo '<p>';
 	NavPrintBack();
-	echo '</p>';
 	
 	EndPage();
 	

@@ -23,7 +23,7 @@
 	$PageCount = 0;
 	
 	?>
-	<p>
+	<p class=content>
 	<?
 		$res = SQL_Query("SELECT COUNT(*) AS 'cnt' FROM forum_posting WHERE (topic=$id)");
 		$row = mysql_fetch_array($res);
@@ -33,7 +33,7 @@
 			$page = $PageCount - 1;
 		
 		if ($PageCount > 1) {
-			printf("The topic is %d pages long:", $PageCount);
+			printf(_("The topic is %d pages long:"), $PageCount);
 			for ($i = 0; $i < $PageCount; $i++) {
 				echo " ";
 				if ($i == $page)
@@ -100,8 +100,7 @@
 				 ?>
 			</td>
 			<td class="liste" valign="top"><? 
-				$htmltext= Text2HTML($row[text]);
-				echo $htmltext;
+				PrintText2HTML($row['text']);
 			?></td>
 		</tr>
 		<?

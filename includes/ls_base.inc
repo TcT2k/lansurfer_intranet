@@ -3,17 +3,11 @@
 
 // Scripte
 	require $LS_BASEPATH."../includes/ls_const.inc";
-	
-	$cfgFile = $LS_BASEPATH."../conf/base.inc";
-	if (file_exists($cfgFile))
-		require $cfgFile;
-	else {
-		define ('LS_CONFIGURED', false);	
-		define ('LS_LANGUAGE', 'en_EN');
-	}
+	require $LS_BASEPATH."../includes/ls_conf.inc";
   require $LS_BASEPATH."../includes/sql_util.inc";
 	require $LS_BASEPATH."../includes/ls_printing.inc";
 	require $LS_BASEPATH."../includes/user_util.inc";
+	require $LS_BASEPATH."../includes/ims.inc";
 
 	setlocale(LC_ALL, LS_LANGUAGE);
 
@@ -61,7 +55,7 @@
 	}
 
 	function StartPage($title = "", $innerstyle = 1, $icon = '') {
-		global $LS_BASEPATH, $LS_TITLEPAGE, $LS_Design, $footerhtml, $HTTP_COOKIE_VARS, $LS_POPUPPAGE;
+		global $LS_BASEPATH, $HTTP_COOKIE_VARS, $LS_POPUPPAGE;
 
 //		SetLang();
 //		ob_start(ob_gzhandler); 
@@ -77,7 +71,35 @@
 	<? endif; ?>
 </head>
 
-<body>
+<body background="<? echo $LS_BASEPATH; ?>images/preview.gif">
+<script language="JavaScript">
+<!--
+	function IMSOpenSend(to) {
+		var t = LSPopup("<? echo $LS_BASEPATH; ?>ims/send.php?to=" + to, "ims_send", 400, 360, 0);
+		
+		t.focus();
+	}
+	
+	function IMSBuddyList(params) {
+		var t = LSPopup("<? echo $LS_BASEPATH; ?>ims/buddy.php" + params, "ims_buddy", 200, 400, 1);
+		t.focus();
+	}
+	
+	function LSPopup(url, name, width, height, type) {
+		var options = "width="+width+", height=" + height;
+		
+		if (type == 0) {
+		  options += "scrollbar=1, top="+((screen.availHeight - height) / 2)+", left="+((screen.availWidth - width) / 2);
+		} else if (type == 1) {
+			options += ", top="+(screen.availHeight - height - 100)+", left="+(screen.availWidth - width - 30);
+		}
+		
+		var w = window.open(url, name, options);
+		return w;
+	}
+//-->
+</script>
+
 <? if (!$LS_POPUPPAGE): ?>
 <h3 class=content><?  
 	if ($icon && $icon != $LS_BASEPATH.'images/tourney/icons/')

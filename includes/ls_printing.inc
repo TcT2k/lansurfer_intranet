@@ -124,12 +124,9 @@
 		for ($i=0; $i < $FormErrorCount && !($ElementError = ($FormErrors[$i] == $name)); $i++) ;
 	
 		
-		if ($type == "text" || $type == "password" || $type == "textarea" || $type == "file" || $type == "datetime")
-			$showcaption = 1;
-		elseif ($type == "checkbox" || $type == "radio")
+		$showcaption = ($type == "text" || $type == "password" || $type == "textarea" || $type == "file" || $type == "datetime");
+		if ($type == "checkbox" || $type == "radio")
 			$showcaption = 2;
-		else
-			$showcaption = 0;
 
 		if ($linepos > 1)
 			$showcaption = 0;
@@ -214,6 +211,8 @@
 		$max = count($NavList);
 		
 		if (!$max) return;
+		
+		echo '<table><tr>';
 
 		for ($i=0;$i<$max;$i++) {
 			switch ($max - $i) {
@@ -250,12 +249,14 @@
 		echo '<td class="content" width="10"><img src="'.$LS_BASEPATH.'images/navigation/quadrat.gif" width="9" height="9"></td>';
 		echo '<td class="content"><img src="'.$LS_BASEPATH.'images/pixel.gif" width="5" height="1"></td>';
 		echo '<td valign="top" width="100%" nowrap><span class=content id=NavLevel1>'.$title.'</span></td>';
+		
+		echo '</tr></table>';
 	}
 	
 	function NavPrintBack($caption = "") {
 		global $LS_BASEPATH, $NavList;
 		
-		echo "<p>";
+		echo "<p class=content>";
 		NavPrintAction($NavList[count($NavList) - 1][1], ($caption) ? $caption : _("Back"));
 		echo "</p>";
 	}
@@ -276,15 +277,16 @@
 		echo "</a>";
 	}
 	
-	function NavPrintAction($url, $caption) {
-		global $LS_BASEPATH, $LS_Design, $sess;
+	function NavPrintAction($url, $caption, $htmltags = "") {
+		global $LS_BASEPATH, $LS_Design;
 		
 		if ($url == "")
 			$url = $LS_BASEPATH."notopen.php";
-		if (isset($sess))
-			$url = $sess->url($url);
 		
-		echo "<a href=\"".$url."\"><img border=0 width=5 height=9 src=\"".$LS_Design[nav_action]."\"> $caption</a>";
+		echo '<a href="'.$url.'"';
+		if ($htmltags)
+			echo ' '.$htmltags;
+		echo "><img border=0 width=5 height=9 src=\"".$LS_Design[nav_action]."\"> $caption</a>";
 	}
 	
 	function HTMLStr($str, $limit = 0) {
@@ -296,6 +298,36 @@
 	
 	function PrintHTMLStr ($str, $limit = 0) {
 		echo HTMLStr($str, $limit);
+	}
+
+	define("TH_NOUBB", 		1);			// Kein UBB Code
+	define("TH_NOBR", 		2);			// nl nicht in <br> umwandeln
+
+	function Text2HTML($text, $options = 0) {
+		$text = str_replace("%", "%%", HTMLSpecialChars($text));
+		
+		if (!($options & TH_NOBR))
+			$text = nl2br($text);
+		
+    $text = eregi_replace("[^=](http|ftp|https)://([^[:space:]]*)([[:alnum:]#?/&=])", " <a href=\"\\1://\\2\\3\" target=\"_blank\" target=\"_new\">\\1://\\2\\3</a>", $text);
+
+    $text = str_replace('[b]', '<b>', $text);
+    $text = str_replace('[/b]', '</b>', $text);
+
+    $text = str_replace('[i]', '<i>', $text);
+    $text = str_replace('[/i]', '</i>', $text);
+
+    $text = str_replace('[u]', '<u>', $text);
+    $text = str_replace('[/u]', '</u>', $text);
+
+    $text = ereg_replace('\[url=([a-zA-Z0-9.:\/@,#?=_-]+)\]', '<a href="\1">', $text);
+    $text = str_replace('[/url]', '</a>', $text);
+    
+		return $text;
+	}
+	
+	function PrintText2HTML($text, $options = 0) {
+		printf(Text2HTML($text, $options));
 	}
 	
 	function PrintPageHeader($innerstyle = 1) {
@@ -395,12 +427,15 @@
 		return $s;
 	}
 
-	function NavPrintDel($url, $caption = '') {
+	function NavPrintDel($url, $caption = '', $htmltags = '') {
 		global $LS_BASEPATH;
 		if ($caption == '')
 			$caption = _("Remove");
 	
-		echo '<a href="'.$url.'"><img alt="'.$caption.'" border=0 width=12 height=12 src="'.$LS_BASEPATH.'images/navigation/delete_button.gif"></a>';
+		echo '<a href="'.$url.'"';
+		if ($htmltags)
+			echo ' '.$htmltags;
+		echo '><img alt="'.$caption.'" border=0 width=12 height=12 src="'.$LS_BASEPATH.'images/navigation/delete_button.gif"></a>';
 	}
 
 	function PrintSeat($userid) {
@@ -437,37 +472,6 @@
 			return sprintf('%s', str_replace('.', $LS_locale_info['decimal_point'], $value));
 		else
 			return str_replace('.', $LS_locale_info['decimal_point'], sprintf('%.2f %s', str_replace('.', $LS_locale_info['decimal_point'], $value), LS_CATERING_CURRENCY));
-	}
-
-	define("TH_NOUBB", 		1);			// Kein UBB Code
-	define("TH_NOBR", 		2);			// nl nicht in <br> umwandeln
-
-	function Text2HTML($text, $options = 0) {
-		global $LS_BASEPATH;
-		
-		$text = HTMLSpecialChars($text);
-		
-		if (!($options & TH_NOBR))
-			$text = nl2br($text);
-		
-		$search = array(
-			"'\\[i\\](.*?)\\[\\/i\\]'is",
-			"'\\[b\\](.*?)\\[\\/b\\]'is",
-			"'\\[u\\](.*?)\\[\\/u\\]'is",
-			"'([^=])(http|ftp|https)://([A-Za-z0-9#?/.&=_-]*)'i",
-			"'\\[url\\=(.*?)\\](.*?)\\[\\/url\\]'is");
-		$replace = array(
-			"<i>\\1</i>",
-			"<b>\\1</b>",
-			"<u>\\1</u>",
-			"\\1<a target=_blank href=\"\\2://\\3\">\\2://\\3</a>",
-			"<a target=_blank href=\"\\1\">\\2</a>");
-
-    return preg_replace($search, $replace, $text);
-	}
-	
-	function PrintText2HTML($text, $options = 0) {
-		echo Text2HTML($text, $options);
 	}
 
 	$LS_locale_info = false;
