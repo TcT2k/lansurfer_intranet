@@ -89,7 +89,7 @@ Parameter:
 				FormElement("f_date", _("Date"), $f_date, "text", "size=10 maxlength=10", 1);
 					FormElement("f_time", "", $f_time, "text", "size=5 maxlength=5", -1);
 				FormElement("f_msg", _("Text"), $f_msg, "textarea", "cols=\"60\" rows=\"20\"");
-				FormElement("f_orgateam", _("Visible on Beamer"), NEWS_PUBLIC, "checkbox", ($f_orgateam) ? "checked" : "");
+				FormElement("f_orgateam", _("Visible on news page"), NEWS_TEAM, "checkbox", ($f_orgateam) ? "checked" : "");
 				
 				FormElement("", "", _("Save"), "submit");
 			}

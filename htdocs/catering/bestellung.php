@@ -5,7 +5,7 @@
 	include $LS_BASEPATH.'../includes/lsi_base.inc';
 	StartPage("Catering");
 
-//Checken ob user eingelogged ist.
+	//Checken ob user eingelogged ist.
 
 	//User id ermitteln 
 	$user_id=$user_current[id];
@@ -60,4 +60,4 @@
 	
 <?
 	EndPage();
-?>	
+?>

@@ -119,7 +119,7 @@
 	</table>
 	</div>
 	<br>
-	<? NavPrintAction("topic.php?action=reply&forum=".$TopicInfo[id]."&topic=$id", _("Post reply")); ?>
+	<div class="content"><? NavPrintAction("topic.php?action=reply&forum=".$TopicInfo[id]."&topic=$id", _("Post reply")); ?></div>
 	</p>
 <?
 	NavPrintBack();

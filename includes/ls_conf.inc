@@ -10,4 +10,5 @@
   define('LS_CATERING', TRUE);
   define('LS_CATERING_CURRENCY', 'EUR');
   define('LS_TOURNEY_UPLOAD', TRUE);
+  define('LS_USE_EMOTICONS', FALSE);
 ?>

@@ -27,9 +27,13 @@ function BeamerStart() {
 	echo "<br>";
 	NavPrintAction("guest_stat.php", _("Current stats"));
 	echo "<br>";
+	NavPrintAction("beamer_config.php", "Beamer Config");
+	echo "<br>";
 	NavPrintAction("javascript:BeamerStart()", _("Start Beamer Presentation"));
 	echo "<br>";
 	NavPrintAction("ip_adder.php", "IP-Vergabe");
+	echo "<br>";
+	NavPrintAction("rcon.php", "RCON");
 	echo "<br>";
 	if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		NavPrintAction("catering/", "Catering");

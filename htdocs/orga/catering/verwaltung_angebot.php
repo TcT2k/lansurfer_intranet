@@ -42,11 +42,11 @@ elseif ($mode=="submit_edit_lieferant") {
 }
 elseif ($mode=="del") {
 	SQL_Query("DELETE FROM CatProduct WHERE id='$id'");
-	echo "Das Angebot mit der ID = $id wurde gelöscht";
+	echo "<div class=\"content\">Das Angebot mit der ID = $id wurde gelöscht</div>";
 }
 elseif ($mode=="del_lieferant") {
 	SQL_Query("DELETE FROM CatSupplier WHERE id='$id'");
-	echo "Der Lieferant mit der ID = $id wurde gelöscht";
+	echo "<div class=\"content\">Der Lieferant mit der ID = $id wurde gelöscht</div>";
 }
 elseif ($mode=="add_angebot") {
 	if (($name=="")||($beschreibung=="")||($preis=="")) {
@@ -132,7 +132,7 @@ elseif ($mode=="edit") {
 							</td>
 						</tr>
 						<tr>
-							<td class=form>Preis (Pfennige durch '.' trennnen)</td>
+							<td class=form>Preis (Cent durch '.' trennnen)</td>
 							<td class=form><input type="text" name="preis" size="5" value="<?echo $row[preis];?>"></td>
 						</tr>
 						<tr>
@@ -196,7 +196,6 @@ if (($mode!="edit")&&($mode!="edit_lieferant")) {
 </table>
 <br>
 <br>
-Angebote :
 			<table width="100%">
 				<tr>
 					<th class=liste>Lieferant</th>
@@ -244,7 +243,7 @@ Angebote :
 							}						
 						?>
 						</td>
-						<td><? NavPrintDel($PHP_SELF.'mode=del&id='.$row['id']);	?></td>
+						<td><? NavPrintDel($PHP_SELF.'?mode=del&id='.$row['id']);	?></td>
 					</tr>
 					<?
 					}
@@ -257,8 +256,8 @@ Angebote :
 <br>
 <br>
 </div>
-<div align="left">
-Neues Angebot eintragen :<br>
+<div align="left" class="content">
+<b>Neues Angebot eintragen:</b>
 <form action="verwaltung_angebot.php" method=POST>
 <input type="hidden" name="mode" value="add_angebot">
 <table>
@@ -325,8 +324,9 @@ Neues Angebot eintragen :<br>
 <br>
 <br>
 </div>
-<div align="left">
-Vorhandene Lieferanten bearbeiten :
+<div align="left" class="content">
+<br>
+<b>Vorhandene Lieferanten bearbeiten:</b><br>
 <br>
 	<table width="25%">
 		<tr>
@@ -347,8 +347,10 @@ Vorhandene Lieferanten bearbeiten :
 		}
 		?>
 	</table>
-
-Neuen Lieferanten eintragen :<br>
+<br>
+<br>
+<b>Neuen Lieferanten eintragen:</b>
+<br>
 <form action="verwaltung_angebot.php" method=POST>
 <input type="hidden" name="mode" value="add_lieferant">
 <table>

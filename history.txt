@@ -1,5 +1,14 @@
 Versions Änderungen
 ===================
+
+Version 1.7.0 Preview 3 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDACHT)
+- Add: Optionale Smilie Funktion im Forum
+- Add: Sponsoren können für den Beamer gewartet werden
+- Add: Anzeige von News am Beamer auswählbar (+ wieviele Messages auf den Beamer kommen)
+- Fix: Link zum Löschen von Catering Angeboten
+- Add: Catering Konto aller Gäste hochsetzen
+- Fix: Intranet Daten Import
+
 Version 1.7.0 Preview 2 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDACHT)
 - Add: Optische Verbesserungen am Turnierbaum
 - Add: Turnier Option für "Loser bracket Verlierer muss den Gewinner des Winner Brackets zwei mal schlagen"
@@ -11,6 +20,10 @@ Version 1.7 Preview 1 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDA
 - Add: Intranet Message System
 - Add: Kommentare für einzelne Turnier Spiele
 - Add: Datei Upload für einzelne Turnier Spiele (nur von den Gegnern und Turnier Admins)
+
+Version 1.6.2
+- Fix: Anzahl der Spiele im Halb-/Viertel- und Endfinale wurde falsch berechnet auf grund eines "Rundungsfehlers"
+       dieser Fehler ist auch als "Fehler -1" bekannt
 
 Version 1.61
 - Fix: Turnier Spiel rückgängig machen

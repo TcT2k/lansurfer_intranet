@@ -71,7 +71,8 @@
 			}
 			$this->MaxMatches = $this->StartTeams / 2;
 			
-			$this->WinnerRounds = log($this->MaxMatches) / log(2);
+			// FIX: (int)
+			$this->WinnerRounds = (int) (log($this->MaxMatches) / log(2));
 			if ($this->DoubleLimit > 0) {
 				$this->LoserRounds = $this->WinnerRounds * 2;
 				$this->WinnerRounds++;
@@ -514,9 +515,12 @@
 					$skip = false;
 				if (!$skip) {
 					echo '<td class=content>';
+					
+					
 					echo '<table border=0 cellspacing=0 cellpadding=0>';
 	
 					for ($row = 0; $row < $round->MatchCount; $row++) {
+						
 						while ($currentMatch && ($currentMatch['row'] < $row || $currentMatch['col'] < $round->Col)) {
 							$currentMatch = mysql_fetch_array($res);
 						}

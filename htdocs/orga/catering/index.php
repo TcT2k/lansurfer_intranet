@@ -52,16 +52,19 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 				}
 			}
 		}
-		echo "Die Produkte wurden eingetragen. Zu Bezahlen : <b>$gesamtpreis</b><br><br>";
+		echo "<p class=content>Die Produkte wurden eingetragen. Zu Bezahlen: <b>$gesamtpreis</b></p>";
 	}
 	?>
 		
 	<table border=0 width="50%">
-		<tr class="liste">
-	Eigene Umsätze eintragen : <br>
-	Mit diesem Formular werden die Verkäufe zur Statistik hinzugefügt die nicht über <br>
-	das Catering Konto abgewickelt werden. Somit ist am Ende der Party eine Überprüfung<br>
-	des Internen Umsatzes möglich.	</tr>
+	<tr class="liste">
+	<p class="content">
+	<b>Eigene Umsätze eintragen:</b><br>
+	Mit diesem Formular werden die Verkäufe zur Statistik hinzugefügt die nicht über 
+	das Catering Konto abgewickelt werden. Somit ist am Ende der Party eine Überprüfung 
+	des Internen Umsatzes möglich.
+	</p>
+	</tr>
 	<table>
 	<br><br>
 	<form action="index.php" method=POST>

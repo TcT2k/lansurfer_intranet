@@ -235,7 +235,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		$res=mysql_query("SELECT * FROM CatSupplier WHERE id='$lieferant'");
 		$row=mysql_fetch_array($res);
 		fputs($best,"Lieferant : $row[name] - Telefon : $row[telefon] - Kunden Nr. : $row[knr]\n\n");
-		echo "Lieferant : $row[name] - Telefon : $row[telefon] - Kunden Nr. : $row[knr]<br>";
+		echo "<p class=\"content\">Lieferant: $row[name] - Telefon: $row[telefon] - Kunden Nr.: $row[knr]</p>";
 		$res=SQL_Query("SELECT angebot.name AS name,
 														 angebot.nummer AS nummer,
 														 angebot.size AS size,
@@ -330,7 +330,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<input type="hidden" name="lieferant" value="<?echo"$lieferant";?>">
 		<input type="hidden" name="mode" value="group_bestellung_status_setzen">
 		<?
-		if ($j<=1) echo "Keine neuen Bestellungen";
+		if ($j<=1) echo "<p class=\"content\">Keine neuen Bestellungen</p>";
 		else {
 		?>
 			<input type="submit" name="Submit" value="Diese Bestellungen auf bearbeitet setzen" class="form_btn">
@@ -386,7 +386,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	}
 	else {
 		?>
-		<a href="verwaltung_bestellung.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen<br>
+		<p class="content"><a href="verwaltung_bestellung.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen</p>
 		<?
 	}
 	// ENDE Filtern!
@@ -399,7 +399,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	?>
 	<br>
 	<br>
-	Aktuelle Bestellungen (Sortierrichtung durch klick auf Überschrifft) :
+	<p class="content">Aktuelle Bestellungen (Sortierrichtung durch klick auf Überschrifft):
 	<table width="95%" class="liste">
 		<tr>
 			<td>
@@ -617,7 +617,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	<input type="hidden" name="mode" value="group_bestellung">
 	<input type="hidden" name="order" value="<?echo"$order";?>">
 	<input type="hidden" name="suche" value="<?echo"$suche";?>">
-	Bestellungen gruppiert nach 
+	<p class="content">Bestellungen gruppiert nach 
 	<select name="lieferant" class="form_field">
 	<?
 		if ($row=mysql_fetch_array($res)) {

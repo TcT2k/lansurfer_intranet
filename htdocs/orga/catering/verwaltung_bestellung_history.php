@@ -104,8 +104,7 @@
 	if (($mode!="info")&&($mode!="undo_single")) {
 	?>
 	<br>
-	<br>
-	Alle durchgeführten bestellungen (gruppiert nach ihrer zeitlichen Aufgabe beim Lieferanten) :
+	<p class="content">Alle durchgeführten bestellungen (gruppiert nach ihrer zeitlichen Aufgabe beim Lieferanten):<br>
 	<table width="95%" class="liste">
 		<tr>
 			<td>

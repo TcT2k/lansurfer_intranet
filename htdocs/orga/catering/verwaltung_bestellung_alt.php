@@ -136,7 +136,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	}
 	else {
 		?>
-		<a href="verwaltung_bestellung_alt.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen<br>
+		<p class="content"><a href="verwaltung_bestellung_alt.php?order=<?echo"$order";?>&direction=<?echo"$direction";?>&suche=<?echo"$suche";?>">Alle Lieferanten</a> zeigen</p>
 		<?
 	}
 	// ENDE Filtern!
@@ -149,7 +149,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	?>
 	<br>
 	<br>
-	Alte Bestellungen (Sortierrichtung durch klick auf Überschrifft) :
+	<p class="content">Alte Bestellungen (Sortierrichtung durch klick auf Überschrifft):
 	<table width="95%" class="liste">
 		<tr>
 			<td>

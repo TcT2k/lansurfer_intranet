@@ -53,11 +53,11 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		while ($row=mysql_fetch_array($res));
 	}
 	?>
-	<div align="left">
+	<div class="content">
 	<?
-	echo "Umsatz intern : $umsatz_intern <br>";
-	echo "Umsatz extern : $umsatz_extern <br>";	
-	echo "Umsatz gesamt : $umsatz_gesamt <br>";
+	echo "Umsatz intern: $umsatz_intern <br>";
+	echo "Umsatz extern: $umsatz_extern <br>";	
+	echo "Umsatz gesamt: $umsatz_gesamt <br>";
 	?>
 	</div><div align="center">
 	<br>
@@ -80,7 +80,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		?>
 		<br><br></div><div align="left">
 		<?
-		echo "$lieferant_name[$j]<br><br>";
+		echo "<div class=\"content\"><b>$lieferant_name[$j]</b></div><br>";
 		
 		// Suchrichtung:
 		if ($direction[$j]=="ASC") $direction[$j]="DESC";

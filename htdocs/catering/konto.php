@@ -273,13 +273,15 @@ if ($user_valid=="true") {
 			SQL_Query("UPDATE user SET kontostand='$diff' WHERE id='$user_id'");
 			?>
 			<blockquote>
+			<div class="content">
 			Die Produkte wurden erfolgreich bestellt!<br>	
 			Ihr neuer Kontostand ist <font size="3"><?$kdiff=sprintf("%.2f", $diff);echo"$kdiff";echo LS_CATERING_CURRENCY;?></font><br>
+			</div>
 			</blockquote>
 <br>
 <table width="95%" border="0" align="center" cellpadding="0" cellspacing="0">
   <tr> 
-    <td valign="top" align="left"><a href="bestellen.php"><img src="../images/navigation/arrow_right.gif" border="0"> weiter shoppen</a></td>
+    <td valign="top" align="left"><a class="content" href="bestellen.php"><img src="../images/navigation/arrow_right.gif" border="0"> weiter shoppen</a></td>
   </tr>
 </table>			
 			<?

@@ -13,6 +13,12 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 		<br>Der neue Kontostand beträgt <?echo"$kontostand";echo LS_CATERING_CURRENCY;?>
 		<?
 	}
+	if ($mode=="submit_overall") {
+		SQL_Query("UPDATE user SET kontostand=99999");
+		?>
+		<br>Alle Konten wurden auf 99.999 <?echo LS_CATERING_CURRENCY;?> gesetzt!
+		<?
+	}
 	if ($mode=="edit") {
 		$res=SQL_Query("SELECT id,name,realname1,realname2,kontostand FROM user WHERE id='$id'");
 		$row=mysql_fetch_array($res);
@@ -61,6 +67,7 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	<?
 	if ($suche=="") {
 		?>
+		<a class="content" href="verwaltung_konten.php?mode=submit_overall">Alle Konten auf 99.999 <?echo LS_CATERING_CURRENCY;?> setzen</a>
 		<form action="verwaltung_konten.php" method=POST>
 		<input type="hidden" name="order" value="<?echo"$order";?>">
 		<input type="text" name="suche" class="form_field"><input type="submit" name="Submit" value="Suchen" class="form_btn">
@@ -81,7 +88,6 @@ if (user_auth_ex(AUTH_TEAM, 0, TEAM_CATERING, FALSE)) {
 	?>
 	<br>
 	<br>
-	Teilnehmer (Sortierrichtung durch Klick auf Überschrift) :
 	<table width="95%" class="liste">
 		<tr>
 			<td>

@@ -1,0 +1,167 @@
+A {
+	COLOR: #0000FF; TEXT-DECORATION: none
+}
+A:visited {
+	COLOR: #0000FF
+}
+A:hover {
+	COLOR: #003366
+}
+A:active {
+	COLOR: #0000FF
+}
+BODY {
+	BACKGROUND-COLOR: #FFFFFF;COLOR: #000000; SCROLLBAR-FACE-COLOR: #666666; 
+	scrollbar-face-color : white;
+	scrollbar-highlight-color : white;
+	scrollbar-3dlight-color : white;
+	scrollbar-shadow-color : white;
+	scrollbar-arrow-color : white;
+	scrollbar-track-color : white;
+	scrollbar-darkshadow-color : white;
+}
+H3.content {
+	FONT-WEIGHT: bold; FONT-SIZE: 17px; COLOR: #99CCFF; FONT-FAMILY: Verdana,Helvetica
+}
+.content {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-FAMILY: Verdana,Helvetica
+}
+TD.content {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-FAMILY: Verdana,Helvetica
+}
+.form {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-FAMILY: Verdana,Helvetica
+}
+TH.liste {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-FAMILY: Verdana,Helvetica; BACKGROUND-COLOR: #99CCFF
+	}
+TD.liste {
+	FONT-WEIGHT: normal; FONT-SIZE: 12px; FONT-FAMILY: Verdana,Helvetica; BACKGROUND-COLOR: #CCE5FF
+}
+.form_field {
+	BORDER-RIGHT: black 2px solid; BORDER-TOP: black 2px solid; FONT: 10pt 'Verdana'; BORDER-LEFT: black 2px solid; BORDER-BOTTOM: black 2px solid
+}
+.form_btn {
+	BORDER-LEFT-COLOR: #9cceff; BORDER-BOTTOM-COLOR: #9cceff; FONT: bold 11px 'Verdana'; COLOR: black; BORDER-TOP-COLOR: #9cceff; BACKGROUND-COLOR: white; BORDER-RIGHT-COLOR: #9cceff
+}
+.formerror {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #900000; FONT-FAMILY: Verdana,Helvetica
+}
+.formerrorsign {
+	FONT-SIZE: 20px; COLOR: #900000
+}
+A.NavLink {
+	FONT-WEIGHT: normal; FONT-SIZE: 11px; FONT-FAMILY: Verdana,Helvetica; TEXT-DECORATION: none
+}
+A.NavLink:hover {
+	TEXT-DECORATION: underline
+}
+#NavLevel1 {
+	COLOR: #99CCFF
+}
+#NavLevel2 {
+	COLOR: #cccccc
+}
+#NavLevel3 {
+	COLOR: #cccccc
+}
+#NavLevel4 {
+	COLOR: #cccccc
+}
+.TourneyTab {
+	FONT-WEIGHT: normal; FONT-SIZE: 11px; COLOR: black; FONT-FAMILY: Verdana,Helvetica; BACKGROUND-COLOR: #99CCFF; TEXT-ALIGN: center
+}
+#TourneyTabSelected {
+	BACKGROUND-COLOR: #CCE5FF
+}
+#TourneyTabDisabled {
+	COLOR: black
+}
+TD.Tourney {
+	FONT-WEIGHT: normal; FONT-SIZE: 11px; COLOR: white; FONT-FAMILY: Verdana,Helvetica; BACKGROUND-COLOR: #66B3FF
+}
+#TourneyFinished {
+	BACKGROUND-COLOR: #8AB8E5
+}
+#TourneyUnready {
+	BACKGROUND-COLOR: #8AB8E5;
+}
+#TourneyWon {
+	FONT-WEIGHT: bold; BACKGROUND-COLOR: #99CCFF
+}
+#TourneyOwn {
+	BACKGROUND-COLOR: #004400
+}
+#TourneyHover {
+	CURSOR: hand; BACKGROUND-COLOR: #CCE5FF
+}
+A.TMatch{
+	FONT-FAMILY: Verdana,Helvetica;
+	FONT-SIZE: 11px;
+	FONT-WEIGHT: normal;
+	COLOR: white;
+	TEXT-DECORATION: none;
+}
+A.TMatch:visited{
+	COLOR: white;
+}
+A.TMatch:hover {
+	TEXT-DECORATION: none;
+}
+#MatchUninitialized {
+	BACKGROUND-COLOR: #7AA3CC;
+}
+#MatchPlayable {
+	BACKGROUND-COLOR: #99ccff;
+}
+#MatchPlayed {
+	BACKGROUND-COLOR: #7AA3CC;
+}
+#MatchVs {
+	COLOR: #000000;
+	FONT-SIZE: 9px;
+}
+#MatchWinner {
+	COLOR: white;
+}
+#MatchLoser {
+	COLOR: #555555;
+}
+#MatchPlayer {
+	color: #555555;
+}
+
+TD.TourneyLabel {
+	FONT-FAMILY: Verdana,Helvetica;
+	FONT-SIZE: 11px;
+	COLOR: #606060;
+}
+
+#TourneyTeamName {
+	FONT-FAMILY: Verdana,Helvetica;
+	FONT-SIZE: 16px;
+}
+
+#TourneyScoreLarge {
+	FONT-FAMILY: Verdana,Helvetica;
+	FONT-SIZE: 19px;
+}
+
+#TourneyMatchWinner {
+	FONT-WEIGHT: bold;
+}
+
+A.NavModule {
+	FONT-SIZE: 12px;
+	FONT-WEIGHT: bold;
+	COLOR: #003366;
+}
+A.NavModule:visited{
+	COLOR: #003366;
+}
+A.NavModule:hover{
+	COLOR: white;
+}
+A.NavModule:visited:hover{
+	COLOR: white;
+}

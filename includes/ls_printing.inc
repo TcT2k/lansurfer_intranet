@@ -7,7 +7,7 @@
 			$action = $PHP_SELF;
 			if ($sess)
 				$action = $sess->url($action);
-			$tags = "action=\"$action\" method=\"post\"";
+			$tags = "action=\"$action\" method=\"post\" enctype=\"multipart/form-data\"";
 		}
 
 		echo "<form $tags>\n<table>\n";
@@ -304,6 +304,8 @@
 	define("TH_NOBR", 		2);			// nl nicht in <br> umwandeln
 
 	function Text2HTML($text, $options = 0) {
+		global $LS_BASEPATH;
+		
 		$text = HTMLSpecialChars($text);
 		
 		if (!($options & TH_NOBR))
@@ -314,15 +316,79 @@
 			"'\\[b\\](.*?)\\[\\/b\\]'is",
 			"'\\[u\\](.*?)\\[\\/u\\]'is",
 			"'([^=])(http|ftp|https)://([A-Za-z0-9#?/.&=_-]*)'i",
-			"'\\[url\\=(.*?)\\](.*?)\\[\\/url\\]'is",
-			);
+			"'\\[url\\=(.*?)\\](.*?)\\[\\/url\\]'is");
+		if (LS_USE_EMOTICONS)
+			$search = array_merge($search, array(
+				"':D(.*?)'is",
+				"':-D(.*?)'is",
+				"'8o(.*?)'is",
+				"'8-o(.*?)'is",
+				"':rambo:(.*?)'is",
+				"':berettas:(.*?)'is",
+				"'\?\?\?(.*?)'is",
+				"'=\)(.*?)'is",
+				"'8-\)(.*?)'is",
+				"'8\)(.*?)'is",
+				"':\((.*?)'is",
+				"':-\((.*?)'is",
+				"'&gt;\((.*?)'is",
+				"':-\)(.*?)'is",
+				"':\)(.*?)'is",
+				"':P(.*?)'is",
+				"':-P(.*?)'is",
+				"':p(.*?)'is",
+				"':-p(.*?)'is",
+				"';\)(.*?)'is",
+				"';-\)(.*?)'is",
+				"':rifle:(.*?)'is",
+				"':matrix:(.*?)'is",
+				"':ko:(.*?)'is",
+				"':heul:(.*?)'is",
+				"':boah:(.*?)'is",
+				"':firestarter:(.*?)'is",
+				"':newbie:(.*?)'is",
+				"':sniper:(.*?)'is",
+				"':shotgun:(.*?)'is"
+				));
 		$replace = array(
 			"<i>\\1</i>",
 			"<b>\\1</b>",
 			"<u>\\1</u>",
 			"\\1<a target=_blank href=\"\\2://\\3\">\\2://\\3</a>",
-			"<a target=_blank href=\"\\1\">\\2</a>",
-			);
+			"<a target=_blank href=\"\\1\">\\2</a>");
+		if (LS_USE_EMOTICONS)
+			$replace = array_merge($replace, array(
+				"<img src=".$LS_BASEPATH."images/smilies/1.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/1.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/2.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/2.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/3.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/4.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/5.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/6.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/7.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/7.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/8.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/8.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/9.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/11.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/11.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/12.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/12.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/12.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/12.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/13.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/13.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/14.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/15.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/16.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/17.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/18.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/19.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/20.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/21.gif border=0>",
+				"<img src=".$LS_BASEPATH."images/smilies/22.gif border=0>",
+				));
 
     return preg_replace($search, $replace, $text);
 	}

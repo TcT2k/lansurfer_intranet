@@ -41,7 +41,9 @@
 	echo '<p class=content>';
 
 	if (!$action) {
-		echo '<p class=content><b>'._("Intranet Version").'</b>: '.LS_INTRANET_VERSION.'</p>';
+		echo '<p class=content><b>'._("Intranet Version").'</b>: '.LS_INTRANET_VERSION;
+		echo '<br><b>'._("Intranet Build Date").'</b>: '.LS_INTRANET_BUILD_DATE;
+		echo '</p>';
 		
 		echo '<p class=content>';
 		echo '<b>'._("PHP Configuration").'</b> (<a href="'.$PHP_SELF.'?action=phpinfo">'._("More...").'</a>)<br>';
@@ -75,6 +77,7 @@
 			'LS_CATERING' => array('caption' => _("Show catering in navigation"), 'default' => true, 'type' => 'bool'), 
 			'LS_CATERING_CURRENCY' => array('caption' => _("Currency to use in catering"), 'default' => 'EUR'), 
 			'LS_TOURNEY_UPLOAD' => array('caption' => _("Tournament file upload"), 'default' => true, 'type' => 'bool'),
+			'LS_USE_EMOTICONS' => array('caption' => _("Translate Emoticons to graphic"), 'default' => false, 'type' => 'bool')
 		);
 		
 		echo '<b>'._("Configuration").':</b>';
@@ -268,6 +271,12 @@ CreateTable("guest", "
   flags int(11),
   PRIMARY KEY (id)
 ");
+
+CreateTable("beamer", "
+  msg_no tinytext NOT NULL,
+  sponsors longtext NOT NULL
+");
+SQL_Query ("INSERT INTO `beamer` (`msg_no`, `sponsors`) VALUES ('3', '<CENTER>\n<FONT FACE=\"Verdana\" COLOR=\"#99CCFF\" SIZE=\"5\"><B>Hier kommen die Sponsoren rein ...</B></FONT>\n<\/CENTER>');");
 
 CreateTable("news", "
   id int(11) DEFAULT '0' NOT NULL auto_increment,

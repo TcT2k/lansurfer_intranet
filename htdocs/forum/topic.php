@@ -156,12 +156,23 @@
 	<?
 		echo _("HTML Code will be ignored.<br>The following commands can be used for formatting your text:");
 	?><br>
+	<div class="content">
 	<ul>
 		<li><? echo _("[b]Text[/b] for <b>bold</b> Text"); ?></li>
 		<li><? echo _("[i]Text[/i] for <i>italic</i> Text"); ?></li>
 		<li><? echo _("[u]Text[/u] for <u>underlined</u> Text"); ?></li>
 		<li><? echo _("[url=http://www.url.de]Page Title[/url] to display a link.<br>URLs beginning with ftp:// or http:// are converted to links without this command."); ?></li>
+<?
+		if (LS_USE_EMOTICONS) {
+			echo '<li>';
+			echo _("Emoticons are converted to graphic");
+			echo ' ';
+			NavPrintAction('smilies.php', _("List of all Emoticons"));
+			echo '</li>';
+		}
+?>		
 	</ul>
+	</div>
 	</p>
 <?
 		}

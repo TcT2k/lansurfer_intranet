@@ -1,6 +1,6 @@
 <?
 // LanSurfer Consts
-	define('LS_INTRANET_VERSION', "1.6 Release Canidate 3");
+	require $LS_BASEPATH.'../includes/ls_version_info.inc';
 
 // Gast Flags
 	define('GUEST_PAID', 			1);			// Der Gast hat bereits bezahlt

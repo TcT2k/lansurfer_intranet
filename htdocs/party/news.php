@@ -17,7 +17,6 @@
 		news.msg,
 		UNIX_TIMESTAMP(news.date) as date
 		FROM news LEFT JOIN user ON author=user.id 
-		WHERE (news.options&".NEWS_TEAM.")
 		ORDER BY news.date DESC");
 	while ($row = mysql_fetch_array($res)) {
 		$s = $des;
