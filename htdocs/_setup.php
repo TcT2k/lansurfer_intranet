@@ -94,7 +94,7 @@
 				'en_EN' => _("English"),
 				)), 
 			'SQL_USER' => array('caption' => _("SQL user"), 'default' => 'root'), 
-			'SQL_PASSWORD' => array('caption' => _("SQL user password"), 'default' => 'root', 'type' => 'password'), 
+			'SQL_PASSWORD' => array('caption' => _("SQL user password"), 'default' => '', 'type' => 'password'), 
 			'SQL_DB' => array('caption' => _("SQL database"), 'default' => 'db_intra2'), 
 			'SQL_HOST' => array('caption' => _("SQL Server"), 'default' => 'localhost'),
 			'LS_IP_PUBLIC' => array('caption' => _("Show IPs on public guest list"), 'default' => false, 'type' => 'bool'), 
@@ -109,9 +109,9 @@
 		
 		if ($submitted) {
 			echo '<hr>';
-			$fp = fopen($LS_BASEPATH.'../includes/ls_conf.inc', 'w');
+			$fp = fopen($LS_BASEPATH.'../conf/base.inc', 'w');
 			if ($fp) {
-				fwrite($fp, "<?\ndefine('LS_CONFIGURED', TRUE);");
+				fwrite($fp, "<?\n  define('LS_CONFIGURED', TRUE);\n");
 				
 				foreach ($cfgParams as $name => $cfg) {
 					$newValue = $newCfg[$name];
@@ -119,14 +119,14 @@
 					if ($cfg['type'] == 'bool') {
 						$value = ($newValue) ? 'TRUE' : 'FALSE';
 					} else
-						$value = "'".$newValue."'";
-					fwrite($fp, "define('".$name."', ".$value.");\n");
+						$value = '"'.addcslashes($newValue, "\0..\37!@\177..\377").'"';
+					fwrite($fp, "  define('".$name."', ".$value.");\n");
 				}
 				fwrite($fp, "?>\n");
 				fclose($fp);
 				echo _("Configuration Saved.");
 			} else {
-				echo '<b>'._("Error").':</b> '.sprintf(_("Configuration file could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../includes/ls_conf.inc');
+				echo '<b>'._("Error").':</b> '.sprintf(_("Configuration file could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../conf/base.inc');
 			}
 			echo '<hr>';
 		}
@@ -141,15 +141,21 @@
 				case 'bool':
 					$value = 1;
 					$type = 'checkbox';
-					$params = (constant($name)) ? ' checked' : '';
+					if (defined($name))
+						$params = (constant($name)) ? ' checked' : '';
+					else
+						$params = ($cfg['default']) ? ' checked' : '';
 					break;
 				case 'password':
-					$value = constant($name);
+					$value = (defined($name)) ? constant($name) : $cfg['default'];
 					$params = '';
 					$type = 'password';
 					break;
 				default:
-					$value = constant($name);
+					if (is_array($cfg['default']))
+						$value = '';
+					else
+						$value = (defined($name)) ? constant($name) : $cfg['default'];
 					$params = '';
 					$type = 'text';
 					break;
@@ -161,7 +167,7 @@
 			if (is_array($cfg['default'])) {
 				echo '<select name=newCfg['.$name.']>';
 				foreach($cfg['default'] as $defvalue => $caption) {
-					echo '<option value="'.$defvalue.'"';
+						echo '<option value="'.$defvalue.'"';
 					if ($defvalue == $value)
 						echo ' selected';
 					echo '>'.$caption.'</option>';
@@ -178,6 +184,9 @@
 		echo '</table></form>';
 		
 		echo '<p class=content><a href="'.$PHP_SELF.'">&lt;&lt;'._("Back").'</a> | <a href="'.$PHP_SELF.'?action=database">'._("Next").' &gt;&gt;</a></p>';
+	} elseif (!LS_CONFIGURED) {
+		echo _("No configuration saved.").'<br>';
+		echo '<a href="'.$PHP_SELF.'?acion=config">'._("Configuration").'</a>';
 	} elseif ($action == 'database') {
 ?>
 </p>

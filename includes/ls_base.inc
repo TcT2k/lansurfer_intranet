@@ -3,7 +3,14 @@
 
 // Scripte
 	require $LS_BASEPATH."../includes/ls_const.inc";
-	require $LS_BASEPATH."../includes/ls_conf.inc";
+	
+	$cfgFile = $LS_BASEPATH."../conf/base.inc";
+	if (file_exists($cfgFile))
+		require $cfgFile;
+	else {
+		define ('LS_CONFIGURED', false);	
+		define ('LS_LANGUAGE', 'en_EN');
+	}
   require $LS_BASEPATH."../includes/sql_util.inc";
 	require $LS_BASEPATH."../includes/ls_printing.inc";
 	require $LS_BASEPATH."../includes/user_util.inc";

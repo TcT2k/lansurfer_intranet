@@ -1,5 +1,8 @@
 Versions Änderungen
 ===================
+Version 1.6.4
+- Fix: conf/base.inc wird nun korrekt durch das setup erzeugt
+
 Version 1.6.3
 - Add: Guest comments in guest details
 
