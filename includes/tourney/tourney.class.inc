@@ -71,7 +71,7 @@
 			}
 			$this->MaxMatches = $this->StartTeams / 2;
 			
-			$this->WinnerRounds = log($this->MaxMatches) / log(2);
+			$this->WinnerRounds = (int) (log($this->MaxMatches) / log(2));
 			if ($this->DoubleLimit > 0) {
 				$this->LoserRounds = $this->WinnerRounds * 2;
 				$this->WinnerRounds++;

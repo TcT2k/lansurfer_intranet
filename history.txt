@@ -1,5 +1,9 @@
 Versions Änderungen
 ===================
+Version 1.6.2
+- Fix: Anzahl der Spiele im Halb-/Viertel- und Endfinale wurde falsch berechnet auf grund eines "Rundungsfehlers"
+       dieser Fehler ist auch als "Fehler -1" bekannt
+
 Version 1.61a
 - Fix: Inkompatibilität mit PHP 4.1.0 RC1 (bei Formularen)
 - Fix: Turnier Loeschen (SQL Error)
