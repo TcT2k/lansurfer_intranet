@@ -124,7 +124,7 @@
 		for ($i=0; $i < $FormErrorCount && !($ElementError = ($FormErrors[$i] == $name)); $i++) ;
 	
 		
-		$showcaption = ($type == "text" || $type == "password" || $type == "textarea" || $type == "file" || $type == "datetime");
+		$showcaption = ($type == "text" || $type == "password" || $type == "textarea" || $type == "file" || $type == "datetime") ? 1 : 0;
 		if ($type == "checkbox" || $type == "radio")
 			$showcaption = 2;
 
@@ -304,32 +304,33 @@
 	define("TH_NOBR", 		2);			// nl nicht in <br> umwandeln
 
 	function Text2HTML($text, $options = 0) {
-		$text = str_replace("%", "%%", HTMLSpecialChars($text));
+		$text = HTMLSpecialChars($text);
 		
 		if (!($options & TH_NOBR))
 			$text = nl2br($text);
 		
-    $text = eregi_replace("[^=](http|ftp|https)://([^[:space:]]*)([[:alnum:]#?/&=])", " <a href=\"\\1://\\2\\3\" target=\"_blank\" target=\"_new\">\\1://\\2\\3</a>", $text);
+		$search = array(
+			"'\\[i\\](.*?)\\[\\/i\\]'is",
+			"'\\[b\\](.*?)\\[\\/b\\]'is",
+			"'\\[u\\](.*?)\\[\\/u\\]'is",
+			"'([^=])(http|ftp|https)://([A-Za-z0-9#?/.&=_-]*)'i",
+			"'\\[url\\=(.*?)\\](.*?)\\[\\/url\\]'is",
+			);
+		$replace = array(
+			"<i>\\1</i>",
+			"<b>\\1</b>",
+			"<u>\\1</u>",
+			"\\1<a target=_blank href=\"\\2://\\3\">\\2://\\3</a>",
+			"<a target=_blank href=\"\\1\">\\2</a>",
+			);
 
-    $text = str_replace('[b]', '<b>', $text);
-    $text = str_replace('[/b]', '</b>', $text);
-
-    $text = str_replace('[i]', '<i>', $text);
-    $text = str_replace('[/i]', '</i>', $text);
-
-    $text = str_replace('[u]', '<u>', $text);
-    $text = str_replace('[/u]', '</u>', $text);
-
-    $text = ereg_replace('\[url=([a-zA-Z0-9.:\/@,#?=_-]+)\]', '<a href="\1">', $text);
-    $text = str_replace('[/url]', '</a>', $text);
-    
-		return $text;
+    return preg_replace($search, $replace, $text);
 	}
 	
 	function PrintText2HTML($text, $options = 0) {
-		printf(Text2HTML($text, $options));
+		echo Text2HTML($text, $options);
 	}
-	
+
 	function PrintPageHeader($innerstyle = 1) {
 		global $LS_Design_id, $LS_PageTitle, $LS_BASEPATH, $login, $LS_TITLEPAGE, 
 			$LS_Design, $footerhtml, $HTTP_COOKIE_VARS, $sess, $auth, $LS_OPENPAGE,

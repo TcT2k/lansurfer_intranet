@@ -24,14 +24,14 @@
 	if ($fp) {
 		
 		if ($user_valid) {
-			$res = SQL_Query("SELECT COUNT(*) FROM ims WHERE dst=".$user_current['id']." AND NOT flags & ".IMS_READ);
+			$res = SQL_Query("SELECT COUNT(*) FROM ims WHERE dst=".$user_current['id']." AND NOT (flags & ".IMS_READ.")");
 			if ($cnt = mysql_result($res, 0, 0))
 				$msgstr = sprintf(_("Inbox (%d)"), $cnt);
 			else
 				$msgstr = _("Inbox");
 			$msgstr = '<a class=NavModule href="ims/">'.$msgstr.'</a>';
 
-			Header('refresh: 120; URL='.$PHP_SELF.'?prevcnt='.$cnt);
+			Header('refresh: 30; URL='.$PHP_SELF.'?prevcnt='.$cnt);
 		} else {
 			$msgstr = _("Messages");
 		}
@@ -59,12 +59,17 @@
 		
 		echo $des;
 		if ($user_valid && isset($prevcnt) && $cnt > $prevcnt) {
+		require $LS_BASEPATH.'../includes/js_default.inc';
 ?>
 <embed name="notify" src="sound/notify.wav" loop=false autostart=true mastersound hidden=true></embed>
 <script language="JavaScript">
 <!--
-	window.open ("ims/notify.php?prev=<? echo $prevcnt; ?>&cnt=<? echo $cnt; ?>", "ims_notify", 
-		"width=300, height=30, top=" + (screen.availHeight - 180) + ",left = "+(screen.availWidth-350)+",scrollbars=no", true);
+		//var t = LSPopup("<? echo $LS_BASEPATH; ?>ims/buddy.php?notify=<? echo $cnt ?>", "ims_buddy", 200, 400, 1);
+		//t.focus();
+
+	IMSBuddyList('?notify=<? echo $cnt ?>');
+	/*window.open ("ims/notify.php?prev=<? echo $prevcnt; ?>&cnt=<? echo $cnt; ?>", "ims_notify", 
+		"width=300, height=30, top=" + (screen.availHeight - 180) + ",left = "+(screen.availWidth-350)+",scrollbars=no", true);*/
 
   var main_frame = parent.frames["main"];
   if (main_frame.location.pathname.indexOf('ims/index.php') >= 0) {

@@ -106,7 +106,7 @@
   </p>
 	<p class=content>&nbsp;</p>
 	<p class="content">
-	<? NavPrintAction($PHP_SELF."?action=logout&party=$party", _("Logout")); ?><br>
+	<? NavPrintAction($PHP_SELF."?action=logout", _("Logout")); ?><br>
 	</p>
 
 <?	

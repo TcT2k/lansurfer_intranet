@@ -10,7 +10,7 @@
 
 	user_auth();
 
-	$TeamAdmin = $user_valid && ($Team->leader == $user_current['id'] || user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE));
+	$TeamAdmin = $user_valid && ($Team->leader == $user_current['id'] || user_auth_ex(AUTH_TOURNEY, $Tourney->id, 0, FALSE));
 
   NavStruct("tourney");
 	$LS_POPUPPAGE = TRUE;

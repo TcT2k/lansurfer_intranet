@@ -1,41 +1,13 @@
 <head>
 	<title>Setup</title>
-	<style>
-	<!--
-	BODY {
-		FONT-FAMILY: Verdana, Helvetica;
-		FONT-SIZE: 12px;
-	}
-	
-	TH.liste {
-		FONT-FAMILY: Verdana,Helvetica;
-		FONT-SIZE: 12px;
-		FONT-WEIGHT: normal;
-    BACKGROUND-COLOR: #333333;
-    COLOR: WHITE;
-	}
-	
-	TD.liste {
-		FONT-FAMILY: Verdana,Helvetica;
-		FONT-SIZE: 12px;
-		FONT-WEIGHT: normal;
-	  BACKGROUND-COLOR: #555555;
-	  COLOR: WHITE;
-	}
-	
-	H2 {
-		FONT-FAMILY: Verdana,Helvetica;
-		FONT-SIZE: 24px;
-		FONT-WEIGHT: bold;
-	}
-	-->
-	</style>
+	<link rel="StyleSheet" href="intra.css">
 </head>
 <body>
-<h2>LANsurfer Intranet Setup</h2>
+<h3 class=content>LANsurfer Intranet Setup</h3>
 <!-- <? if (false) {  ?> --> <? }  ?>
+<p class=content>
 <b>Fatal Error:</b> PHP could not be detected.<br>Check your Webserver configuration.<br><br>
-<b>Fataler Fehler:</b> PHP konnte nicht benutzt werden.<br>Webserver Konfiguration &uuml;berpr&uuml;fen.<!--
+<b>Fataler Fehler:</b> PHP konnte nicht benutzt werden.<br>Webserver Konfiguration &uuml;berpr&uuml;fen.</p><!--
 <? echo '-'.'-'.'>';  
 	$LS_BASEPATH = "";
 	require $LS_BASEPATH.'../includes/ls_base.inc';
@@ -59,10 +31,12 @@
 	echo '<p class=content>';
 	echo _("<b>Warning:</b> This file <i>_setup.php</i> must be deleted or moved out of the document root after the initial setup.");
 	echo '</p>';
+	echo '<p class=content>';
 	PrintSetupStep('', _("Start"));
 	PrintSetupStep('config', _("Configuration"));
 	PrintSetupStep('database', _("Check/Create Database"));
 	PrintSetupStep('import', _("Import Registration Data"));
+	echo '</p>';
 
 	echo '<p class=content>';
 
@@ -100,17 +74,17 @@
 		
 			'LS_CATERING' => array('caption' => _("Show catering in navigation"), 'default' => true, 'type' => 'bool'), 
 			'LS_CATERING_CURRENCY' => array('caption' => _("Currency to use in catering"), 'default' => 'EUR'), 
-			'LS_TOURNEY_UPLOAD' => array('caption' => _("Tournament file upload"), 'default' => true, 'type' => 'bool')
+			'LS_TOURNEY_UPLOAD' => array('caption' => _("Tournament file upload"), 'default' => true, 'type' => 'bool'),
 		);
-		
 		
 		echo '<b>'._("Configuration").':</b>';
 		
 		if ($submitted) {
 			echo '<hr>';
+			echo '<p class=content>';
 			$fp = fopen($LS_BASEPATH.'../includes/ls_conf.inc', 'w');
 			if ($fp) {
-				fwrite($fp, "<?\ndefine('LS_CONFIGURED', TRUE);");
+				fwrite($fp, "<?\r\n  define('LS_CONFIGURED', TRUE);\r\n");
 				
 				foreach ($cfgParams as $name => $cfg) {
 					$newValue = $newCfg[$name];
@@ -119,62 +93,57 @@
 						$value = ($newValue) ? 'TRUE' : 'FALSE';
 					} else
 						$value = "'".$newValue."'";
-					fwrite($fp, "define('".$name."', ".$value.");\n");
+					fwrite($fp, "  define('".$name."', ".$value.");");
+					if ($cfg['caption']) {
+						fwrite($fp, " // ".$cfg['caption']);
+					}
+					fwrite($fp, "\r\n");
 				}
-				fwrite($fp, "?>\n");
+				fwrite($fp, "?>");
 				fclose($fp);
 				echo _("Configuration Saved.");
 			} else {
 				echo '<b>'._("Error").':</b> '.sprintf(_("Configuration file could not be saved. Check file permissions on %s."), $LS_BASEPATH.'../includes/ls_conf.inc');
 			}
+			echo '</p>';
 			echo '<hr>';
 		}
 		
-		echo '<form action="'.$PHP_SELF.'" method="post"><table>';
-		echo '<input type=hidden name=action value='.$action.'>';
-		echo '<input type=hidden name=submitted value=1>';
-		foreach ($cfgParams as $name => $cfg) {
-			$caption = ($cfg['caption']) ? $cfg['caption'] : $name;
-			
-			switch ($cfg['type']) {
-				case 'bool':
-					$value = 1;
-					$type = 'checkbox';
-					$params = (constant($name)) ? ' checked' : '';
-					break;
-				case 'password':
-					$value = constant($name);
-					$params = '';
-					$type = 'password';
-					break;
-				default:
-					$value = constant($name);
-					$params = '';
-					$type = 'text';
-					break;
-			}
-			
-			echo '<tr class=liste>';
-			echo '<th class=liste width=200 align=left>'.$caption.'</th>';
-			echo '<td class=liste width=100>';
-			if (is_array($cfg['default'])) {
-				echo '<select name=newCfg['.$name.']>';
-				foreach($cfg['default'] as $defvalue => $caption) {
-					echo '<option value="'.$defvalue.'"';
-					if ($defvalue == $value)
-						echo ' selected';
-					echo '>'.$caption.'</option>';
+		FormStart();
+			FormValue('action', $action);
+			FormValue('submitted', 1);
+
+			foreach ($cfgParams as $name => $cfg) {
+				$caption = ($cfg['caption']) ? $cfg['caption'] : $name;
+				
+				switch ($cfg['type']) {
+					case 'bool':
+						$value = 1;
+						$type = 'checkbox';
+						$params = (constant($name)) ? ' checked' : '';
+						break;
+					case 'password':
+						$value = constant($name);
+						$params = '';
+						$type = 'password';
+						break;
+					default:
+						$value = constant($name);
+						$params = '';
+						$type = 'text';
+						break;
 				}
-				echo '</selct>';
-			} else
-				echo '<input type='.$type.' name="newCfg['.$name.']" value="'.$value.'"'.$params.'>';
-			echo '</td>';
-			echo '</tr>';
-		}
-		echo '<tr class=liste>';
-		echo '<th class=liste colspan=2 align=right><input type="submit" value="'._("Save").'"></th>';
-		echo '</tr>';
-		echo '</table></form>';
+				if (is_array($cfg['default'])) {
+					FormSelectStart('newCfg['.$name.']', $caption, $value);
+						foreach($cfg['default'] as $defvalue => $caption)
+							FormSelectItem($caption, $defvalue);
+					FormSelectEnd();
+				} else
+					FormElement('newCfg['.$name.']', $caption, $value, $type, $params);
+			}
+		
+			FormElement('', '', _("Save"), 'submit');
+		FormEnd();
 		
 		echo '<p class=content><a href="'.$PHP_SELF.'">&lt;&lt;'._("Back").'</a> | <a href="'.$PHP_SELF.'?action=database">'._("Next").' &gt;&gt;</a></p>';
 	} elseif ($action == 'database') {
@@ -182,7 +151,7 @@
 </p>
 <p class=content>
 <b><? echo _("Check/Create Database"); ?>:</b><br>
-<ul>
+<ul class=content>
 <?  
 	SQL_Init(false);
   echo '<li>'._("Search for databases...");
@@ -471,6 +440,14 @@ CreateTable("Tourney", "
    PRIMARY KEY (id)
 ");
 
+CreateTable("TourneyAdmin", "
+  id int(11) NOT NULL auto_increment,
+  tourney int(11) NOT NULL default '0',
+  user int(11) NOT NULL default '0',
+  rights int(11) NOT NULL default '0',
+  PRIMARY KEY  (id)
+");
+
 CreateTable("TourneyTempPlayer", "
   id int(11) NOT NULL auto_increment,
   type tinyint(3) unsigned NOT NULL default '0',
@@ -650,40 +627,36 @@ CreateTable("imsUsers", "
 		return $ret;
 	}
 
-	if (isset($action) && $submitted) {
-		echo _("Importing data...").'<br>';
-		flush();
-		@set_time_limit(0);
-		
-		
-		if(!empty($sql_file) && $sql_file != "none")
-		{
-		    $sql_query = fread(fopen($sql_file, "r"), filesize($sql_file));
+		if (isset($action) && $submitted) {
+			echo _("Importing data...").'<br>';
+			flush();
+			@set_time_limit(0);
+			
+			
+			if(!empty($sql_file) && $sql_file != "none")
+			{
+			    $sql_query = fread(fopen($sql_file, "r"), filesize($sql_file));
+			}
+			
+			$pieces  = split_sql($sql_query);
+			
+			$cnt = count($pieces);
+			for ($i=0; $i<$cnt; $i++)
+		  {
+				$q = $pieces[$i];
+				if ($q)
+		    	$result = SQL_Query($q);
+		  }
+		  echo _("Data imported.");
+			
 		}
 		
-		$pieces  = split_sql($sql_query);
-		
-		$cnt = count($pieces);
-		for ($i=0; $i<$cnt; $i++)
-	  {
-			$q = $pieces[$i];
-			if ($q)
-	    	$result = SQL_Query($q);
-	  }
-	  echo _("Data imported.");
-		
-	}
-?>
-<form method="post" action="<? echo $PHP_SELF; ?>" enctype="multipart/form-data">
-<input type="hidden" name="action" value="import">
-<input type="hidden" name="submitted" value="1">
-<? echo _("SQL File"); ?>:<br>
-<input type="file" name="sql_file"><br>
-<input type="submit" name="SQL" value="<? echo _("Import"); ?>">
-</form>
-
-<?
-	
+		FormStart();
+			FormValue('action', 'import');
+			FormValue('submitted', 1);
+			FormElement('sql_file', _("SQL File"), '', 'file');
+			FormElement('', '', _("Import"), 'submit');
+		FormEnd();
 		echo '<p class=content><a href="'.$PHP_SELF.'?action=database">&lt;&lt;'._("Back").'</a></p>';
 	} elseif ($action == 'phpinfo') {
 		phpinfo();

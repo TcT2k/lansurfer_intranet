@@ -424,7 +424,7 @@
 				if ($row['flags'] & MF_OP2WON) {
 					$loser = 'op1';
 					$winner = 'op2';
-					if ($this->DoubleLimit && $row['round'] == $this->WinnerRounds)
+					if ($this->DoubleLimit && $row['round'] == $this->WinnerRounds && !($this->info['options'] & TO_SKIP_DOUBLEFINAL) )
 						$winner = false;
 				} else {
 					$loser = 'op2';
@@ -485,6 +485,7 @@
 					tm.id,
 					tm.op1 'team1',
 					tm.op2 'team2',
+					tm.flags,
 					tm.status,
 					$SQLFields
 				FROM 
@@ -516,6 +517,12 @@
 					echo '<table border=0 cellspacing=0 cellpadding=0>';
 	
 					for ($row = 0; $row < $round->MatchCount; $row++) {
+						while ($currentMatch && ($currentMatch['row'] < $row || $currentMatch['col'] < $round->Col)) {
+							$currentMatch = mysql_fetch_array($res);
+						}
+						$matchValid = $currentMatch && $currentMatch['row'] == $row && $currentMatch['col'] == $round->Col;
+						$matchActive = $matchValid && ($currentMatch['status'] >= MS_PLAYABLE || $tourneyAdmin);
+
 						if ($round->Col < 0) {
 							$imgRightFill = '';
 							$imgRight = 'middle';
@@ -544,7 +551,14 @@
 									$imgLeft = 'top_right';
 							} else
 								$imgLeft = 'middle';
-							if ($row % 2) {
+ 							if ($round->Col == $this->WinnerRounds) {
+ 								if ($this->DoubleLimit && !($this->info['options'] & TO_SKIP_DOUBLEFINAL) && $currentMatch && $currentMatch['status'] >= MS_PLAYED && $currentMatch['flags'] & MF_OP2WON)
+									$imgRight = 'middle';
+								else
+									$imgRight = 'blank';
+							} elseif ($round->Col > $this->WinnerRounds) {
+								$imgRight = 'blank';
+							} elseif ($row % 2) {
 								$imgRightFill = 'left';
 								$imgRight = 'bottom_left';
 							} else {
@@ -596,14 +610,8 @@
 							
 							echo '</tr>';
 						}
-							
-						while ($currentMatch && ($currentMatch['row'] < $row || $currentMatch['col'] < $round->Col)) {
-							$currentMatch = mysql_fetch_array($res);
-						}
 	
 						echo '<tr><td><img width=8 height=48 src="'.$imgLeft.'"></td>';
-						$matchValid = $currentMatch && $currentMatch['row'] == $row && $currentMatch['col'] == $round->Col;
-						$matchActive = $matchValid && ($currentMatch['status'] >= MS_PLAYABLE || $tourneyAdmin);
 						
 						echo '<td class=tourney width=90 background="'.$LS_BASEPATH.'images/tourney/match.gif" nowrap align=center';
 						if ($matchValid) {
@@ -645,7 +653,7 @@
 									$op1name = '<i>'._("Die").'<i>';
 									break;
 								default:
-									$op1name = HTMLStr($currentMatch['op1name'], 12);
+									$op1name = HTMLStr($currentMatch['op1name'], 11);
 									break;
 							}
 							
@@ -657,16 +665,30 @@
 									$op2name = '<i>'._("Die").'<i>';
 									break;
 								default:
-									$op2name = HTMLStr($currentMatch['op2name'], 12);
+									$op2name = HTMLStr($currentMatch['op2name'], 11);
 									break;
 							}
+							if ($currentMatch['status'] >= MS_PLAYED) {
+								if ($currentMatch['flags'] & MF_OP2WON) {
+									$op1CSS = 'Loser';
+									$op2CSS = 'Winner';
+								} else {
+									$op2CSS = 'Loser';
+									$op1CSS = 'Winner';
+								}
+							} else {
+								$op2CSS = 'Player';
+								$op1CSS = 'Player';
+							}
+							
 							if ($matchActive)
 								echo '<a class=TMatch href="javascript:ShowMatch('.$currentMatch['id'].')">';
-							echo $op1name.'<br><span id=MatchVs>vs</span><br>'.$op2name;
+							echo '<span id=Match'.$op1CSS.'>'.$op1name.'</span><br><span id=MatchVs>vs</span><br><span id=Match'.$op2CSS.'>'.$op2name.'</span>';
 							if ($matchActive)
 								echo '</a>';
 						} else {
-							echo '???';
+							echo '<span id=MatchPlayer>???</span>';
+							//echo '???';
 						}
 						
 						echo '</td>';
@@ -674,21 +696,45 @@
 						
 						if ($round->Type == RT_LOSER || ($row == $round->MatchCount - 1)) {
 							$attr = '';
+							$imgRight = '';
 							if ($round->Type != RT_LOSER) {
 								$imgLeft = $LS_BASEPATH.'images/tourney/blank.gif';
 								if ($round->Col > 0) {
 									$srcText = chr($round->Col + 64).($row + 1);
 									$attr = ' align=right valign=top';
+
+									if ($round->Col == $this->WinnerRounds - 1 && $this->DoubleLimit) {
+										if ($this->DoubleLimit) {
+											$imgRight = $LS_BASEPATH.'images/tourney/bottom_left.gif';
+											$srcText = _("Loser Bracket<br>Winner");
+											$attr = ' align=right';
+										} else {
+											$srcText = _("Final");
+										}
+									} elseif ($round->Col == $this->WinnerRounds)
+										$srcText = _("Final");
+									elseif ($round->Col > $this->WinnerRounds)
+										$srcText = '';
+
+								} elseif ($round->Col == -$this->LoserRounds && $this->DoubleLimit) {
+									$imgLeft = $LS_BASEPATH.'images/tourney/bottom_right.gif';
+									$srcText = '&nbsp;'._("to Final");
+									$attr = ' align=left';
 								} else
 									$srcText = '';
 							} else {
+
 								$imgLeft = $LS_BASEPATH.'images/tourney/bottom_right.gif';
 								$pos = $prevRound->GetSrc($row);
-								$srcText = sprintf(_("From %s"), $pos->toString());
+								$srcText = '&nbsp;'.sprintf(_("from %s"), $pos->toString());
 							}
 							echo '<tr><td><img width=8 height=48 src="'.$imgLeft.'"></td>';
 							echo '<td nowrap class=TourneyLabel'.$attr.'>'.$srcText.'</td>';
-							echo '<td></td></tr>';
+							if ($imgRight)
+								echo '<td><img src="'.$imgRight.'" width=8 height=48></td>';
+							else
+								echo '<td></td>';
+							echo '</tr>';
 						}
 					}
 					echo '</table>';

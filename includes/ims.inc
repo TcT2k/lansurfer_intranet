@@ -9,9 +9,12 @@
 	}
 	
 	function PrintIMSContactLink($to, $title) {
-		global $LS_BASEPATH;
+		global $LS_BASEPATH, $user_valid;
 		
-		echo '<a href="'.GetIMSContactURL($to).'">'.$title.'</a>';
+		if ($user_valid)
+			echo '<a href="'.GetIMSContactURL($to).'">'.$title.'</a>';
+		else
+			echo $title;
 	}	
 	
 ?>

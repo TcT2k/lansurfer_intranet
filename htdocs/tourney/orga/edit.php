@@ -1,16 +1,11 @@
 <?
-	$LS_BASEPATH = '../';
+	$LS_BASEPATH = '../../';
 	require $LS_BASEPATH.'../includes/ls_base.inc';
   require $LS_BASEPATH."../includes/tourney/base.inc";
 	
-  NavStruct("tournaments");
+  NavStruct("tournaments/tourney_orga");
 
-/*	if (!isset($action))
-		$action = 'newdef';*/
-	if ($action)
-		NavAdd(_("Tournament Administration"), $PHP_SELF);
-
-	StartPage((!$action) ? _("Tournament Administration") : _("Edit Tournament"));
+	StartPage(_("Edit Tournament"));
 	
 	user_auth_ex(AUTH_TOURNEY, -1, 0, TRUE);
 	
@@ -20,89 +15,7 @@
 	$acNewDef = 'createdef';
 
   // Create Default Groups
-	if (!$action) {
-  	$res = SQL_Query("SELECT COUNT(*) FROM TourneyGroup");
-  	if (!mysql_result($res, 0, 0)) {
-  		SQL_Query("INSERT INTO TourneyGroup SET ".SQL_QueryFields(array(
-  			'name' => _("Teamplay Tournaments"),
-  			'type' => GRP_EXCLUSIVE
-  			)));
-  		SQL_Query("INSERT INTO TourneyGroup SET ".SQL_QueryFields(array(
-  			'name' => _("1on1 Tournaments"),
-  			'type' => GRP_EXCLUSIVE
-  			)));
-  	}
-  	
-  	echo '<p class=content>';
-  	NavPrintAction($PHP_SELF.'?action='.$acNewDef, _("Create from template"));
-  	echo '<br>';
-  	NavPrintAction($PHP_SELF.'?action='.$acNew, _("Create tournament"));
-	  echo '<br><br>';
-  	
-		$res = SQL_Query("SELECT id,grp,name,icon,options FROM Tourney ORDER BY grp,name");
-		
-		$prevGrp = false;
-		
-		$showWWCL = false;
-		if (mysql_num_rows($res)) {
-	  	echo '<table>';
-	  	echo '<th class=liste width=300>'._("Name").'</th>';
-			while ($row = mysql_fetch_array($res)) {
-				if ($prevGrp && $prevGrp != $row['grp'])
-					echo '<tr></tr>';
-				echo '<tr>';
-				echo '<td class=liste><a href="'.$PHP_SELF.'?id='.$row['id'].'&action='.$acEdit.'">';
-				if ($row['icon'])
-					echo '<img border=0 width=16 height=16 src="'.$LS_BASEPATH.'images/tourney/icons/'.$row['icon'].'"> ';
-				echo HTMLStr($row['name']).'</td>';
-				if ($row['options'] & TO_WWCL) {
-					echo '<td class=liste><a href="wwcl.php?id='.$row['id'].'">'._("Export").'</td>';
-					$showWWCL = true;
-				} else
-					echo '<td></td>';
-				echo '<td>';
-				NavPrintDel($PHP_SELF.'?id='.$row['id'].'&action='.$acRemove);
-				echo '</td></tr>';
-				$prevGrp = $row['grp'];
-				
-			}
-	  	echo '</table>';
-	  }
-	  echo '</p>';
-	  
-	  if ($showWWCL) {
-	  	echo '<p class=content>';
-	  	echo '<b>'._("WWCL Export").'</b><br>';
-	  	echo _("If you want to export the tournament results to the WWCL application you have to dowload all 'Export' links to the party folder of the WWCL application. Additionally you have to download the unkown players DB below.");
-	  	echo '<br>';
-	  	NavPrintAction('wwcl.php?action=unknowns', _("Unknown Players Data Base"));
-	  	echo '</p>';
-	  }
-	  
-	  echo '<h3 class=content>'._("Tournament Groups").'</h3>';
-	  
-	  $res = SQL_Query("SELECT id,name FROM TourneyGroup ORDER BY name");
-	  
-	  echo '<p class=content>';
-	  NavPrintAction('group.php?action=new', _("Create Group"));
-	  echo '<br><br>';
-	  
-		if (mysql_num_rows($res)) {
-	  	echo '<table>';
-	  	echo '<th class=liste width=300>'._("Name").'</th>';
-			while ($row = mysql_fetch_array($res)) {
-				echo '<tr>';
-				echo '<td class=liste><a href="group.php?id='.$row['id'].'&action=edit'.'">';
-				echo HTMLStr($row['name']).'</td>';
-				echo '<td>';
-				NavPrintDel('group.php?id='.$row['id'].'&action=remove');
-				echo '</td></tr>';
-			}
-	  	echo '</table>';
-		}
-		echo '</p>';
-	  
-	} elseif ($action == $acNewDef) {
+	if ($action == $acNewDef) {
 		include $LS_BASEPATH.'../includes/tourney/templates.inc';
 		
 		if ($submitted) {
@@ -115,7 +28,7 @@
 					
 					$opt = TO_LOSER_SUBMIT | TO_STRICTTIMES;
 					if ($TourneyPreSet[$keys[0]]['data'][$keys[1]]['-wwcl'])
-						$opt |= TO_WWCL;
+						$opt |= TO_WWCL | TO_SKIP_DOUBLEFINAL;
 					
 					$fields = array(
 						'MaxTeams' => 64,
@@ -220,6 +133,8 @@
 				$f_options |= TO_LOSER_SUBMIT;
 			if ($f_wwcltype)
 				$f_options |= TO_WWCL;
+			if (!$f_doublefinal)
+				$f_options |= TO_SKIP_DOUBLEFINAL;
 			
 			if (!$FormErrorCount) {
 				$fields = SQL_QueryFields(array(
@@ -276,8 +191,8 @@
 				$f_ignoregroup = $row['options'] & TO_IGNOREGROUP;
 				$f_score_games = $row['options'] & TO_SCORE_COUNT_GAMES;
 				$f_loser_submit = $row['options'] &  TO_LOSER_SUBMIT;
+				$f_doublefinal = !($row['options'] & TO_SKIP_DOUBLEFINAL);
 				$f_wwcltype = ($row['options'] &  TO_WWCL) ? $row['WWCLType'] : 0;
-				
 			} else {
 				$f_teams = 64;
 				$f_de_limit = 2048;
@@ -291,6 +206,7 @@
 				$f_score_type = SCORE_DEFAULT;
 				$f_loser_submit = true;
 				$f_wwcltype = 0;
+				$f_doublefinal = true;
 			}
 		}
 		$f_start_date = DateToStr($f_start);
@@ -320,10 +236,12 @@
 						FormSelectItem(sprintf(_("Double Elimination in rounds with %d matches or less"), $i), $i);*/
 					FormSelectItem(_("Complete Double Elimination"), 2048);
 				FormSelectEnd();
+				FormElement('f_doublefinal', _("Loser bracket winner must beat winner bracket winner two times"), 1, 'checkbox', ($f_doublefinal) ? 'checked' : '');
+				
 				FormElement('f_teamsize', _("Players per Team"), $f_teamsize, 'text', 'size=4');
 				FormSelectStart("f_rulefile", _("Rules"), $f_rulefile);
 					FormSelectItem(_("(No Rules)"), '');
-					$dir = opendir('rules/');
+					$dir = opendir('../rules/');
 					while (($file = readdir($dir))!=false) {
 						if ($file != "." && $file != "..")
 							$rFiles[] = $file;
@@ -356,7 +274,7 @@
 				
 				FormSelectStart("f_icon", _("Icon"), $f_icon);
 					FormSelectItem(_("(Select icon)"), "");
-					$dir = opendir("../images/tourney/icons/");
+					$dir = opendir("../../images/tourney/icons/");
 					while (($file = readdir($dir))!=false) {
 						if ($file != "." && $file != "..")
     					FormSelectItem($file, $file);

@@ -24,7 +24,7 @@ III. im Browser die _setup.php (z.B. http://localhost/_setup.php) aufrufen, und 
         Auf dieser Seite einfach die intranet.sql auswählen ind den "Import" button drücken
  IV. evtl. noch das aussehen der Dateien ein wenig anpassen:
      Dazu sind besonders die Dateien in includes/design/, intra.css (Style Sheet angaben die im ganzen Intranet 
-     benutzt werden und includes/ls_base.inc zu beachten
+     benutzt werden) und includes/ls_base.inc zu beachten
 
 Wichtige Hinweise
 =================

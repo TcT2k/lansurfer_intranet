@@ -1,5 +1,5 @@
 <?
-	$LS_BASEPATH = '../';
+	$LS_BASEPATH = '../../';
 	require $LS_BASEPATH.'../includes/ls_base.inc';
   require $LS_BASEPATH."../includes/tourney/base.inc";
 

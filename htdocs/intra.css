@@ -121,6 +121,15 @@ A.TMatch:hover {
 	COLOR: #000000;
 	FONT-SIZE: 9px;
 }
+#MatchWinner {
+	COLOR: white;
+}
+#MatchLoser {
+	COLOR: #555555;
+}
+#MatchPlayer {
+	color: #555555;
+}
 
 TD.TourneyLabel {
 	FONT-FAMILY: Verdana,Helvetica;

@@ -30,14 +30,14 @@
 			NavPrintAction('register.php?action=register&tourney='.$id, ($tourney->TeamSize > 1) ? _("Create new team") : _("Register for this tourney"));
 		}
 	}
-	$tourneyAdmin = false;
 	if (user_auth_ex(AUTH_TOURNEY, $id, 0, false)) {
 		echo '<br>';
 		NavPrintAction('register.php?action=add&tourney='.$id, ($tourney->TeamSize > 1) ? _("Admin: Create Team") : _("Admin: Add User"));
 		echo '<br>';
-		NavPrintAction('debug.php?action=add&tourney='.$id, _("Admin: Debug Teams"));
+		NavPrintAction('orga/debug.php?action=add&tourney='.$id, _("Admin: Debug Teams"));
 		$tourneyAdmin = true;
-	}
+	} else
+		$tourneyAdmin = false;
 	echo '</p>';
 	
 	echo '<p class=content>';

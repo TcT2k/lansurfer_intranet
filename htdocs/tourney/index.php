@@ -7,7 +7,7 @@
 	
 	if (user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE)) {
 		echo '<p class=content>';
-		NavPrintAction("edit.php", _("Tournament Administration"));
+		NavPrintAction("orga/", _("Tournament Administration"));
 		echo '</p>';
 	}
 	
@@ -88,7 +88,7 @@
 			
 			echo '<table>';
 			echo '<tr>';
-			echo '<th class=liste width=220>'._("Name").'</th>';
+			echo '<th class=liste width=280>'._("Name").'</th>';
 			echo '<th class=liste width=220>'._("Status").'</th>';
 			echo '</tr>';
 		}

@@ -1,13 +1,14 @@
 <?
 
-	function PrintTab($url, $title) {
+	function PrintTab($url, $title, $enabled = true) {
 		global $PHP_SELF, $id;
 		
-		$active = !strpos($PHP_SELF, $url);
+		$active = !strpos($PHP_SELF, $url) && $enabled;
 		
 		echo '<td width="100" class=TourneyTab ';
-		if ($active) {
+		if ($active || !$enabled)
 			echo " id=TourneyTabSelected";
+		if ($active) {
    		echo ' onmouseover="CellOver(this);" onmouseout="CellOut(this);" onclick="CellClick(this);"';
 		}
 		echo ">";
@@ -15,7 +16,7 @@
 		if ($active)
 			echo "<a href=".$url."?id=".$id.">";
 		echo $title;
-		if ($active)
+		if ($active && $enabled)
 			echo "</a>";
 		
 		echo "</td>";

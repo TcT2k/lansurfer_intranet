@@ -12,6 +12,7 @@
 	define('TO_SCORE_COUNT_GAMES', 4);
 	define('TO_LOSER_SUBMIT',  8);
 	define('TO_WWCL',  16);
+	define('TO_SKIP_DOUBLEFINAL',  32);
 	
 	// Tourney Status
 	define('TS_CLOSED', 			0);

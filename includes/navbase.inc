@@ -9,6 +9,7 @@
 		array ("name" => "tourney", "title" => _("Tournaments"), "url" => "_tourney/"),
 		array ("name" => "singletourney", "title" => _("Tourney"), "url" => "tourney/teams.php?id=%tid%"),
 		array ('name' => 'tournaments', 'title' => _("Tournaments"), 'url' => 'tourney/'),
+		array ('name' => 'tourney_orga', 'title' => _("Tournament Administration"), 'url' => 'tourney/orga/'),
 		array ('name' => 'teams', 'title' => _("Partcipants"), 'url' => 'tourney/teams.php?id=%tid%')
 	);
 

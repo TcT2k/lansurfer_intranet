@@ -1,9 +1,25 @@
 Versions Änderungen
 ===================
+Version 1.7.0 Preview 2 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDACHT)
+- Add: Optische Verbesserungen am Turnierbaum
+- Add: Turnier Option für "Loser bracket Verlierer muss den Gewinner des Winner Brackets zwei mal schlagen"
+- Add: Optionale Turnier Admins für einzelne Turniere (sie brauchen nicht Mitglied des Orga Teams sein)
+- Change: Intranet Message System: einige erweiterungen
+- Change: Neues Versions Schema
+
 Version 1.7 Preview 1 (ACHTUNG PREVIEW VERSION NICHT FÜR DEN REALEN EINSATZ GEDACHT)
 - Add: Intranet Message System
 - Add: Kommentare für einzelne Turnier Spiele
 - Add: Datei Upload für einzelne Turnier Spiele (nur von den Gegnern und Turnier Admins)
+
+Version 1.61
+- Fix: Turnier Spiel rückgängig machen
+- Add: Gewinner/Verlierer Anzeige in der Turnier Spiel Übersicht
+- Fix: WWCL Export: Single Elimination Turniere
+- Fix: WWCL Export: Ergebnis Anzeige im WWCL Programm
+
+Version 1.6a
+- Fix: Turnier Loeschen
 
 Version 1.6
 - Fix: Einige HTML Fehler (falsche/fehlende CSS Anweisungen)

@@ -12,7 +12,7 @@
 		
 		function TRound($tourney, $col) {
 			$this->Col = $col;
-			$this->tourney = $tourney;
+			$this->tourney = &$tourney;
 		
 			if ($this->Col < 0) {
 				if ($this->Col % 2)
@@ -37,10 +37,23 @@
 		}
 		
 		function DisplayName() {
-			if ($this->Col >= 0)
-				$s = sprintf(_("Round %s"), $this->Col + 1);
-			else
-				$s = sprintf(_("Round %s"), (($this->Col - 1) / -2) + 1);
+			if ($this->Col >= 0) {
+				if ($this->tourney->WinnerRounds == $this->Col)
+					$s = _("Final");
+				elseif (!$this->tourney->DoubleLimit && $this->tourney->WinnerRounds - 1 == $this->Col)
+					$s = _("Semi Final");
+				elseif (!$this->tourney->DoubleLimit && $this->tourney->WinnerRounds - 2 == $this->Col)
+					$s = _("Quater Final");
+				else
+					$s = sprintf(_("Round %s"), $this->Col + 1);
+			} else {
+				if ($this->tourney->LoserRounds == -$this->Col)
+					$s = _("Semi Final");
+				elseif ($this->tourney->LoserRounds - 1 == -$this->Col)
+					$s = _("Quater Final");
+				else
+					$s = sprintf(_("Round %s"), (($this->Col - 1) / -2) + 1);
+			}
 			return $s;
 		}
 
@@ -58,7 +71,7 @@
 				$dstRow = -1;
 				$dstSlot = 0;
 			} elseif ($this->Col == $this->tourney->WinnerRounds) {			// Finale
-				if ($srcSlot && $this->tourney->DoubleLimit) {
+				if ($srcSlot && $this->tourney->DoubleLimit && !($this->tourney->info['options'] & TO_SKIP_DOUBLEFINAL) ) {
 					$dstCol = $this->Col + 1;
 					$dstRow = 0;
 					$dstSlot = 0;
