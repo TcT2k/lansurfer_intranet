@@ -1,0 +1,20 @@
+Versions Änderungen
+===================
+Version 1.55a
+- Unterstützung für verschlüsselte passwörter
+
+Version 1.55
+- IP Adder von [MTCL]Matz integriert
+  Email: matz@mtcl-clan.de URL: http://www.impworld.de/lansurfer/
+
+Version 1.54
+- _setup.phtml Verbessert:
+  - Fehler beim Importieren der daten falls ein ' in einem feld vorkommt entfernt
+  - Die datei stellt nun sicher das PHP korrekt konfiguriert ist und warnt falls dies nicht der fall ist
+- seat.phtml Zeigt nun alle vorhandenen Sitzblöcke an
+- das Verzeichnis "includes" befindet sich nun auf der gleichen ebene wie htdocs um zu sätzliche Sicherheit 
+  bei nicht apache webservern zu garantieren
+
+Version 1.53
+- Freilos Verteilung in der 1. Runde eines Turniers stark verbessert
+- _setup.phtml hinzugefügt um die Installation zu vereinfachen

@@ -1,0 +1,450 @@
+<?
+  $LS_BASEPATH = "../";
+  require $LS_BASEPATH."../includes/lsi_base.inc";
+  include $LS_BASEPATH."../includes/tourney.inc";
+  
+  NavStruct("tourney/");
+  
+  SQL_Init();
+  $tourney = new Tourney($id);
+  $tourney->InitTiming();
+
+	NavAdd("Turniere", $LS_BASEPATH."tourney/");
+	NavAdd($tourney->info[name], "show.phtml?id=$id");
+
+  StartPage("Baum Ansicht");
+
+  if ($tourney->info[flags] & $TF_TIMECHECK)
+  	$tourney->clean();
+	
+	if ($user_valid) {
+	  $query = "SELECT
+	  		tt.id as 'id'
+	  	FROM 
+	  		tourney_teams as tt, 
+	  		tourney_teammember as ttm 
+	  	WHERE (ttm.team=tt.id) AND (tt.tourney=$id) AND (user=".$user_current[id].")";
+		if ($result=mysql_query($query)) {
+			if ($userteam=mysql_fetch_array($result)) {
+			}
+		}
+		else
+		  SQL_Error($query, true);
+	}
+
+	$colcount = 0;
+	$matches = 1;
+	$matchcount = 0;
+	while ($matches  < $tourney->maxmatches) {
+	  $matches*=2;
+		$matchcount+=$matches;
+	  $colcount++;
+	}
+	$i = (($colcount * 2) + 2);
+
+//	include "tinfo.inc";
+
+	
+/*	
+	echo "<p><font face=Verdana size=2>";
+	echo ($tourney->info[teamsize] > 1) ? "Teams" : "Spieler";
+	echo ": <b>".($tourney->teamcount)."</b> ";
+	echo "<br>Startzeit: <b>".shortdate($tourney->starttime)."</b>";
+	echo "<br>Dauer: <b>".floor($tourney->length / 60)."</b> Stunden";
+	if ($tourney->length % 60)
+		echo " und <b>".($tourney->length % 60)."</b> Minuten";
+	echo "</font></p>";*/
+	
+?>
+<p class=content>
+<? NavPrintBack(); ?>
+</p>
+
+<?
+	if ($clean == 1)  // normales aufräumen
+		$tourney->clean();
+	elseif ($clean == 2) {
+		echo "Turnier RESET !!!";
+		$query = "DELETE FROM tourney_matches WHERE (col!=0)";
+    if (!mysql_query($query))
+    	SQL_Error($query, true);
+		$query = "UPDATE tourney_matches SET flags=0, extratime=0 WHERE (col=0)";
+    if (!mysql_query($query))
+    	SQL_Error($query, true);
+		$tourney->clean();
+	}
+	elseif ($clean == 3) {
+		$query = "DELETE FROM tourney_matches WHERE (tourney=".$tourney->id.")";
+    if (!mysql_query($query))
+    	SQL_Error($query, true);
+	  $query = "UPDATE tourneys SET flags=0 WHERE (id=$id)";
+	  if (!mysql_query($query))
+	  	SQL_Error($query, TRUE);
+		
+	}
+
+	if ($tourney->info[teamsize] == 1) {
+		$namequery = "u1.name as 'op1_name', 
+			u1.clan as 'op1_clan', 
+			u2.name as 'op2_name', 
+  		u2.clan as 'op2_clan'";
+  	$tables = ",
+			user as u1,
+			user as u2";
+		$whereadd = "AND (tt1.leader=u1.id) AND (tt2.leader=u2.id)";
+	} else {
+		$namequery = "tt1.name as 'op1_name', 
+			tt2.name as 'op2_name'";
+		$tables = "";
+		$whereadd = "";
+	}
+			
+	
+	if ($result=mysql_query(
+		"SELECT
+			tm.id as 'matchid',
+			op1,
+			op2, 
+			col, 
+			row,
+			tm.flags,
+			$namequery
+		FROM 
+			tourney_matches as tm, 
+			tourney_teams as tt1, 
+			tourney_teams as tt2
+			$tables
+		WHERE 
+			(tm.tourney=$id) AND 
+		  (tt1.id=op1) AND (tt2.id=op2)
+		  $whereadd
+		ORDER BY col, row")) {
+		$row = mysql_fetch_array($result);
+	} else {
+		die("<font face=\"Courier New\" size=2><b>SQL Error:</b><br>".mysql_error()."</font><BR>\n");
+	}
+	
+?>
+
+<div align=center>
+<table border=0 cellspacing=0 CELLPADDING=0 width=<? echo ((8 + 100 + 8) *(($colcount * 3) + 3)); ?> height=<? echo ($tourney->maxmatches + 2) * 48; ?>>
+  <colgroup width=116 span=<? echo ($colcount * 3) + 2 ?>>
+  </colgroup>
+  <tr>
+  <?
+    $currentcol = -($colcount * 2);
+    while ($currentcol <= $tourney->colcount + 1) {
+    	$round = $tourney->GetNextRound();
+    	
+    	echo "<td align=center><font face=\"Verdana\" size=1>";
+    	echo "<b>Runde $round->dispindex</b><br><font color=#A0A0A0>bis $round->endtimeStr</font>";
+    	if ($tourney->info[flags] & $TF_DEFMAPS)
+    		echo "<br><font color=#A0A0A0>Map: <b>$round->defmap</b></font>";
+    		
+    	echo "</td>\n";
+    	$currentcol++;
+    }
+  ?>
+  </tr>
+  <tr>
+<?		
+  
+  
+    $TDM_HEIGHT = 48;
+    $TDM_SPANWIDTH = 8;
+    $TDM_WIDTH = 100;
+  
+    $currentcol = -($colcount * 2);
+    $divisor = $tourney->maxmatches;
+    $extracol = TRUE;
+    
+    $tourney->InitTiming();
+    $ctime = time();
+    
+    while ($currentcol <= $colcount + 2) {
+    	$round = $tourney->GetNextRound();
+    
+      $colplayercount =  (($tourney->maxmatches * 2) / ($divisor));
+      $matchcount = ($colplayercount / 2);
+
+    	if ($currentcol < -1 && $matchcount > 1)
+    		$looserSrcRow = $matchcount / 2;
+    	else
+    		$looserSrcRow = $matchcount;
+    
+      echo "<td width=116 height=".(($tourney->maxmatches + 2) * 48).">";
+/*      echo "<div align=center><b>$currentcol</b></div>";
+      echo "<br>Matches: $matchcount"; */
+      flush();
+      echo "<table border=0 cellspacing=0 CELLPADDING=0 width=116>";
+      $i = 0;
+      	// Leere Rows fürs Verticale Center (Loosers, und Finale
+        if ($currentcol < -1 || $currentcol >= $colcount + 1) {
+        	if ($currentcol >= $colcount + 1)
+        		$j = ($colcount - 1);
+        	else
+        		$j = 0;
+        	while ($j < abs($currentcol)) {
+        		echo "<tr>
+        			<td width=$TDM_SPANWIDTH height=$TDM_HEIGHT><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/blank.gif\"></td>
+        			<td width=$TDM_WIDTH height=$TDM_HEIGHT><font face=Verdana size=1><br><br><br></font></td>
+        			<td width=$TDM_SPANWIDTH height=$TDM_HEIGHT><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/blank.gif\"></td>
+        		</tr>\n";
+        		$j++;
+        	}
+        }
+      while ($i < $matchcount) {
+      	echo "<tr>";
+
+      	// Match Info
+      	if ($row) {
+      		if ($row[col] < $currentcol || ($row[col] == $currentcol && $row[row] < $i))
+						$row = mysql_fetch_array($result);
+					if ($row[col] == $currentcol && $row[row] == $i) {
+						if ($row[op1] == 2)
+							$playername1 = "<font color=#57A551><i>Freilos</i></font>";
+						elseif ($row[op1] == 1)
+							$playername1 = "<font color=#A0A0A0>???</font>";
+						else {
+						  $playername1 = "<font color=#77DC6E>".ShortPlayerName($row[op1_clan], $row[op1_name])."</font>";
+						  if ($row[flags] & $MF_PLAYED && !($row[flags] & $MF_OP2WON) )
+						  	$playername1 = "<b>$playername1</b>";
+						}
+							
+						if ($row[op2] == 2)
+							$playername2 = "<font color=#57A551><i>Freilos</i></font>";
+						elseif ($row[op2] == 1)
+							$playername2 = "<font color=#A0A0A0>???</font>";
+						else {
+						  $playername2 = "<font color=#77DC6E>".ShortPlayerName($row[op2_clan], $row[op2_name])."</font>";
+						  if ($row[flags] & $MF_PLAYED && $row[flags] & $MF_OP2WON)
+						  	$playername2 = "<b>$playername2</b>";
+						}
+					}
+					else {
+						$playername1 = "";
+						$playername2 = "";
+					}
+      	}
+
+     		// Linke Seite des Matches
+     		echo "<td width=$TDM_SPANWIDTH height=$TDM_HEIGHT><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/";
+     		if ($currentcol <= 0) {
+     		  if (!($i % 2)  || (!$extracol && $currentcol < 0))
+     		  	echo "top_right";
+     		  else
+     		    echo "bottom_right";
+     		} elseif ($currentcol == $colcount + 2 && !$row) {
+     			echo "blank";
+     		} else
+     			echo "middle";
+  		  echo ".gif\"></td>";
+      	
+        // Print Match
+				if ($currentcol < $colcount + 2 || $row)
+				{
+	      	if ($row[col] == $currentcol && $row[row] == $i)
+	      		$matchactive = TRUE;
+	      	else
+	      		$matchactive = FALSE;
+
+	      	echo "<td width=$TDM_WIDTH height=$TDM_HEIGHT bgcolor=";
+	      	if ($ctime > $round->endtime && !($row[flags] & $MF_CHECKED))		// matches die nur noch 5 Minuten bis zum eintragen haben
+	      		echo "#300000";
+	      	elseif ($matchactive && $userteam && ($row[op1] == $userteam[id] || $row[op2] == $userteam[id]))
+	      		echo "#003000";
+	      	elseif ($extracol || ($currentcol == 0 && ($i % 2)))
+	      		echo "#151515";
+	      	else
+	      		echo "#202020";
+	      	echo " align=center width=100>";
+	      	
+	      	$matchactive = ($matchactive  && $row[op1] > 9 && $row[op2] > 9);
+	      		
+	      	
+	      	if ($matchactive)
+	      		echo "<a class=\"tlink\" href=\"match.phtml?action=show&tree=1&id=".$row[matchid]."\">";
+	      	echo "<font face=Verdana size=1>";
+	      	
+	      	if ($playername1 != "")
+	      		echo $playername1;
+	      	elseif ($currentcol == -1)
+	      		echo "<font color=#A0A0A0>Verlierer ".(($i * 2) + 1)."</font>";
+	      	elseif ($currentcol == 1)
+	      		echo "<font color=#A0A0A0>Gewinner ".(($i * 2) + 1)."</font>";
+	      	elseif ($currentcol > 1 && $currentcol <= $colcount)
+	      		echo "<font color=#A0A0A0>Gewinner ".chr($currentcol + 63).(($i * 2) + 1)."</font>";
+	      	elseif ($currentcol == 0)
+	      		echo "<font color=#77DC6E>Spieler ".(($i * 2) + 1)."</font>";
+	      	else
+	      		echo "<font color=#A0A0A0>???</font>";
+	      	echo "<br><font color=white>vs</font><br>";
+	
+	      	if ($playername2 != "")
+	      		echo $playername2;
+	      	elseif ($currentcol == -1)
+	      		echo "<font color=#A0A0A0>Verlierer ".(($i * 2) + 2)."</font>";
+	      	elseif ($currentcol == 1)
+	      		echo "<font color=#A0A0A0>Gewinner ".(($i * 2) + 2)."</font>";
+	      	elseif ($currentcol > 1 && $currentcol <= $colcount)
+	      		echo "<font color=#A0A0A0>Gewinner ".chr($currentcol + 63).(($i * 2) + 2)."</font>";
+	      	elseif ($currentcol == 0)
+	      		echo "<font color=#77DC6E>Spieler ".(($i * 2) + 2)."</font>";
+	      	else
+	      		echo "<font color=#A0A0A0>???</font>";
+	      	echo "</font>";
+	      	if ($matchactive) 
+	      		echo "</a>";
+	      	echo "</td>";
+	      } else
+	      	echo "<td width=$TDM_WIDTH height=$TDM_HEIGHT>&nbsp;</td>";
+
+				// Rechte Seite des Matches
+     		echo "<td width=$TDM_SPANWIDTH height=$TDM_HEIGHT><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/";
+     		if ($currentcol >= 0) {
+     		  if ($currentcol == $colcount + 2 && !$row)
+     				echo "blank";
+     		  elseif ($i % 2)
+     		  	echo "bottom_left";
+     		  else
+     		    echo "top_left";
+     		} else 
+     			echo "middle";
+  		  echo ".gif\"></td>";
+
+      	echo "</tr>";
+      	$i++;
+      	
+      	if ($currentcol == $colcount + 1)
+					$row = mysql_fetch_array($result);
+      	
+      	
+        if ($i > 0) {
+          $dest = $divisor;
+          if ($i >= $matchcount)
+          	$dest = 2;
+          $j = 1;
+          while ($j < abs($dest)) {
+        		echo "<tr>";
+       		  echo "<td width=$TDM_SPANWIDTH height=$TDM_HEIGHT><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/";
+       		  $text = "<br><br><br>";
+        		if ($currentcol < 0 && ($i % 2 || !$extracol) ) {
+        			if (!$extracol) {
+        				if ($j == 1) {
+        		  		echo "bottom_right";
+//        		  		$text = "<br>&nbsp;&nbsp;Verlierer ".chr(abs($currentcol / 2) + 65).($matchcount - $i + 1)."<br><br>";
+        		  		$text = "<br>&nbsp;&nbsp;Verlierer ".chr(abs($currentcol / 2) + 65).($looserSrcRow)."<br><br>";
+        		  		$looserSrcRow--;
+        		  		if ($looserSrcRow == 0)
+        		  			$looserSrcRow = $matchcount;
+        		  	}
+        		  	else
+        		  		echo "blank";
+        		  }
+        		  else {
+        		  	if ($currentcol == -($colcount * 2)) {
+        		  		echo "bottom_right";
+        		  		$text = "<br>&nbsp;&nbsp;Zum Finale<br><br>";
+        		  	}
+        		  	else
+        		  		echo "right";
+        		  }
+        		}
+        		else 
+        		  echo "blank";
+        		if ($currentcol > 0 && $j == 1) {
+        			$text = "<div align=right>".chr($currentcol + 64).$i."<br><br><br></div>";
+        			if ($currentcol == $colcount)
+        		  		$text = "<div align=right><br>Gewinner der&nbsp;&nbsp;<br>Loosers Bracket<br></div>";
+        			elseif ($currentcol == $colcount + 1 || ($currentcol == $colcount + 2 && $row)) {
+        				if ($currentcol == $colcount + 1 && $row)
+        		  		$text = "<div align=right><br>Extra Match<br>ben&ouml;tigt&nbsp;&nbsp;<br><br></div>";
+        		  	else
+        		  		$text = "<div align=right><br>Gewinner des Turniers&nbsp;&nbsp;<br><br></div>";
+        		  }
+        			elseif ($currentcol == $colcount + 2)
+        					$text = "";
+        		}
+       		  echo ".gif\"></td>";
+        		echo "<td><font face=\"Verdana\" size=1 color=#A0A0A0>$text</font></td>";
+        		echo "<td><img width=8 height=48 src=\"".$LS_BASEPATH."images/tourney/";
+
+        		if ($currentcol >= 0 && $i % 2) {
+        			if ($currentcol == $colcount + 1 || $currentcol == $colcount)
+        				echo "bottom_left";
+	        		elseif ($currentcol == $colcount + 2)
+	        		{
+	        			if ($row)
+	        				echo "bottom_left";
+	        			else
+	        				echo "blank";
+	        		}
+        			else
+        		  	echo "left";
+        		}
+        		else
+        		  echo "blank";
+        		echo ".gif\"></td>";
+        		echo "</tr>";
+        		$j++;
+        	}
+        }
+      }
+      
+      echo "</table>\n";
+      
+      echo "</td>";
+      flush();
+      if (!$extracol) {
+	      if ($currentcol < 0)
+	      	$divisor /= 2;
+	      else
+	      	$divisor *= 2;
+	    }
+      $currentcol++;
+      if ($currentcol < 0)
+     		$extracol = !$extracol;
+     	else
+     		$extracol = FALSE;
+    }
+
+  
+  ?>
+  </tr>
+</table>
+</div>
+
+<? if (user_auth_ex(AUTH_TOURNEY, $id) && !$clean): ?>
+<table>
+	<tr>
+		<td>
+			<form action="tree.phtml" method="post">
+				<input type="hidden" name="id" value="<? echo $id; ?>">
+				<input type="hidden" name="clean" value="1">
+				<input class="abtn" type="submit" value="Clean">
+			</form>
+		</td>
+		<td>
+			<form action="tree.phtml" method="post">
+				<input type="hidden" name="id" value="<? echo $id; ?>">
+				<input type="hidden" name="clean" value="2">
+				<input class="abtn" type="submit" value="Reset to Start">
+			</form>
+		</td>
+		<td>
+			<form action="tree.phtml" method="post">
+				<input type="hidden" name="id" value="<? echo $id; ?>">
+				<input type="hidden" name="clean" value="3">
+				<input class="abtn" type="submit" value="Reset to SignUp">
+			</form>
+		</td>
+	</tr>
+</table>
+<? endif; ?>
+
+
+<?
+
+	EndPage();
+
+?>

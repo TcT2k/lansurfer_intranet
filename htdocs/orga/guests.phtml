@@ -1,0 +1,46 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	NavStruct("user/orga/", array("party" => $id, "team" => $Party[team]));
+
+	StartPage("G&auml;steliste");
+	
+	user_auth_ex(AUTH_TEAM, $Party[team]);
+	
+	if (!isset($page))
+		$page = $GL_Page;
+	else
+		$GL_Page = $page;
+		
+	if (!isset($sort))
+		$sort = $GL_Sort;
+	else
+		$GL_Sort = $sort;
+		
+	if (!isset($desc))
+		$desc = $GL_Desc;
+	else
+		$GL_Desc = $desc;
+		
+	$GL_DisplaySearch = TRUE;
+	
+	$GL_DetailLink = "guest_detail.phtml?id=%d";
+	$GL_DelLink = "guest_detail.phtml?action=remove&id=%d&page=%d";
+	
+	include $LS_BASEPATH."../includes/guest_list.inc";
+
+	echo "<p>";
+	NavPrintBack();
+	echo "</p>";
+?>
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+
+document.GuestSearch.f_search.focus();
+
+// STOP HIDING FROM OTHER BROWSERS -->
+</SCRIPT>
+<?
+	EndPage();
+?>

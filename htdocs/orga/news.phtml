@@ -1,0 +1,144 @@
+<?
+/*
+Funktion:
+	News Posten, Bearbeiten und Löschen
+
+Parameter:
+	action:
+		"new"
+		"edit"
+		"remove"
+	Team:
+		Orga Team zu dem die News einträge gehören
+	id:
+		id des news posting
+
+
+*/
+
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	NavAdd("Benutzer Status", $LS_BASEPATH."user.phtml");
+	NavAdd("Orga Team", $LS_BASEPATH."orga/?id=$team");
+
+	StartPage("Neuigkeiten");
+	
+	if (!isset($action) || !isset($team))
+		LS_Error("Ungültige Parameter");
+
+	user_auth_ex(AUTH_TEAM, $team, TEAM_NEWS);
+
+	function deStrToDate($date, $time = "") {
+		$thedate = -1;
+		
+		list( $day, $month, $year ) = split( '[/.-]', $date );
+		
+		if ($time)
+			list($hour, $minute) = split( '[:.-]', $time );
+		
+		if (checkdate($month, $day, $year))
+			$thedate = mktime($hour, $minute, 0, $month, $day, $year);
+		else
+			$thedate = -1;
+		
+		return $thedate;
+	}
+
+	
+	if ($action == "new" || $action == "edit") {
+	
+	?><h3 class="contentpanel"><? echo ($action == "new") ? "Neue Meldung" : "Meldung Bearbeiten";  ?></h3>
+	<p><?
+	
+		FormStart("action=\"".$PHP_SELF."\" method=\"post\"");
+			if ($submited) {
+				if ($f_title == "")
+					FormError("f_title", "Der Titel darf nicht lehr sein");
+
+				$date = deStrToDate($f_date, $f_time);
+				if ($date < 0)
+					FormError("f_time", "Das Datum oder die Uhrzeit im Feld Datum ist nicht g&uuml;ltig.");
+
+				
+				if (!$FormErrorCount) {
+					$fields = SQL_QueryFields(array(
+						"title" => $f_title,
+						"msg" => $f_msg,
+						"options" => ($f_public | $f_orgateam))).",
+						date=FROM_UNIXTIME($date)";
+					
+					if ($action == "new")
+						$query = "INSERT INTO news SET author=".$user_current[id].", $fields";
+					else
+						$query = "UPDATE news SET $fields WHERE (id=$id)";
+					
+					SQL_Query($query);
+					
+					echo "Die Meldung wurde gespeichert.<br>";
+				}
+			} else {
+				if ($action == "edit") {
+					$res = SQL_Query("SELECT *, UNIX_TIMESTAMP(date) as ts FROM news WHERE (id=$id)");
+					$row = mysql_fetch_array($res);
+					$f_title = $row[title];
+					$f_msg = $row[msg];
+					$f_public = $row[options] & NEWS_PUBLIC;
+					$f_orgateam = $row[options] & NEWS_TEAM;
+
+					$f_date = date("d.m.Y", $row[ts]);
+					$f_time = date("H:i", $row[ts]);
+					
+				} else {
+					$now = time();
+					$f_date = date("d.m.Y", $now);
+					$f_time = date("H:i", $now);
+				}
+			}
+			
+			if ($FormErrorCount || !$submited) {
+				FormValue("action", $action);
+				FormValue("submited", 1);
+				FormValue("team", $team);
+				FormValue("id", $id);
+				
+				FormElement("f_title", "Titel", $f_title, "text", "size=40");
+				FormElement("f_date", "Datum", $f_date, "text", "size=10 maxlength=10", 1);
+					FormElement("f_time", "", $f_time, "text", "size=5 maxlength=5", -1);
+				FormElement("f_msg", "Text", $f_msg, "textarea", "cols=\"60\" rows=\"20\"");
+//				FormElement("f_public", "&Ouml;ffentliche Meldung (erscheint auf der LanSurfer Hauptseite)", NEWS_PUBLIC, "checkbox", ($f_public) ? "checked" : "");
+				FormElement("f_orgateam", "Meldung auf der Neuigkeiten Seite anzeigen", NEWS_TEAM, "checkbox", ($f_orgateam) ? "checked" : "");
+				
+				FormElement("", "", "Speichern", "submit");
+			}
+		FormEnd();
+	} elseif ($action == "remove") {
+		if ($submited)
+		{
+			SQL_Query("DELETE FROM news WHERE (id=$id)");
+			echo "Der Beitrag wurde entfernt.";
+		} else {
+			$res = SQL_Query("SELECT * FROM news WHERE (id=$id)");
+			$item = mysql_fetch_array($res);
+			if (!$item)
+				LS_Error("Der Beitrag konnte nicht gefunden werden.");
+			
+			echo "Den Beitrag <i>&quot;".$item[title]."&quot;</i> wirklich <b>unwiederuflich</b> entfernen?";
+			
+			FormStart();
+				FormValue("team", $team);
+				FormValue("id", $id);
+				FormValue("action", $action);
+				FormValue("submited", 1);
+				FormElement("", "", "Entfernen", "submit");
+			FormEnd();
+		}
+	}
+	?>
+	</p>
+	<?
+
+	NavPrintBack();
+	
+	EndPage();
+?>

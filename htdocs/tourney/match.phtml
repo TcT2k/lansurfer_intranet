@@ -1,0 +1,815 @@
+<?
+  $LS_BASEPATH = "../";
+  require $LS_BASEPATH."../includes/lsi_base.inc";
+  include $LS_BASEPATH."../includes/tourney.inc";
+
+	if (!isset($action)) $action = "show";
+
+	function RefreshMainWindow() {
+/*		
+?>
+  <script language="JavaScript">
+  <!--
+  var status_frame = window.frames["main"];
+  if (status_frame.location) {
+  	var url = status_frame.location.href;
+  	status_frame.location.replace(url);
+  }
+  //-->
+  </script>
+<?  
+*/
+	}
+
+	$match = new Match($id);
+	$tourney = new Tourney($match->info[tourney]);
+	$tourney->InitTiming();
+	$match->SetTourney($tourney, $action == "result");
+	$round = $match->round;
+
+	if ($tourney->info[maplist])
+		$maplist = split("\n", $tourney->info[maplist]);
+	if ($tourney->info[teamtypes])
+		$teamtypes = split("\n", $tourney->info[teamtypes]);
+	if ($tourney->info[settings])
+		$settings = split("\n", $tourney->info[settings]);
+
+	
+	$LS_POPUPPAGE = TRUE;
+	StartPage("Spiel Infos");
+	$tourneyadmin = user_auth_ex(AUTH_TOURNEY, $tourney->info[id], 0, FALSE);
+	
+	function PrintSeat($userid) {
+		$res = SQL_Query("SELECT * FROM guest WHERE user=".$userid);
+		if ($Guest = mysql_fetch_array($res)) {
+			$res = SQL_Query("SELECT
+					sb.id as 'blockid',
+					s.id,
+					sb.name,
+					s.row,
+					s.col 
+				FROM guest AS g
+					LEFT JOIN seats AS s ON s.guest=g.id
+					LEFT JOIN seat_block AS sb ON s.block=sb.id
+				WHERE g.id=".$Guest[id]." AND s.status=".SEAT_OCCUPIED."
+				");
+			$Seat = mysql_fetch_array($res);
+		}
+		if ($Seat && $Seat[id]) {
+			echo "<a href=\"../party/seat.phtml?id=".$Seat[blockid]."&row=".$Seat[row]."&col=".$Seat[col]."\" target=\"main\">".$Seat[name].", ".chr($Seat[row] + 65)." ".($Seat[col] + 1)."</a><br>";
+		} else {
+			echo "<font color=white>(Unbekannt)</font>";
+		}
+		
+	}
+
+	function PrintMatchResult($showrounds = true) {
+		global $round, $match, $tourney, $user_valid, $user_current, $id;
+?>
+	<table width="100%" class=liste>
+		<tr>
+			<td class=liste align=center><?
+			
+		if ($showrounds) {	
+			echo "<table><tr>";
+			$res = SQL_Query("SELECT * FROM tourney_results WHERE matchid=$id ORDER BY round");
+			$i = 0;
+			while ($row = mysql_fetch_array($res)) {
+				if ($i)
+					echo "<td>&nbsp;&nbsp;&nbsp;</td>";
+				echo "<td align=center valign=top>";
+				printf("<font size=1 color=#909090>Runde %d:</font><br>", $i + 1);
+				printf("<font size=2 color=white>%d - %d</font>", $row[score1], $row[score2]);
+				if ($row[map])
+					printf("<br><font size=1 color=#909090>%s</font>", HTMLStr($row[map]));
+				echo "</td>";
+				$i++;
+			}	
+			echo "</table>";
+		}
+		
+		$needinput = false;
+		if ($match->info[flags] & MF_PLAYED || $match->info[flags] & MF_DRAW) {
+			echo "<font face=\"Verdana\" color=\"#909090\" size=6>";
+			echo $match->info[score1];
+			echo "</font><font face=Verdana color=#909090 size=5>:</font><font color=#909090 size=6>";
+			echo $match->info[score2];
+			echo "</font>";
+			echo "<br>";
+			if ($match->info[flags] & MF_OP2WON)
+				printf("Das Spiel wurde von <b>%s</b> gewonnen.", $match->op2_displayname);
+			elseif ($match->info[flags] & MF_DRAW) {
+				echo "Das Spiel ist zur Zeit unentschieden.<br>";
+				switch ($tourney->info[drawhandling]) {
+					case DRAW_SINGLE:
+						printf("Es wird ein Entscheidungs Spiel gespielt.");
+						break;
+					case DRAW_SINGLE_HALF_TIME:
+						printf("Es wird ein Entscheidungs Spiel von %d Minuten L&auml;nge gespielt", $tourney->info[roundtime] / 2);
+						break;
+					case DRAW_DOUBLE_HALF_TIME:
+						printf("Es werden 2 Entscheidungs Spiele von jeweils %d Minuten L&auml;nge gespielt", $tourney->info[roundtime] / 2);
+						break;
+				}
+				$needinput = true;
+			} else
+				printf("Das Spiel wurde von <b>%s</b> gewonnen.", $match->op1_displayname);
+			
+			if ($match->info[flags] & MF_ADMINREQUEST)
+				echo "<br>(Das Ergebniss wurde durch den Turnierleiter eingetragen.)";
+			
+		} else {
+			echo "Es liegt noch kein Ergebniss vor.";
+			printf("<br><br>Das Ergebniss muss bis %s<br>eingetragen werden, sonst entscheidet das Los", DisplayDate($round->scoreTime + $match->info[extratime] * 60));
+			$needinput = true;
+		}
+		if ($needinput && $user_valid && ($user_current[id] == $match->leader1 || $user_current[id] == $match->leader2)) {
+			FormStart();
+				FormValue("id", $id);
+				FormValue("action", "result");
+			
+				FormElement("", "", "Ergebniss Eintragen", "submit");
+			FormEnd();
+		}
+			
+			
+?></td>
+		</tr>
+	</table>
+<?		
+	}
+
+	function PrintSettings($Sett, $OpSett, $team, $show_btn = TRUE) {
+		global $id, $settings, $teamtypes, $maplist, $round, $match, $user_valid, $user_current;
+		
+		
+		if ($Sett) {
+			if ($show_btn && !$OpSett)
+				echo "Einstellungen werden erst gezeigt, wenn der Gegner die Einstellungen angegeben hat.";
+			else {
+				if ($maplist) {
+					echo "<font size=1 color=#909090>Map:</font><br>";
+					echo $Sett[map];
+					echo "<br>";
+				}
+				if ($teamtypes) {
+					echo "<font size=1 color=#909090>Team:</font><br>";
+					echo $Sett[teamtype];
+					echo "<br>";
+				}
+				if ($settings) {
+					echo "<font size=1 color=#909090>Settings:</font><br>";
+					$flag = 1;
+					for ($i = 0; $i < count($settings); $i++) {
+						if ($Sett[flags] & $flag)
+							echo $settings[$i]."<br>";
+						$flag *= 2;
+					}
+					echo "<br>";
+				}
+			}
+			
+		} else {
+			echo "Es wurden noch keine Einstellungen angegeben.";
+
+			if ($user_valid && (($match->info[op1] == $team && $user_current[id] == $match->info[leader1]) 
+				|| ($match->info[op2] == $team && $user_current[id] == $match->info[leader2])) ) {
+				echo "<div align=center>";
+				FormStart();
+					FormValue("action", "settings");
+					FormValue("id", $id);
+					FormValue("steam", $team);
+					
+					FormElement("", "", "Setzen", "submit");
+				FormEnd();
+				echo "</div>";
+			}
+		}
+	}
+	
+	if ($action == "forcewin"):
+		$MatchPrintBack = TRUE;
+		$newflags = $match->info[flags] | MF_PLAYED | MF_ADMINREQUEST;
+		if ($force == 2) {
+			$newflags |= MF_OP2WON;
+			$score1 = 0;
+			$score2 = 3;
+		} else {
+			$score1 = 3;
+			$score2 = 0;
+		}
+		SQL_Query("UPDATE tourney_matches SET flags=$newflags,score1=$score1, score2=$score2 WHERE id=$id");
+		$tourney->clean();
+	
+		echo "<p class=content>Der Sieg wurde eingetragen.</p>";
+		RefreshMainWindow();
+	elseif ($action == "correctwin"):
+		$MatchPrintBack = TRUE;
+		$newflags = MF_PLAYED;
+		if ($force == 2) {
+			$newflags |= MF_OP2WON;
+			$score1 = 0;
+			$score2 = 3;
+		} else {
+			$score1 = 3;
+			$score2 = 0;
+		}
+		SQL_Query("UPDATE tourney_matches SET flags=$newflags,score1=$score1, score2=$score2 WHERE id=$id");
+		$tourney->clean();
+	
+		echo "<p class=content>Das Ergebniss wurde eingetragen.</p>";
+	
+	elseif ($action == "setextratime"):
+		$MatchPrintBack = TRUE;
+		
+		SQL_Query("UPDATE tourney_matches SET extratime=$f_extratime WHERE id=$id");
+		
+		echo "<p class=content>Die neue Extra Zeit wurde gesetzt.</p>";
+	
+	elseif ($action == "settings"):
+		$MatchPrintBack = TRUE;
+		
+?>
+	<table class=liste width="100%">
+		<tr>
+			<th class=liste>Einstellungen</th>
+		</tr>
+		<tr>
+			<td class=liste><? 
+			
+			if ($submitted) {
+				$map = ($maplist) ? $maplist[$f_map] : "";
+				$team = ($teamtypes) ? $teamtypes[$f_teamtype] : "";
+				$setting = 0;
+				if ($settings) {
+					$cur_setting = 1;
+					for ($i=0; $i < count($settings); $i++) {
+						if ($f_setting[$i])
+							$setting |= $cur_setting;
+						$cur_setting *= 2;
+					}
+							
+				}
+				SQL_Query(sprintf("INSERT INTO tourney_settings SET mtch=%d, tourney=%d, team=%d, map='%s', teamtype='%s', flags='%d'",
+					$id, $tourney->info[id], $steam, $map, $team, $setting));
+				
+				echo "Die Einstellungen wurden gespeichert und werden f&uuml;r alle sichtbar,<br>sobald beide Gegner ihre Einstellungen gesetzt haben.";
+			}
+			
+			if (!$submitted) {
+				FormStart();
+					FormValue("action", $action);
+					FormValue("id", $id);
+					FormValue("steam", $steam);
+					FormValue("submitted", 1);
+					
+					if ($maplist) {
+						$f_map = 0;
+						$size = count($maplist);
+						if ($size == 1)
+							$size++;
+						
+						FormSelectStart("f_map", "Map", $f_map, "size=".$size);
+						for ($i=0; $i<count($maplist); $i++)
+							FormSelectItem($maplist[$i], $i);
+						FormSelectEnd();
+					}
+					if ($teamtypes) {
+						$size = count($teamtypes);
+						if ($size == 1)
+							$size++;
+						$f_teamtype = 0;
+						
+						FormSelectStart("f_teamtype", "Team Typ", $f_teamtype, "size=".$size);
+						for ($i=0; $i<count($teamtypes); $i++)
+							FormSelectItem($teamtypes[$i], $i);
+						FormSelectEnd();
+					}
+					if ($settings) {
+						for ($i = 0; $i < count($settings); $i++)
+							FormElement("f_setting[$i]", $settings[$i], 1, "checkbox");
+					}
+				
+					FormElement("", "", "Setzen", "submit");
+				FormEnd();
+			}
+			
+			?></td>
+		</tr>
+	</table>
+<?		
+	
+	elseif ($action == "result"):
+	
+		function PrintResultInput() {
+			global $match, $tourney, $id, $maplist;
+
+			$winonly = $tourney->info[scorename1] == "";
+			$drawinput = $match->info[flags] & MF_DRAW;
+
+			$inputcount = $tourney->info[rounds];
+			
+			if ($drawinput) {
+				switch ($tourney->info[drawhandling]) {
+					case DRAW_DOUBLE_HALF_TIME:
+						$inputcount = 2;
+						break;
+					default:
+						$inputcount = 1;
+				}
+			}
+?>
+	<table width="100%">
+		<tr class=liste>
+			<th width="20%" class=liste>Runde</th>
+			<? if ($maplist): ?>
+			<th width="20%" class=liste>Map</th>
+			<? endif; ?>
+			
+			<th width="40%" class=liste><? 
+				echo "<b>".$match->op1_displayname."</b>";
+				echo "<br>";
+				echo $tourney->info[scorename1]; 
+			?></th>
+			<th width="40%" class=liste><? 
+				echo "<b>".$match->op2_displayname."</b>";
+				echo "<br>";
+
+				echo $tourney->info[scorename1]; 
+			?></th>
+		</tr>
+				<form action="<? echo $PHP_SELF; ?>" method="post">
+					<input type="hidden" name="action" value="result">
+					<input type="hidden" name="submitted" value="1">
+					<input type="hidden" name="id" value="<? echo $id; ?>">
+		<?
+			for ($i = 0; $i < $inputcount; $i++) {
+		?>
+		<tr class=liste>
+			<td class=liste>Spiel <? echo ($i + 1); ?></td>
+
+			<? if ($maplist): ?>
+			<td class=liste><?
+				echo "<input type=\"text\" name=\"f_map[$i]\" size=10 value=";
+				if ($i < 2 && !$drawinput)
+					echo $match->settings[$i+1][map];
+				
+				echo ">";
+			?></td>
+			<? endif; ?>
+			
+			<td class=liste align=right><?
+				if ($winonly)
+					echo "<input id=\"score1_$i\" type=\"radio\" name=\"f_score1[$i]\" value 1><label for=\"score1_$i\"> Gewonnen</label>";
+				else
+					echo "<input type=\"text\" name=\"f_score1[$i]\" size=4 value=0>";
+			
+			?></td>
+			<td class=liste align=right><input <?
+				if ($winonly)
+					echo "<input id=\"score2_$i\" type=\"radio\" name=\"f_score1[$i]\" value=0><label for=\"score2_$i\"> Gewonnen</label>";
+				else
+					echo "<input type=\"text\" name=\"f_score2[$i]\" size=4 value=0>";
+			
+			?></td>
+		</tr>
+		<?
+			}
+		?>
+		<tr class=liste>
+			<td class=liste colspan=<? echo ($maplist) ? 4 : 3; ?> align=right>
+			<input type="submit" value="Eintragen" class=form_btn>&nbsp;
+			</td>
+		</tr>
+		</form>
+	</table>
+<?			
+		}
+		
+		function PrintResultTable() {
+			global $tourney, $match, $mres, $f_score1, $f_score2, $win_points1, $win_points2;
+?>
+	<table class=liste width="100%">
+		<tr class=liste>
+			<th width="20%" class=liste>Runde</th>
+			<th width="40%" class=liste colspan=3><? 
+				echo "<b>".$match->op1_displayname."</b>";
+			?></th>
+			<th width="40%" class=liste colspan=3><? 
+				echo "<b>".$match->op2_displayname."</b>";
+			?></th>
+		</tr>
+		<tr>
+			<th class=liste>&nbsp;</th>
+			<th class=liste><? echo $tourney->info[scorename1]; ?></th>
+			<th class=liste>Anteil</th>
+			<th class=liste>Punkte</th>
+			<th class=liste><? echo $tourney->info[scorename1]; ?></th>
+			<th class=liste>Anteil</th>
+			<th class=liste>Punkte</th>
+		</tr>
+<?			
+			for ($i = 0; $i < count($mres); $i++) {
+				echo "<tr>";
+				echo "<td width=\"20%\" class=liste>Spiel ".($i+1);
+				if ($f_map[$i])
+					printf(" (%s)", $f_map[$i]);
+				echo "</td>";
+
+				echo "<td width=\"10%\" class=liste align=right>".$f_score1[$i]."</td>";
+				echo "<td width=\"10%\" class=liste align=right>".round($mres[$i][points1])."%";
+				if ($mres[$i][corrected]) echo " *";
+				echo "</td>";
+				
+				echo "<td width=\"10%\" class=liste align=right>".$mres[$i][winpoint1]."</td>";
+
+				echo "<td width=\"10%\" class=liste align=right>".$f_score2[$i]."</td>";
+				echo "<td width=\"10%\" class=liste align=right>".round($mres[$i][points2])."%";
+				if ($mres[$i][corrected]) echo " *";
+				echo "</td>";
+				echo "<td width=\"10%\" class=liste align=right>".$mres[$i][winpoint2]."</td>";
+				echo "</tr>";
+			}
+
+			echo "<tr>";
+			echo "<td class=liste>&nbsp;</td>";
+			echo "<td colspan=3 class=liste align=right>".$win_points1."</td>";
+			echo "<td colspan=3 class=liste align=right>".$win_points2."</td>";
+			echo "</tr>";
+		}
+	
+	
+		$MatchPrintBack = TRUE;
+
+?>
+	<table class=liste width="100%">
+		<tr class=liste>
+			<th class=liste>Ergebniss Eintragen</th>
+		</tr>
+	</table>	
+		
+<?
+		
+		if ($submitted) {
+			// Ergebniss Auswerten
+			
+			$score_corrections = 0;
+			
+			$match_points1 = 0;
+			$match_points2 = 0;
+			
+			if ($match->info[flags] & MF_DRAW) {
+				$win_points1 = $match->info[score1];
+				$win_points2 = $match->info[score2];
+			} else {
+				$win_points1 = 0;
+				$win_points2 = 0;
+			}
+			for ($i = 0; $i < count($f_score1); $i++) {
+				$score1 = $f_score1[$i];
+				$score2 = $f_score2[$i];
+				
+				$score_correction_factor = 0;
+
+				if ($score1 < 0 && $score1 < $score2) {
+					$score_correction_factor = -$score1;
+					$mres[$i][corrected] = true;
+					$score_corrections++;
+				}
+				if ($score2 < 0 && $score2 < $score1) {
+					$score_correction_factor = -$score2;
+					$mres[$i][corrected] = true;
+					$score_corrections++;
+				}
+				if (!($score1 + $score_correction_factor) || !($score2 + $score_correction_factor)) {
+					$mres[$i][corrected] = true;
+					$score_corrections++;
+					$score_correction_factor++;
+				}
+				
+				$score1+=$score_correction_factor;
+				$score2+=$score_correction_factor;
+				
+				$sum = $score1 + $score2;
+				$points1 = ($score1/$sum) * 100;
+				$points2 = ($score2/$sum) * 100;
+				if ($points1 > $points2) {
+					$win_points1++;
+					$mres[$i][winpoint1] = 1;
+					$mres[$i][winpoint2] = 0;
+				} elseif ($points2 > $points1) {
+					$win_points2++;
+					$mres[$i][winpoint1] = 0;
+					$mres[$i][winpoint2] = 1;
+				} else {
+					$mres[$i][winpoint1] = 0;
+					$mres[$i][winpoint2] = 0;
+				}
+				$match_points1 += $points1;
+				$match_points2 += $points2;
+
+				$mres[$i][score1] = $score1;
+				$mres[$i][score2] = $score2;
+				$mres[$i][points1] = $points1;
+				$mres[$i][points2] = $points2;
+				
+			}
+
+			if ($match_points1 > $match_points2)
+				$win_points1++;
+			elseif ($match_points2 > $match_points1)
+				$win_points2++;
+			
+			function PrintResMsg($text) {
+?>
+	<table width="100%" class=liste>
+		<tr>
+			<td class=liste align=center><? echo $text; ?></td>
+		</tr>
+	</table>
+<?
+			}
+		
+			if (!$user_valid)
+				PrintResMsg("Du musst eingelogged sein und an diesem Spiel Teilnehmen um ein Ergebniss einzutragen.");
+			elseif (($user_current[id] == $match->info[leader1] && $win_points1 > $win_points2)
+			  || ($user_current[id] == $match->info[leader2] && $win_points2 > $win_points1))
+				PrintResMsg("Das Ergebniss muss vom Verlierer eingetragen werden.");
+			else {
+				// Ergebniss Eintragen
+				if ($win_points1 == $win_points2) {
+					$match->info[flags] |= MF_DRAW;
+					// Settings Losen
+					srand((double)microtime()*1000000);
+					if ($teamtypes)
+						$team = $teamtypes[rand(0, count($teamtypes) - 1)];
+					if ($maplist)
+						$map = $maplist[rand(0, count($maplist) - 1)];
+					$match->info[extratime] = $tourney->info[roundtime];
+					SQL_Query("DELETE FROM tourney_settings WHERE mtch=$id AND tourney=".$tourney->info[id]." AND team=0");
+					SQL_Query("INSERT INTO tourney_settings SET mtch=$id, tourney=".$tourney->info[id].",team=0, map='$map', teamtype='$team'");
+					
+				}	else {
+					$match->info[flags] &= ~MF_DRAW;
+					$match->info[flags] |= MF_PLAYED;
+					if ($win_points2 > $win_points1)
+						$match->info[flags] |= MF_OP2WON;
+				}
+					
+				$match->info[score1] = $win_points1;
+				$match->info[score2] = $win_points2;
+				if ($match->info[extratime] && !($match->info[flags] & MF_DRAW)) {  // Extrazeit abbauen
+					$now = time();
+					if ($now < $round->scoreTime + $match->info[extratime] * 60) {
+						$oldextra = $match->info[extratime];
+						$match->info[extratime] = (($round->scoreTime + $match->info[extratime] * 60) - $now) / 60;
+						if ($match->info[extratime] < 0 || $match->info[extratime] > $oldextra)
+							$match->info[extratime] = 0;
+					}
+				}
+				
+				for ($i = 0; $i < count($f_score1); $i++) 
+					SQL_Query(sprintf("INSERT INTO tourney_results SET tourney=%d, matchid=%d, round=%d, score1=%d, score2=%d, map=%s", 
+						$tourney->info[id], $id, $i, $f_score1[$i], $f_score2[$i], SQL_Quot($f_map[$i])));
+				SQL_Query(sprintf("UPDATE tourney_matches SET flags=%d, score1=%d, score2=%d, extratime=%d WHERE id=%d",
+					$match->info[flags], $win_points1, $win_points2, $match->info[extratime],$id));
+				$tourney->clean();
+				
+				PrintResultTable();
+				PrintMatchResult(false);
+			}
+		}
+
+		if (!$submitted) {
+			PrintResultInput();
+		} else {
+			//
+		}
+	
+	elseif ($action == "show"):
+		$match->GetMember();
+
+		if ($match->info[flags] & $MF_PLAYED) {
+			if ($match->info[flags] & $MF_OP2WON)
+				$won = 2;
+			else
+				$won = 1;
+		} else
+			$won = 0;
+
+/*		if (!($match->info[flags] & $MF_CHECKED) && $userteam && ($row[op1] == $userteam[id] || $row[op2] == $userteam[id]))
+			$rowcolor = "#003000";
+		else*/if (!($match->info[flags] & $MF_PLAYED))
+			$rowcolor= "#505050";
+		else
+			$rowcolor = "#202020";
+	
+?>
+	<table class=liste width="100%">
+		<tr class=liste>
+			<th class=liste colspan=2>Die Gegner</th>
+		</tr>
+		<tr class=liste>
+			<td width="50%" valign=top bgcolor=<? echo ($won == 1) ? "#303030" : $rowcolor; ?>>
+			<font face="Verdana" color=white size="4">
+			<?
+				if ($won == 1)
+					echo "<b>";
+				echo $match->op1_displayname;
+				if ($won == 1)
+					echo "</b>";
+				echo "<br><font size=2 color=#909090>";
+				if ($tourney->info[teamsize] == 1)
+					echo ($match->op1_clan) ? $match->op1_clan : "&nbsp;";
+				else {
+					echo "Team Mitglieder:<br></font><font size=2>";
+					for ($i = 0; $i< count($match->member[1]); $i++) {
+						if ($leader=($match->member[1][$i][id] == $match->info[leader1]))
+							echo "<b>";
+						echo HTMLStr($match->member[1][$i][name]);
+						if ($leader)
+							echo "</b>";
+						echo "<br>";
+					}
+				}
+				echo "<br><br><font size=2 color=#909090>Sitzplatz";
+				if ($tourney->info[teamsize] > 1)
+					echo " des Teamleiters";
+				echo ":</font><br>";
+				PrintSeat($match->info[leader1]);
+			?>
+			</font>
+			</td>
+			<td width="50%" valign=top bgcolor=<? echo ($won == 2) ? "#303030" : $rowcolor; ?>>
+			<font face="Verdana" color=white size="4">
+			<?
+				if ($won == 2)
+					echo "<b>";
+				echo $match->op2_displayname;
+				if ($won == 2)
+					echo "</b>";
+				echo "<br><font size=2 color=#909090>";
+				if ($tourney->info[teamsize] == 1)
+					echo ($match->op2_clan) ? $match->op2_clan : "&nbsp;";
+				else {
+					echo "Team Mitglieder:<br></font><font size=2>";
+					for ($i = 0; $i< count($match->member[2]); $i++) {
+						if ($leader=($match->member[2][$i][id] == $match->info[leader2]))
+							echo "<b>";
+						echo HTMLStr($match->member[2][$i][name]);
+						if ($leader)
+							echo "</b>";
+						echo "<br>";
+					}
+				}
+				echo "<br><br><font size=2 color=#909090>Sitzplatz";
+				if ($tourney->info[teamsize] > 1)
+					echo " des Teamleiters";
+				echo ":</font><br>";
+				PrintSeat($match->info[leader2]);
+			?>
+			</font>
+			</td>
+		</tr>
+	
+		<tr class=liste>
+			<th class=liste colspan=2>Das Ergebnis</th>
+		</tr>
+		</table>
+		<?
+			PrintMatchResult();
+		?>
+		<table class=liste width="100%">
+		<? if (!($match->info[flags] & MF_PLAYED)): ?>
+		<tr class=liste>
+			<th class=liste colspan=2>Die Einstellungen</th>
+		</tr>
+		<tr class=liste>
+			<? if ($match->info[flags] & MF_DRAW): ?>
+			<td class=liste width="50%" valign="top" align=center colspan=2>
+			<?
+				PrintSettings($match->settings[0], $match->settings[0], 0, FALSE);
+			?>
+			</td>
+			<? elseif ($tourney->info[flags] & $TF_DEFMAPS): ?>
+			<td class=liste width="100%" valign="top" align=center colspan=2>
+			<?
+				printf("In dieser Runde wird die Map <b>%s</b> gespielt,<br>falls sich nicht beide Gegner auf eine andere Map einigen.", $round->defmap);
+			?>
+			</td>
+			<? else: ?>
+			<td class=liste width="50%" valign="top">
+			<?
+				PrintSettings($match->settings[1], $match->settings[2], $match->info[op1]);
+			?>
+			</td>
+			<td class=liste width="50%" valign="top">
+			<?
+				PrintSettings($match->settings[2], $match->settings[1], $match->info[op2]);
+			?>
+			</td>
+			<? endif; ?>
+		</tr>
+		<? endif; ?>
+		
+		
+	<? if ($tourneyadmin): ?>	
+		<tr class=liste>
+			<th class=liste colspan=2>Die Admin Funktionen</th>
+		</tr>
+	<? if (!($match->info[flags] & $MF_PLAYED)): ?>
+
+		<tr class=liste>
+			<td class=liste align=center>
+			<?
+					FormStart();
+						FormValue("id", $id);
+						FormValue("action", "forcewin");
+						FormValue("force", "1");
+					
+						FormElement("", "", "Force Win", "submit");
+					FormEnd();
+			?>
+			</td>
+			<td class=liste align=center>
+			<?
+				FormStart();
+					FormValue("id", $id);
+					FormValue("action", "forcewin");
+					FormValue("force", "2");
+
+					FormElement("", "", "Force Win", "submit");
+				FormEnd();
+			?>
+			</td>
+		</tr>
+		<tr>
+			<td class=liste colspan=2 align=center><?
+				FormStart();
+					FormValue("id", $id);
+					FormValue("action", "setextratime");
+					FormElement("f_extratime", "Extra Zeit (Minuten)", $match->info[extratime], "text", "size=4");
+					
+					FormElement("", "", "Setzen", "submit");
+				FormEnd();
+			?></td>
+		</tr>
+	<? endif; ?>	
+		<tr class=liste>
+			<th class=liste colspan=2>!!!Experimentelle Admin Funktionen!!!</th>
+		</tr>
+		<? if ($match->info[flags] & MF_PLAYED): ?>
+		<tr class=liste>
+			<td class=liste align=center>
+			<?
+					FormStart();
+						FormValue("id", $id);
+						FormValue("action", "correctwin");
+						FormValue("force", "1");
+					
+						FormElement("", "", "Correct Win", "submit");
+					FormEnd();
+			?>
+			</td>
+			<td class=liste align=center>
+			<?
+				FormStart();
+					FormValue("id", $id);
+					FormValue("action", "correctwin");
+					FormValue("force", "2");
+
+					FormElement("", "", "Correct Win", "submit");
+				FormEnd();
+			?>
+			</td>
+		</tr>
+		<? endif; ?>
+
+	<? endif; ?>
+	
+	</table>
+<?
+	endif;
+?>
+		
+
+
+<table class=liste width="100%">
+	<tr class=liste>
+		<th class=liste width="50%" align=center>
+			<? 
+			if ($MatchPrintBack)
+				echo "<a href=\"match.phtml?id=$id\">Zur&uuml;ck</a>";
+			else
+				echo "&nbsp;";
+			?>
+		</th>
+		<th class=liste align=center width="50%">
+			<a href="#" onclick="javascript:window.close(); return true;">Fenster Schliessen</a>
+		</th>
+	</tr>
+</table>
+<?
+	
+	EndPage();
+?>

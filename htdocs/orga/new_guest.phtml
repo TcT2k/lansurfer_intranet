@@ -1,0 +1,37 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+	
+	include $LS_BASEPATH."../includes/user_form_new.inc";
+	
+	NavStruct("orga/");
+
+	StartPage("Neuer User/Gast");
+	
+	user_auth_ex(AUTH_TEAM, TEAM_GUEST, 0);
+	
+	if ($submited) {
+		if (UserSignupCheck()) {
+			$newuser = UserSignupCreateAccount();
+			echo "User Angelegt (ID: $newuser)<br>";
+			if (!$f_useronly) {
+				SQL_Query("INSERT INTO guest SET user=$newuser,flags=0");
+				NavPrintAction("guest_detail.phtml?id=".mysql_insert_id(), "Details des Gasts");
+			}
+		};
+	}
+	
+	if (!$submited || $SignUpErrors) {
+		FormStart();
+			UserSignupPrint();
+			FormElement("f_useronly", "Nur als User anlegen", 1, "checkbox");
+			FormElement("", "", "Anlegen", "submit");
+		FormEnd();
+	}
+	
+
+	NavPrintBack();
+	
+	EndPage();
+
+?>

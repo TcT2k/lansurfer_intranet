@@ -1,0 +1,123 @@
+<?
+  $LS_BASEPATH = "../";
+  require $LS_BASEPATH."../includes/lsi_base.inc";
+  include $LS_BASEPATH."../includes/tourney.inc";
+  
+  StartPage("Turniere");
+
+	$tourneyadmin = user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE);
+
+  if ($tourneyadmin): ?>
+	<p class=content>
+	<? NavPrintAction("edit.phtml", "Neues Turnier Anlegen"); ?>
+	</p>
+<? endif; 
+
+  $grp = 0;
+
+  $result= SQL_Query("SELECT 
+  		t.maxteams,
+  		t.grp,
+  		t.id, 
+  		t.name, 
+  		t.icon, 
+  		t.flags,
+  		t.teamsize,
+ 			COUNT(tt.id) as 'teamcount' 
+  	FROM 
+  		tourneys AS t
+  		LEFT JOIN tourney_teams AS tt ON tt.tourney=t.id
+#  	WHERE tt.tourney != 0
+ 		GROUP BY t.id 
+  	ORDER BY grp, t.name");
+  
+?>
+
+<table class=liste>
+  <tr>
+    <th class=liste width=220>Name</td>
+    <th class=liste width=250>Status</td>
+  </tr>
+<?
+  while ($row=mysql_fetch_array($result)) {
+    if ($grp != $row[grp]) {
+?>
+  <tr>
+    <td class=liste colspan=2><b>Gruppe <? echo $row[grp]; ?></b></td>
+  </tr>
+<?    
+    }
+?>
+
+  <tr>
+    <td class=liste >
+    	<a href="show.phtml?id=<? echo $row[id]; ?>">
+    	<img border=0 width=32 height=32 src="<? echo $LS_BASEPATH; ?>images/tourney/icons/<? echo $row[icon]; ?>">
+    	<? echo $row[name]; ?></a>
+    </td>
+    <td class=liste><? 
+    	if ($row[flags] & TF_CANCELED) {
+    		printf("Abgesagt");
+    	} elseif ($row[flags] & $TF_OPEN)
+    		printf("Anmeldung<br><b>%d</b> von maximal <b>%d</b> %s", $row[teamcount], $row[maxteams], ($row[teamsize] == 1) ? "Spielern" : "Teams");
+    	elseif ($row[flags] & $TF_STARTED) {
+    		echo "Gestartet";
+    	} else {
+    		echo "Anmeldung noch nicht m&ouml;glich";
+    		$canopen = true;
+    	}
+    ?>
+    </td>
+    <? if ($tourneyadmin): ?>
+    <td class=content><a href="edit.phtml?action=delete&id=<? echo $row[id]; ?>">L&ouml;schen</a><br>
+    <a href="edit.phtml?id=<? echo $row[id]; ?>">Bearbeiten</a></td>
+    <? endif; ?>
+  </tr>
+<?
+    $grp = $row[grp];
+  }
+?>      
+
+	<? if ($tourneyadmin /*&& $canopen*/): ?>
+	<tr>
+		<td align=right colspan=3>
+			<? if ($action == "opentourney"): ?>
+			<font face=Verdana size=2>
+			<?
+				$query = "UPDATE tourneys SET flags=flags | $TF_OPEN WHERE NOT (flags & $TF_OPEN) AND NOT (flags & $TF_STARTED)";
+				if (SQL_Query($query))
+				  echo "Die Turniere wurden eröffnet.";
+			?>
+			</font>
+			<? elseif ($action == "closetourney"): ?>
+			<font face=Verdana size=2>
+			<?
+				$query = "UPDATE tourneys SET flags=flags & ".(~$TF_OPEN)." WHERE (flags & $TF_OPEN)";
+				if (SQL_Query($query))
+				  echo "Die Anmeldungen wurden geschlossen.";
+			?>
+			</font>
+			<? else: ?>
+				<form action="<? echo $PHP_SELF; ?>" method=post>
+					<input type="hidden" name="action" value="opentourney">
+					<input class=form_btn type="submit" value=" Anmeldung er&ouml;ffnen ">
+				</form>
+				<form action="<? echo $PHP_SELF; ?>" method=post>
+					<input type="hidden" name="action" value="closetourney">
+					<input class=form_btn type="submit" value=" Anmeldung schliessen ">
+				</form>
+			<? endif; ?>
+		</td>
+	</tr>
+	<? endif; ?>
+
+
+</table>
+
+<p class=content>
+Turniere mit weniger als 4 Teams bzw. Spielern finden nicht statt.
+</p>
+<?
+	EndPage();
+?>
+

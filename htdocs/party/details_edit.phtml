@@ -1,0 +1,39 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+	include $LS_BASEPATH."../includes/user_form_new.inc";  
+
+	NavAdd("Meine Details", "details.phtml?party=$party");
+
+	user_auth();
+	if ($submited) {
+		if (UserSignupCheck($uid)) {
+			if ($user_current[id] == $uid) {
+				UserSignupCreateAccount($uid);
+				user_login($uid, $f_password1);
+			}
+		}
+	} else
+		UserSignupLoad($user_current);
+	
+	StartPage("Daten &auml;ndern", $party);
+
+	
+	if (!$submited || count($SignUpErrors)) {
+		FormStart("action =\"".$PHP_SELF."\" method=\"post\"");
+			FormValue("party", $party);
+			FormValue("uid", $user_current[id]);
+	
+ 			UserSignupPrint(TRUE);
+ 			FormElement("", "", "Speichern", "submit");
+ 		
+ 		FormEnd();
+ 	} else {
+ 		echo "Die &Auml;nderungen wurden gespeichert.";
+ 	}
+	
+	NavPrintBack();
+	
+	EndPage();
+
+?>

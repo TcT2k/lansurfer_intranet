@@ -1,0 +1,118 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+	
+	if ($action != "new")
+		NavAdd("Orga Team", $LS_BASEPATH."orga/?id=$team");
+
+	if ($action == "new")
+		$title = "Neues Orga Team";
+	else
+		$title = "Mitglieder";
+	
+	StartPage($title);
+	
+	if ($action=="new") {
+?>
+	<h3 class="contentpanel">Neues Orga Team</h3>
+<?
+		if ($submited) {
+			if ($form_teamname == "")
+				$form_error = 1;
+			
+			SQL_Query("INSERT INTO orgateam VALUES(0, '".addslashes($form_teamname)."', '".addslashes($form_info)."', NOW(), '".addslashes($form_info)."')");
+			SQL_Query("INSERT INTO orga VALUES(0, ".$user_current[id].", 0, NOW(), ".mysql_insert_id().")");
+		} else {
+			$form_url = "http://";
+		}
+
+		if (!$submited || $form_error) {
+		  ?>
+			<p class="contentpanel">
+			Das Team wird gegr&uuml;nded von <b><? echo "<a href=\"mailto:".$user_current[email]."\">".$user_current[name]."</a>"; ?></b>
+			</p><?
+			FormStart("action=\"$PHP_SELF\" method=\"post\"");
+				if ($form_error == 1)
+					FormError("form_teamname", "Das Team muss einen namen haben!");
+			
+				FormValue("action", $action);
+				FormValue("submited", "1");
+				FormElement("form_teamname", "Teamname", $form_teamname, "text", "size=40");
+				FormElement("form_url", "Homepage", $form_url, "text", "size=40");
+				FormElement("form_info", "Infotext", "", "textarea", "rows=6 cols=40");
+				FormElement("", "", "Gr&uuml;nden", "submit");
+			FormEnd();
+		}
+	}	elseif ($action=="neworga") {
+		
+		FormStart("action=\"$PHP_SELF\" method=\"post\"");
+			if ($submited) {
+				if ($f_name == "")
+					FormError("f_name", "Du must einen Namen angeben");
+				else {
+					$res = SQL_Query("SELECT * FROM user WHERE (name like '%".addslashes($f_name)."%')");
+					$itemcount = 0;
+
+					while ($row = mysql_fetch_array($res)) {
+						if (!$itemcount)
+							FormSelectStart("f_user", "Benutzer ausw&auml;hlen", $f_user,"size=10");
+						FormSelectItem($row[name], $row[id], ($itemcount) ? "" : "checked");
+						$itemcount++;
+					}
+					if ($itemcount) {
+						FormSelectEnd();
+						
+						FormValue("action", "neworga_selected");
+						FormValue("team", $team);
+						FormElement("", "", "Hinzuf&uuml;gen", "submit");
+					} else 
+						FormError("f_name", "Es konnt kein Benutzer mit diesem Namen gefunden werden.");
+				}
+			}
+				
+			if (!$submited || $FormErrorCount) {	
+				FormValue("action", $action);
+				FormValue("submited", 1);
+				FormValue("team", $team);
+				
+				FormElement("f_name", "Name", $f_name);
+				FormElement("", "", "Suchen", "submit");
+			}
+		
+		FormEnd();
+	
+	} elseif ($action=="neworga_selected") {
+		SQL_Query("INSERT INTO orga SET user=$f_user");
+		echo "Der Benutzer $f_user wurde zum Team $team hinzugef&uuml;gt<br>";
+		NavPrintBack();
+		
+	} else {
+?>
+	<h3 class="contentpanel">Parties</h3>
+	
+	<p>
+		<a href="party.phtml?action=new">Neue Party</a>
+		<br>
+	
+		<table class="liste">
+			<tr class="liste">
+				<th class="liste">Name</th>
+				<th class="liste">Datum</th>
+				<th class="liste">Ort</th>
+				<th class="liste">Status</th>
+			</tr>
+			<tr class="liste">
+				<td class="liste"></td>
+				<td class="liste"></td>
+				<td class="liste"></td>
+				<td class="liste"></td>
+			</tr>
+		</table>
+	</p>
+	
+<?
+	
+	}
+
+	EndPage();
+?>

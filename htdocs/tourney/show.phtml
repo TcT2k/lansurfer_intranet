@@ -1,0 +1,1094 @@
+<?
+  $LS_BASEPATH = "../";
+  require $LS_BASEPATH."../includes/lsi_base.inc";
+  include $LS_BASEPATH."../includes/tourney.inc";
+  
+  NavStruct("tourney/");
+  
+  $tourney = new Tourney($id);
+  $tourney->InitTiming();
+
+	function PrintTourneyTab($title, $naction, $enabled = TRUE) {
+		global $id, $action;
+		
+		if ($action == $naction)
+			$ch = "h";
+		else
+			$ch = "d";
+	
+		echo "<t$ch class=liste width=120 align=center>";
+		$link = $action != $naction;
+		
+		if (!$enabled)
+			$link = FALSE;
+		
+		if ($link)
+			echo "<a href=\"".$PHP_SELF."?id=$id&action=".$naction."\">";
+		if (!$enabled)
+			echo "<font color=black>";
+		echo $title;
+		if (!$enabled)
+			echo "</font>";
+		if ($link)
+			echo "</a>";
+		echo "</t$ch>";
+	}
+
+	if (isset($adminaction)) {
+		NavAdd($tourney->info[name], "show.phtml?id=".$id);
+		StartPage("Turnier Admin");
+		
+		switch ($adminaction) {
+			case "start":
+				$TeamCount = 0;
+				$res = SQL_Query("SELECT tt.*, COUNT(tm.user) AS 'member_count'
+					FROM tourney_teams AS tt
+						LEFT JOIN tourney_teammember AS tm ON tt.id=tm.team
+					WHERE tourney=$id
+					GROUP BY tt.id
+					");
+				while ($row = mysql_fetch_array($res)) {
+					if ($row[member_count] >= $tourney->info[teamsize])
+						$Teams[$TeamCount++] = $row;
+				}
+				for ($slots = 1; $slots < $TeamCount; $slots*=2) ;
+				
+				if (count($Teams) < 4)
+					LS_Error("4 Teams m&uuml;ssen vollst&auml;ndig sein.");
+
+				// Vor Freilos verteilung Teams Shuffeln
+
+				shuffle($Teams);
+
+				// Freilose Anfügen
+/*				for ($i = $TeamCount; $i < $slots; $i++) {
+					$Teams[$i][id] = 2;
+				}*/
+				
+				$OldTeams = $Teams;
+				$FreeCount = $slots - $TeamCount;
+				$Free = 0;
+				$TeamsFetched = 0;
+				for ($i = $slots - 1; $i >= 0; $i--) {
+					if ($i % 2 != 0 && $Free < $FreeCount) {
+						$Teams[$i][id] = 2;
+						$Free++;
+					} else
+						$Teams[$i] = $OldTeams[$TeamsFetched++];
+				}
+				
+/*				echo "<table border=1>";
+				for ($i = 0; $i < $slots; $i++) {
+					printf("<tr><td align=right>%d</td><td align=right>%d</td></tr>", $i, $Teams[$i][id]);
+				}
+				echo "</table>";
+				
+				echo "TeamCount: ".count($Teams)."<br>"; */
+				
+/*				$j = $slots + 1;
+				// Freilose auf die Teams Verteilen
+				for ($i = 1; $i < $TeamCount; $i+=2) {
+					$j-=2;
+					$Teams[$j][id] = $Teams[$i][id];
+					$Teams[$i][id] = 2;
+				}
+*/				
+
+				
+				for ($i = 0; $i < $slots; $i+=2) {
+					SQL_Query("INSERT INTO tourney_matches SET ".SQL_QueryFields(array(
+						"tourney" => $id,
+						"col" => 0,
+						row => ($i / 2),
+						"op1" => $Teams[$i][id],
+						"op2" => $Teams[$i+1][id],
+						"flags" => 0
+						)));
+				}
+				SQL_Query("UPDATE tourneys SET ".SQL_QueryField("flags", ($tourney->info[flags] & ~$TF_OPEN) | $TF_STARTED , TRUE)." WHERE id=$id");
+			  $tourney = new Tourney($id);
+			  $tourney->InitTiming();
+			  $tourney->clean();
+
+				echo "Die Startpaarungen wurden gelost.";
+
+			
+				if ($TeamCount < 4)
+				  die ("Das Turnier hat zu wenig Teilnehmer, 4 müssen es schon sein.");
+
+				break;
+			case "open":
+				SQL_Query("UPDATE tourneys SET flags=(flags | ".$TF_OPEN.") WHERE id=$id");
+				echo "Die Anmeldung wurde er&ouml;ffnet.";
+				break;
+			case "canceltourney":
+				SQL_Query("UPDATE tourneys SET flags=(flags & ".(~TF_OPEN).") | ".TF_CANCELED.",grp=9999 WHERE id=$id");
+				echo "Das Turnier wurde abgesagt.";
+				break;
+			case "clean":
+				$tourney->clean();
+				echo "Das Turnier wurde aufrer&auml;umt.";
+				break;
+			case "resetmatches":
+				SQL_Query("DELETE FROM tourney_matches WHERE col!=0 AND tourney=$id");
+				SQL_Query("DELETE FROM tourney_results WHERE tourney=$id");
+				SQL_Query("DELETE FROM tourney_settings WHERE tourney=$id");
+				SQL_Query("UPDATE tourney_matches SET flags=0,extratime=0,score1=0,score2=0 WHERE tourney=$id");
+			  $tourney = new Tourney($id);
+			  $tourney->InitTiming();
+			  $tourney->clean();
+			  echo "Die Startaufstellung wurde wieder hergestellt.";
+			  break;
+			case "resetsignup":
+				SQL_Query("DELETE FROM tourney_matches WHERE tourney=$id");
+				SQL_Query("UPDATE tourneys SET flags=".(($tourney->info[flags] & ~$TF_STARTED) | $TF_OPEN)." WHERE id=$id");
+				echo "Die Spiele wurden f&uuml;r ung&uuml;ltig erkl&auml;rt und die Anmeldung erneut er&ouml;ffnet.";
+				break;
+			case "closesignup":
+				SQL_Query("UPDATE tourneys SET flags=".($tourney->info[flags] & ~$TF_OPEN)." WHERE id=$id");
+				echo "Die Anmeldung wurde geschlossen.";
+				break;				
+		}
+		
+		NavPrintBack();
+		EndPage();
+		die();
+	}
+
+	switch ($tourney->status) {
+		case TS_OPEN:
+			$status = "Anmeldung er&ouml;ffnet";
+			$AdminAction = "start";
+			$AdminActionCaption = "Starten";
+			$defaction = "player";
+			break;
+		case TS_CLOSED:
+			$status = "Anmeldung noch nicht er&ouml;ffnet";
+			$AdminActionCaption = "Anmeldung Er&ouml;ffnen";
+			$AdminAction = "open";
+			$defaction = "info";
+			break;
+		case TS_RUNNING:
+			$status = "Spiele werden ausgetragen";
+			$defaction = "games";
+			$AdminAction = "clean";
+			$AdminActionCaption = "Clean";
+			break;
+	}
+
+	if (!isset($action))
+		$action = $defaction;
+
+
+  StartPage($tourney->info[name]);
+  
+	$tourneyadmin = user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE);
+  
+?>
+<script language="JavaScript">
+<!--
+
+function ShowMatch(match) {
+	window.open('match.phtml?id='+match, 'matchinfo','height=400,width=520,locationbar=0,menubar=0,resizable=1,scrollbars=1,status=0');
+//	NewWin.focus();
+	return true;
+}
+
+var oldcolor;
+
+function CellOver(cell)
+{
+   if (!cell.contains(event.fromElement))
+   {
+   		oldcolor = cell.bgColor;
+      cell.style.cursor = 'hand';
+      cell.bgColor = '#735A00';
+   }
+}
+
+function CellOut(cell)
+{
+   if (!cell.contains(event.toElement))
+   {
+      cell.style.cursor = 'default';
+      cell.bgColor = oldcolor;
+   }
+}
+
+function CellClick(cell)
+{
+   if(event.srcElement.tagName=='TD')
+   {
+      cell.children.tags('A')[0].click();
+   }
+}
+
+// -->
+</script>
+<?  
+
+	if ($user_valid) {
+	  $query = "SELECT
+	  		tt.id as 'id'
+	  	FROM 
+	  		tourney_teams as tt, 
+	  		tourney_teammember as ttm 
+	  	WHERE (ttm.team=tt.id) AND (tt.tourney=$id) AND (user=".$user_current[id].")";
+		if ($result=SQL_Query($query)) {
+			if ($userteam=mysql_fetch_array($result)) {
+			}
+		}
+	}
+
+?>
+<p class=content>
+<b>Status des Turniers:</b> <?	echo $status; ?>
+</p>
+
+<? 
+	if ($tourneyadmin && $AdminAction) {
+		echo "<p class=content>";
+		echo "<table><tr><td valign=bottom>";
+		FormStart();
+			FormValue("adminaction", $AdminAction);
+			FormValue("id", $id);
+			
+			FormElement("", "", $AdminActionCaption, "submit");
+		FormEnd();
+		echo "</td>";
+		if ($tourney->status == TS_RUNNING) {
+			echo "<td>";
+			FormStart();
+				FormValue("adminaction", "resetmatches");
+				FormValue("id", $id);
+				
+				FormElement("", "", "Reset: Start", "submit");
+			FormEnd();
+			echo "</td>";
+
+			echo "<td>";
+			FormStart();
+				FormValue("adminaction", "resetsignup");
+				FormValue("id", $id);
+				
+				FormElement("", "", "Reset: Anmeldung", "submit");
+			FormEnd();
+			echo "</td>";
+		} elseif ($tourney->status == TS_OPEN) {
+			echo "<td>";
+			FormStart();
+				FormValue("adminaction", "closesignup");
+				FormValue("id", $id);
+				
+				FormElement("f_removeteams", "Teams Entfernen", 1, "checkbox");
+				FormElement("", "", "Anmeldung Schliessen", "submit");
+			FormEnd();
+			echo "</td>";
+
+			echo "<td>";
+			FormStart();
+				FormValue("adminaction", "canceltourney");
+				FormValue("id", $id);
+				
+				FormElement("", "", "Turnier Absagen", "submit");
+			FormEnd();
+			echo "</td>";
+		}
+
+		echo "</tr></table>";		
+		echo "</p>";
+	}
+
+?>
+
+<p class=content>
+<table>
+	<tr>
+<?
+	PrintTourneyTab("Allgemein", "info");
+	PrintTourneyTab("Regeln/Ablauf", "rules");
+	PrintTourneyTab("Teilnehmer", "player", $tourney->status >= TS_OPEN);
+	PrintTourneyTab("Spiele", "games", $tourney->status >= TS_RUNNING);
+	PrintTourneyTab("Verlauf", "tree");
+?>
+	</tr>	
+</table>	
+</p>
+<?
+
+	// ========================================================================================
+	// info
+	// ========================================================================================
+	if ($action == "info"):
+		include "tinfo.inc";
+	// ========================================================================================
+	// Baum
+	// ========================================================================================
+	elseif ($action == "tree"):
+		include "vtree.phtml";
+	// ========================================================================================
+	// Rules
+	// ========================================================================================
+	elseif ($action == "rules"):
+?>
+<p>
+<font face=Verdana size=2>
+<b>Regeln</b><br>
+<blockquote>
+<?
+	if ($tourney->info[scorename1] != "" ) {
+		echo "<p><font face=Verdana size=2>\n
+		  Das Ergebnis einer Runde wird nach erreichten <b>".$tourney->info[scorename1]."</b> bestimmt";
+		if ($tourney->info[scorename2] != "")
+		  echo ",<br>wenn dannach Gleichstand ist entscheiden die <b>".$tourney->info[scorename2]."</b>.";
+		else
+		  echo ".<br>";
+		echo "\n</font></p>";
+	}
+
+	if ($tourney->info[teamtypes] != "") {
+		echo "<p><font face=Verdana size=2>\n
+		  Folgende <b>Team Arten</b> k&ouml;nen pro Runde gew&auml;hlt werden:<br>";
+		echo "<table border=0>\n<tr><td>&nbsp;</td>";
+		echo "<td><font face=Verdana size=2>".nl2br($tourney->info[teamtypes])."</font></td></tr></table>\n";
+		echo "\n</font></p>";
+	}
+	if ($tourney->info[maplist] != "") {
+		echo "<p><font face=Verdana size=2>\n
+		  Folgende <b>Maps</b> werden in diesem Turnier gespielt:<br>";
+		if ($tourney->info[flags] & $TF_DEFMAPS)
+			echo "Die Maps werden pro Runde <b>festgelegt</b>.<br>";
+		echo "<table border=0>\n<tr><td>&nbsp;</td>";
+		echo "<td><font face=Verdana size=2>".nl2br($tourney->info[maplist])."</font></td></tr></table>\n";
+		echo "\n</font></p>";
+	}
+	if ($tourney->info[settings] != "") {
+		echo "<p><font face=Verdana size=2>\n
+		  Folgende <b>Settings</b> k&ouml;nen pro Runde gew&auml;hlt werden:<br>";
+		echo "<table border=0>\n<tr><td>&nbsp;</td>";
+		echo "<td><font face=Verdana size=2>".nl2br($tourney->info[settings])."</font></td></tr></table>\n";
+		echo "\n</font></p>";
+	}
+	
+	if ($tourney->info[rules] != "") { 
+		echo "<hr color=#333333>";
+		include "rules/".$tourney->info[rules];
+		echo "<hr color=#333333>";
+	}
+?>
+</font>
+</blockquote>
+</p>
+<?
+	// ========================================================================================
+	// Spieler 
+	// ========================================================================================
+	elseif ($action == "player"):
+?>
+<p>
+	<font face=Verdana size=2>
+	<b>Anmeldungen:</b>
+	</font>
+
+<?	
+	$res = SQL_Query("SELECT
+			tt.name AS 'teamname',
+			tt.leader AS 'teamleader',
+			tt.id AS 'teamid',
+			u.name AS 'username',
+			u.clan AS 'userclan',
+			u.id AS 'uid'
+		FROM
+			tourney_teams AS tt
+			LEFT JOIN tourney_teammember AS tm ON tt.id=tm.team
+			LEFT JOIN user AS u ON tm.user=u.id
+		WHERE
+			tt.tourney=$id
+		ORDER BY team, teamname, username");
+	
+	echo "<table><tr>";
+	echo "<th class=liste width=200>Name</th>";
+	if ($tourney->info[teamsize] > 1)
+		echo "<th class=liste width=200>Mitglieder</th>";
+	echo "</tr>";
+	
+	$prevteam = -1;
+	$teamcount = 0;
+	$pcount = 0;
+	
+	while ($row=mysql_fetch_array($res)) {
+		if ($tourney->info[teamsize] == 1) {
+			printf("<tr><td class=liste>%s<br><font size=1>%s</font>", HTMLStr($row[username]), ($row[userclan]) ? $row[userclan] : "&nbsp;");
+			if ($tourney->status < TS_RUNNING && $user_valid && $row[teamleader] == $user_current[id])
+				printf("<div align=right><a href=\"team.phtml?action=leave_tourney&teamid=%d&tid=%d\">Abmelden</a></div>", $row[teamid], $id);
+			echo "</td></tr>";				
+			$teamcount++;
+		} else {
+			if ($row[teamid] != $prevteam) {
+				if ($prevteam > 0) {
+					for ($i = $pcount; $i < $tourney->info[teamsize]; $i++)
+						echo "&nbsp;<br>";
+					if ($tourney->status < TS_RUNNING && $user_valid) {
+						if ($UserInTeam)
+							printf("<div align=right><a href=\"team.phtml?action=leave&teamid=%d&tid=%d\">Verlassen</a></div>", $prevteam, $id);
+						if (!$userteam && $pcount < $tourney->info[teamsize])
+							printf("<div align=right><a href=\"team.phtml?action=join&teamid=%d&tid=%d\">Teilnehmen</a></div>", $prevteam, $id);
+					}
+					echo "</td></tr>\n";
+				}
+				$teamcount++;
+				$pcount = 0;
+				$UserInTeam = false;
+				echo "<tr><td class=liste valign=top>";
+				echo $row[teamname];
+				if ($tourney->status < TS_RUNNING && $user_valid && $row[teamleader] == $user_current[id])
+					printf("<div align=right><a href=\"team.phtml?action=leave_tourney&teamid=%d&tid=%d\">Abmelden</a></div>", $row[teamid], $id);
+				
+				if ($tourney->info[teamsize] > 1) {
+					echo "</td><td class=liste valign=top>";
+				}
+			}
+			if ($row[uid] == $row[teamleader])
+				echo "<b>";
+			echo HTMLStr($row[username]);
+			if ($row[uid] == $row[teamleader])
+				echo "</b>";
+			$prevteam = $row[teamid];
+			if ($tourney->status < TS_RUNNING && $user_valid && $row[teamleader] == $user_current[id] && $row[uid] != $user_current[id]) {
+							printf(" <a href=\"team.phtml?action=kick&teamid=%d&tid=%d&user=%d\">Entfernen</a>", $prevteam, $id, $row[uid]);
+			}
+			echo "<br>";
+			if (!$UserInTeam)
+				$UserInTeam = $user_valid && $row[uid] == $user_current[id] && $user_current[id] != $row[teamleader];
+			
+			$pcount++;
+		}
+		
+		$prevteam = $row[teamid];
+	}
+	if ($teamcount) {
+		if ($tourney->status < TS_RUNNING && $user_valid && $tourney->info[teamsize] > 1) {
+			for ($i = $pcount; $i < $tourney->info[teamsize]; $i++)
+				echo "&nbsp;<br>";
+			if ($UserInTeam)
+				printf("<div align=right><a href=\"team.phtml?action=leave&teamid=%d&tid=%d\">Verlassen</a></div>", $prevteam, $id);
+			if (!$userteam && $pcount < $tourney->info[teamsize])
+				printf("<div align=right><a href=\"team.phtml?action=join&teamid=%d&tid=%d\">Teilnehmen</a></div>", $prevteam, $id);
+		}
+		echo "</td></tr>\n";
+	}
+	
+	echo "<tr><th class=liste";
+	if ($tourney->info[teamsize] > 1)
+		echo " colspan=2";
+	printf(">%d von %d m&ouml;glichen Teilnehmern", $teamcount, $tourney->info[maxteams]);
+	echo "</th></tr>";
+	echo "</table>";
+
+	if ($tourney->status < TS_RUNNING && $user_valid && $teamcount < $tourney->info[maxteams] && !$userteam): ?>
+	<p>
+	<font face="Verdana" size="4">
+	<a href="team.phtml?action=signup&tid=<? echo $id ?>"><i><b><? 
+	  if ($tourney->info[teamsize] > 1) 
+	  	echo "Neues Team Anlegen"; 
+	  else 
+	  	echo "Teilnehmen"; 
+	?>!</b></i></a>
+	</font>
+	</p>
+	<? endif; ?>
+<?
+	// ========================================================================================
+	// Spiele
+	// ========================================================================================
+	elseif ($action == "games"):
+?>
+<p class=content>
+
+<table>
+	<tr>
+		<th width=150 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2" color="#909090"><? if ($tourney->info[teamsize] > 1) echo "Team"; else echo "Spieler"; ?> 1</font>
+		</th>
+		<th width=220 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2" color="#909090">Status</font>
+		</th>
+		<th width=150 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2" color="#909090"><? if ($tourney->info[teamsize] > 1) echo "Team"; else echo "Spieler"; ?> 2</font>
+		</th>
+	</tr>
+<?
+  if ($tourney->info[flags] & $TF_TIMECHECK)
+  	$tourney->clean();
+
+	if ($tourney->info[teamsize] == 1) {
+		$namequery = 
+			"u1.name as 'op1_name', 
+			u1.clan as 'op1_clan', 
+			u2.name as 'op2_name', 
+  		u2.clan as 'op2_clan'";
+  	$tables = "
+			LEFT JOIN user as u1 ON tt1.leader=u1.id
+			LEFT JOIN user as u2 ON tt2.leader=u2.id";
+		$where = "";
+	} else {
+		$namequery = "tt1.name as 'op1_name', 
+			tt2.name as 'op2_name'";
+		$tables = "";
+		$where = "";
+	}
+
+	$query = "
+SELECT
+	tm.id as 'matchid',
+	tm.flags,
+	op1,
+	tt1.leader as 'op1_leader',
+	tt2.leader as 'op2_leader',
+	op2, 
+	col,
+	score1,
+	score2,
+	IF(col<0, (abs(col) + 3) / 2, col + 1) as 'round',
+	row,
+	$namequery
+FROM 
+	tourney_matches as tm
+	LEFT JOIN tourney_teams as tt1 ON tt1.id=op1 
+	LEFT JOIN tourney_teams as tt2 ON tt2.id=op2
+	$tables
+WHERE 
+	(tm.tourney=$id)
+  $where
+ORDER BY
+	round DESC, flags
+	";
+	
+	$result = SQL_Query($query);
+	$prevround = 0;
+	$curtime = time();
+  while ($row=mysql_fetch_array($result)) {
+  	if ($row[op1] > 9 || $row[op2] > 9) {
+  		if ($prevround != $row[round]) {
+  			$round = $tourney->GetRound($row[col]);
+  			$roundactive = ($curtime > $round->starttime && $curtime < $round->endtime);
+  			
+  			echo "<tr><td colspan=4 bgcolor=#303030><font face=Verdana size=2>";
+  			if (!$roundactive)
+  				echo "<font color=#909090>";
+  			echo "<b>Runde $round->dispindex</b>";
+  			echo	" <font size=1>von <b>".shortdate($round->starttime)."</b> bis <b>".shortdate($round->endtime)."</b>";
+  			if ($tourney->info[flags] & $TF_DEFMAPS)
+  				echo "Map: <b>$round->defmap</b>";
+  			echo"</font>";
+  			if (!$roundactive)
+  				echo "</font>";
+  			echo "</td></tr>";
+  			
+  		}
+	  	$prevround = $row[round];
+  	
+  		if ($row[flags] & $MF_PLAYED) {
+  			if ($row[flags] & $MF_OP2WON)
+  				$won = 2;
+  			else
+  				$won = 1;
+  		} else
+  			$won = 0;
+
+    	if ($curtime > $round->endtime && !($row[flags] & $MF_CHECKED))		// matches die nur noch 5 Minuten bis zum eintragen haben
+  		  $rowcolor = "#300000";
+  		elseif (!($row[flags] & $MF_CHECKED) && $userteam && ($row[op1] == $userteam[id] || $row[op2] == $userteam[id]))
+  			$rowcolor = "#003000";
+  		elseif (!($row[flags] & $MF_PLAYED))
+  			$rowcolor= "#505050";
+  		else
+  			$rowcolor = "#202020";
+    		
+?>
+	<tr valign="top">
+		<td width=150 valign="top" bgcolor=<? echo ($won == 1) ? "#303030" : $rowcolor; ?>>
+			<font face="Verdana" color=white size="2"><?
+				if ($won == 1) echo "<b>";
+
+	  		if ($row[op1] == 1)
+	  			echo "<font color=#909090>???</font>";
+	  		elseif ($row[op1] == 2)
+	  			echo "<font color=#909090><i>Freilos</i></font>";
+	  		else
+					echo $row[op1_name];
+				if ($won == 1) echo "</b>";
+
+				echo "<br><font size=1 color=#909090>";
+				if ($row[op1_clan]) 
+					echo $row[op1_clan];
+				else
+				  echo "&nbsp";
+				echo "</font>";
+				
+			?>
+			</font>
+		</td>
+		<td align=center valign="top" bgcolor=<? echo $rowcolor; ?>>
+		<font face=Verdana color=#909090 size=2><?
+
+			if ($row[flags] & $MF_DRAW)
+				echo "Unentschieden";
+			elseif ($won) {
+				if ($row[flags] & $MF_TIMEOUT) {
+					echo "<i>Los</i> f&uuml;r ";
+
+					if ($won == 2)
+						echo $row[op2_name];
+					else
+						echo $row[op1_name];
+				} else {
+					echo "<font face=\"Verdana\" color=\"#909090\" size=4>";
+					echo $row[score1];
+					echo "</font><font face=Verdana color=#909090 size=3>:<font size=4>";
+					echo $row[score2];
+					echo "</font>";
+      	}
+			}
+			else
+				echo "Kein Ergebnis";
+
+			echo "<br><font face=Verdana color=#909090 size=1>";
+
+			if ($row[op1] == 1 || $row[op2] == 1)
+				echo "Gegner steht noch nicht fest";
+			elseif ($row[op1] == 2)
+				printf("Freilos f&uuml;r %s", $row[op2_name]);
+			elseif ($row[op2] == 2)
+				printf("Freilos f&uuml;r %s", $row[op1_name]);
+			else {
+				echo "<a title=\"Details &uuml;ber das Spiel\" onclick=\"javascript:ShowMatch(".$row[matchid].");\" href=\"#\">";
+//				echo "<a title=\"Details &uuml;ber das Spiel\" href=\"match.phtml?action=show&id=".$row[matchid]."\">";
+				echo "Details";	
+				echo "</a>";
+			}
+			echo "</font>";
+
+
+		?></font>
+		</td>
+		<td width=150 valign=\"top\" bgcolor=<? echo ($won == 2) ? "#303030" : $rowcolor; ?>>
+			<font face="Verdana" color=white size="2">
+			<? 
+				if ($won == 2) echo "<b>";
+	  		if ($row[op2] == 1)
+	  			echo "<font color=#909090>???</font>";
+	  		elseif ($row[op2] == 2)
+	  			echo "<font color=#909090><i>Freilos</i></font>";
+	  		else
+					echo $row[op2_name];
+				if ($won == 2) echo "</b>";
+
+				echo "<br><font size=1 color=#909090>";
+				if ($row[op2_clan]) 
+					echo $row[op2_clan];
+				else
+				  echo "&nbsp";
+				echo "</font>";
+
+			?></font>
+		</td>
+	</tr>
+	
+
+<?    
+    }
+  }
+
+?>
+
+</table>
+</p>
+
+<? else: ?>
+<p>
+<font face="Verdana" size="2">
+	<? if (user_auth_ex(AUTH_TOURNEY, $id)): ?>
+			<? if ($action == "opentourney"): ?>
+			<font face=Verdana size=2>
+			<?
+				$query = "UPDATE tourneys SET flags=flags | $TF_OPEN WHERE (id=$id)";
+				if (mysql_query($query))
+				  echo "Die Turniere wurden eröffnet.";
+				else
+					SQL_Error($query, false);
+			?>
+			</font>
+			<? else: ?>
+				<form action="<? echo $PHP_SELF; ?>" method=post>
+					<input type="hidden" name="action" value="opentourney">
+					<input type="hidden" name="id" value="<? echo $id; ?>">
+					<input class=abtn type="submit" value=" Anmeldung er&ouml;ffnen ">
+				</form>
+			<? endif; ?>
+	<? endif; ?>
+
+</font>
+</p>
+
+<?
+
+	endif;
+
+
+
+
+
+
+
+
+
+
+// ----------------------------------------
+EndPage();
+die();
+
+?>
+
+<? if ($tourney->info[flags] & $TF_OPEN): ?>
+
+<? if (user_auth_ex(AUTH_TOURNEY, $id) && !($tourney->info[flags] & $TF_STARTED)): ?>
+
+<table>
+	<tr>
+		<td>
+			<form action="show.phtml" method="post">
+			<input type="hidden" name="action" value="start">
+			<input type="hidden" name="id" value="<? echo $id; ?>">
+			<input class=abtn type="submit" value="Turnier Starten">
+			</form>
+		</td>
+		<td>
+		  <?if ($action =="closetourney"): ?>
+			<?
+				echo "TFOPEN: $TF_OPEN  NOT ".(~$TF_OPEN);
+				$query = "UPDATE tourneys SET flags=flags & ".(~$TF_OPEN)." WHERE (id=$id)";
+				if (mysql_query($query))
+				  echo "Das Turnier wurde geschlossen.";
+				else
+					SQL_Error($query, false);
+			?>
+			<? else: ?>
+			<form action="<? echo $PHP_SELF; ?>" method=post>
+				<input type="hidden" name="action" value="closetourney">
+				<input type="hidden" name="id" value="<? echo $id; ?>">
+				<input class=abtn type="submit" value="Anmeldung schliessen">
+			</form>
+			<? endif; ?>
+		</td>
+	</tr>
+</table>	
+<? endif; ?>
+
+
+<? if ($action == "start" && user_auth_ex(AUTH_TOURNEY, $id)): ?>
+
+<!--   Debug Test     -->
+<?
+	if ($pcount < 4)
+	  die ("Das Turnier hat zu wenig Teilnehmer, 4 müssen es schon sein.");
+	$slots = 1;
+	while ($slots < $pcount) {
+		$slots *= 2;
+	}
+	$freecount = ($slots - $pcount);
+?>
+<table>
+  <td>
+  Start Array für <? echo $slots; ?> benötigte Slots:<br>
+  <? echo $freecount; ?> Freilose müssen vergeben werden
+  <table>
+  <?
+    $pindex = 0;
+    while ($pindex < $pcount) {
+    	echo "<tr><td bgcolor=#303030 width=20 align=right>".($pindex + 1)."</td><td bgcolor=#303030 width=50 align=right>".$players[$pindex]."</td></tr>";
+    	$pindex++;
+    }
+    $pindex = $pcount;
+    while ($pindex < $slots) {
+    	echo "<tr><td bgcolor=#303030 width=20 align=right>".($pindex + 1)."</td><td bgcolor=#303030 width=50>&nbsp;</td></tr>";
+    	$pindex++;
+    }
+  ?>
+  </table>
+  </td>
+  <td>
+  End array:<br>&nbsp;
+  <table>
+  <?  
+    shuffle($players);
+
+    $pindex = 1;
+    while ($pcount < $slots) {
+    	$players[$pcount] = $players[$pindex];
+    	$players[$pindex] = 2;
+    	$pcount++;
+    	$pindex += 2;
+    }
+  
+    $pindex = 0;
+    while ($pindex < $pcount) {
+    	echo "<tr><td bgcolor=#303030 width=250 align=right>";
+    	if ($players[$pindex] < 1)
+    		echo "<font color=#a0a0a0>--</font>";
+    	else
+    	  echo $players[$pindex];
+    	echo "<br>";
+    	if ($players[$pindex + 1] == 2)
+    		echo "<font color=#a0a0a0>--</font>";
+    	else
+    	  echo $players[$pindex + 1];
+    	$query = "INSERT INTO tourney_matches VALUES(0, $id, 0, ".($pindex / 2).", ".$players[$pindex].", ".$players[$pindex + 1].", 0, 0)";
+//    	echo $query;
+	  	if ($result=mysql_query($query)) {
+	  		
+		  } else {
+		    echo "<b>SQL Error</b>:".mysql_error()."<br>\n";
+		  }
+		  
+    	echo "</td></tr>";
+    	$pindex += 2;
+    }
+	  $query = "UPDATE tourneys SET flags=flags | $TF_STARTED WHERE (id=$id)";
+	  if (!mysql_query($query))
+	  	SQL_Error($query, TRUE);
+
+	  $query = "UPDATE tourneys SET flags=flags & ".(~$TF_OPEN)." WHERE (id=$id)";
+	  if (!mysql_query($query))
+	  	SQL_Error($query, TRUE);
+
+    
+    $tourney->clean();
+  ?>
+  </table>
+  </td>
+</table>
+
+<p>
+<font face=Verdana size=2>
+<a target="_top" href="tree.phtml?id=<? echo $id; ?>">Start Aufstellung</a>
+</font>
+</p>
+
+<!--   Debug Test Ende    -->
+
+<? endif; ?>
+
+
+<? elseif ($tourney->info[flags] & $TF_STARTED): // Turnier hat bereits gestartet?>
+<p>
+<font face=Verdana size=2>
+<a target="_top" href="tree.phtml?id=<? echo $id; ?>">Turnier Übersicht</a>
+</font>
+</p>
+
+<p>
+	<font face=Verdana size=2>
+	<b>Spiele:</b>
+	</font>
+
+<table>
+	<tr>
+		<th width=150 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2"><? if ($tourney->info[teamsize] > 1) echo "Team"; else echo "Spieler"; ?> 1</font>
+		</th>
+		<th width=150 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2"><? if ($tourney->info[teamsize] > 1) echo "Team"; else echo "Spieler"; ?> 2</font>
+		</th>
+		<th colspan=2 width=150 bgcolor=#303030 align=center>
+			<font face="Verdana" size="2">Status</font>
+		</th>
+	</tr>
+<?
+  if ($tourney->info[flags] & $TF_TIMECHECK)
+  	$tourney->clean();
+
+	if ($tourney->info[teamsize] == 1) {
+		$namequery = 
+			"u1.name as 'op1_name', 
+			u1.clan as 'op1_clan', 
+			u2.name as 'op2_name', 
+  		u2.clan as 'op2_clan'";
+  	$tables = ",
+			user as u1,
+			user as u2";
+		$where = "AND (tt1.leader=u1.id) AND (tt2.leader=u2.id)";
+	} else {
+		$namequery = "tt1.name as 'op1_name', 
+			tt2.name as 'op2_name'";
+		$tables = "";
+		$where = "";
+	}
+
+	$query = "
+SELECT
+	tm.id as 'matchid',
+	tm.flags,
+	op1,
+	tt1.leader as 'op1_leader',
+	tt2.leader as 'op2_leader',
+	op2, 
+	col,
+	IF(col<0, (abs(col) + 3) / 2, col + 1) as 'round',
+	row,
+	$namequery
+FROM 
+	tourney_matches as tm, 
+	tourney_teams as tt1, 
+	tourney_teams as tt2
+	$tables
+WHERE 
+	(tm.tourney=$id) AND /* NOT (tm.flags & $MF_PLAYED) AND (op1>9) AND (op2>9) AND */
+  (tt1.id=op1) AND (tt2.id=op2)
+  $where
+ORDER BY
+	round DESC
+	";
+  if ($result=mysql_query($query)) {
+  	$prevround = 0;
+  	$curtime = time();
+    while ($row=mysql_fetch_array($result)) {
+    	if (/*($row[flags] & $MF_PLAYED) && */$row[op1] > 9 && $row[op2] > 9 ) {
+    		if ($prevround != $row[round]) {
+    			$round = $tourney->GetRound($row[col]);
+    			$roundactive = ($curtime > $round->starttime && $curtime < $round->endtime);
+    			
+    			echo "<tr><td colspan=4 bgcolor=#303030><font face=Verdana size=2>";
+    			if (!$roundactive)
+    				echo "<font color=#909090>";
+    			echo "<b>Runde $round->dispindex</b>";
+    			echo	" <font size=1>von <b>".shortdate($round->starttime)."</b> bis <b>".shortdate($round->endtime)."</b>";
+    			if ($tourney->info[flags] & $TF_DEFMAPS)
+    				echo "Map: <b>$round->defmap</b>";
+    			echo"</font>";
+    			if (!$roundactive)
+    				echo "</font>";
+    			echo "</td></tr>";
+    			
+    		}
+  	  	$prevround = $row[round];
+    	
+    		if ($row[flags] & $MF_PLAYED) {
+    			if ($row[flags] & $MF_OP2WON)
+    				$won = 2;
+    			else
+    				$won = 1;
+    		} else
+    			$won = 0;
+
+      	if ($curtime > $round->endtime && !($row[flags] & $MF_CHECKED))		// matches die nur noch 5 Minuten bis zum eintragen haben
+    		  $rowcolor = "#300000";
+    		elseif ($userteam && ($row[op1] == $userteam[id] || $row[op2] == $userteam[id]))
+    			$rowcolor = "#003000";
+    		else
+    			$rowcolor = "#202020";
+    		
+?>
+	<tr>
+		<td width=150 bgcolor=<? echo $rowcolor; ?>>
+			<font face="Verdana" color=#77DC6E size="2"><?
+				if ($won == 1) echo "<b>";
+				if ($row[op1_clan] != "") 
+					echo "[".$row[op1_clan]."]";
+				echo $row[op1_name];
+				if ($won == 1) echo "</b>";
+			?>
+			</font>
+		</td>
+		<td width=150 bgcolor=<? echo $rowcolor; ?>>
+			<font face="Verdana" color=#77DC6E size="2">
+			<? 
+				if ($won == 2) echo "<b>";
+				if ($row[op2_clan] != "") 
+					echo "[".$row[op2_clan]."]";
+				echo $row[op2_name];
+				if ($won == 2) echo "</b>";
+			?></font>
+		</td>
+		<td width=200 bgcolor=<? echo $rowcolor; ?>>
+			<font face="Verdana" color=#77DC6E size="2">
+		<?
+			if ($row[flags] & $MF_DRAW)
+				echo "Unentschieden";
+			elseif ($won) {
+				if ($row[flags] & $MF_TIMEOUT)
+					echo "<i>Los</i> f&uuml;r ";
+				else
+					echo "Gewonnen von ";
+				if ($won == 2) {
+					if ($row[op2_clan] != "") 
+						echo "[".$row[op2_clan]."]";
+					echo $row[op2_name];
+				} else {
+					if ($row[op1_clan] != "") 
+						echo "[".$row[op1_clan]."]";
+					echo $row[op1_name];
+				}
+			}
+			else
+				echo "Kein Ergebnis"
+		
+		?></font>
+		</td>
+		<td width=80 bgcolor=<? echo $rowcolor; ?> align=center>
+			<font face="Verdana" color=#77DC6E size="2">
+			<a title="Details &uuml;ber das Spiel" href="match.phtml?action=show&id=<? echo $row[matchid] ?>">Details</a>
+			</font>
+		</td>
+	</tr>
+	
+
+<?    
+      }
+    
+    }
+	} else
+	  SQL_Error($query, false);
+
+
+?>
+
+</table>
+</p>
+
+<? else: ?>
+<p>
+<font face="Verdana" size="2">
+	<? if (user_auth_ex(AUTH_TOURNEY, $id)): ?>
+			<? if ($action == "opentourney"): ?>
+			<font face=Verdana size=2>
+			<?
+				$query = "UPDATE tourneys SET flags=flags | $TF_OPEN WHERE (id=$id)";
+				if (mysql_query($query))
+				  echo "Die Turniere wurden eröffnet.";
+				else
+					SQL_Error($query, false);
+			?>
+			</font>
+			<? else: ?>
+				<form action="<? echo $PHP_SELF; ?>" method=post>
+					<input type="hidden" name="action" value="opentourney">
+					<input type="hidden" name="id" value="<? echo $id; ?>">
+					<input class=abtn type="submit" value=" Anmeldung er&ouml;ffnen ">
+				</form>
+			<? endif; ?>
+	<? endif; ?>
+
+</font>
+</p>
+
+<? endif; ?>
+
+<? 
+	echo "<p class=content>";
+	NavPrintBack();
+	echo "</p>";
+	EndPage();
+
+?>
+

@@ -1,0 +1,185 @@
+<?
+	/*
+			format:
+				1: Teilnehmer Liste
+				2: Gästeliste
+				3: Warteliste
+	*/
+	$DisplayRowCount = 50;
+
+	if (!isset($format) || $format > 3)
+		$format = 1;
+
+	switch ($format) {
+		case 1:
+			$title = "Teilnehmerliste";
+			break;
+		case 2:
+			$title = "G&auml;steliste";
+			break;
+		case 3:
+			$title = "Warteliste";
+			break;
+	}
+
+	function ListLink($newpage, $neworder = "") {
+		global $party, $sort, $desc, $page, $PHP_SELF;
+
+		$txt = "";
+
+		if ($neworder) {
+			$txt .= $neworder;
+			if ($page >= 0)
+				$newpage = 0;
+		} else
+			$txt .= $sort;
+
+		if ($neworder == $sort)
+			$txt .= "&desc=".(!$desc);
+		else
+			$txt .= "&desc=".($desc);
+
+		$txt = $PHP_SELF."?party=$party&page=$newpage&sort=".$txt;
+
+		return $txt;
+	}
+
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	if (!isset($sort))
+		$sort = "clan, name";
+	if (!isset($desc))
+		$desc = 0;
+
+	StartPage($title);
+
+	if ($format == 2)
+		$whereadd = "AND (guest.flags & ".GUEST_PAID.")";
+	elseif ($format == 3)
+		$whereadd = "AND NOT (guest.flags & ".GUEST_PAID.")";
+	else
+		$whereadd = "";
+
+	$res = SQL_Query("SELECT COUNT(*) FROM guest $whereadd");
+	$rowcount = mysql_result($res, 0, 0);
+
+	echo "<p class=\"content\">Es sind insgesamt $rowcount Spieler auf der $title.</p>";
+
+	if (!isset($page))
+		$page = 0;
+
+	if ($rowcount > $DisplayRowCount) {
+		echo "<p class=\"content\">";
+		$PageCount = ceil($rowcount / $DisplayRowCount);
+
+		for ($i=0; $i <= $PageCount; $i++) {
+			$startindex = ($i) * $DisplayRowCount;
+			if (!$startindex)
+				$startindex = 1;
+			$text = sprintf("%03d-%03d", $startindex, ($startindex + $DisplayRowCount));
+
+			echo " ";
+
+			if 	($i == $PageCount) {
+				if ($page == -1)
+					echo "Alle";
+				else
+					echo "<a href=\"".ListLink(-1)."\">Alle</a>";
+			} elseif ($i == $page)
+				echo $text;
+			else
+ 				echo "<a href=\"".ListLink($i)."\">".$text."</a>";
+ 			if (($i + 1) % 6 == 0)
+ 				echo "<br>";
+		}
+		echo "</p>";
+	}
+
+	if ($page >= 0) {
+		$startindex= $DisplayRowCount * $page;
+		$SQLlimit = "LIMIT $startindex, $DisplayRowCount";
+	} else {
+		$SQLlimit = "";
+	}
+
+	if ($desc)
+		$SQLSort = "DESC";
+	else
+		$SQLSort = "";
+
+	flush();
+
+	if ($whereadd)
+		$whereadd = "WHERE ".$whereadd;
+
+	$res = SQL_Query("SELECT
+		user.name,
+		user.clan,
+		user.id as 'id',
+		user.ip_address,
+		guest.flags,
+		seats.id as 'seat_id',
+		seats.row,
+		seats.col,
+		seats.block,
+		seat_block.name as 'block_name'
+		FROM guest
+			LEFT JOIN user ON (user.id=guest.user)
+			LEFT JOIN seats ON seats.guest=guest.id AND seats.status=".SEAT_OCCUPIED."
+			LEFT JOIN seat_block ON seats.block=seat_block.id
+		$whereadd
+		ORDER BY $sort $SQLSort
+		$SQLlimit");
+
+	?>
+	<table class="liste">
+		<tr class="liste">
+			<th class="liste" width=180><a href="<? echo ListLink($page, "name"); ?>">Name</a></th>
+			<th class="liste" width=80><a href="<? echo ListLink($page, "clan,name"); ?>">Clan</a></th>
+			<? if ($format == 1): ?>
+			<th class="liste" width=80><a href="<? echo ListLink($page, "flags"); ?>">Status</a></th>
+			<? endif; ?>
+			<? if (LS_IP_PUBLIC): ?>
+			<th class="liste" width=80><a href="<? echo ListLink($page, "ip_address"); ?>">IP-Adresse</a></th>
+			<? endif; ?>
+		</tr>
+	<?
+		while ($row=mysql_fetch_array($res)) {
+	?>
+		<tr class="liste">
+			<td class="liste" width=180><? PrintHTMLStr($row['name']); ?></td>
+			<td class="liste" width=180><? echo ($row['clan'] == "") ? "&nbsp;" : HTMLStr($row['clan']); ?></td>
+			<? if ($format==1): ?>
+			<td class="liste" width=180><?
+				if (isset($row['seat_id']))
+					echo "<a href=\"seat.phtml?id=".$row['block']."&row=".$row['row']."&col=".$row['col']."\">".$row['block_name'].", Platz: ".chr($row['row'] + 65)." ".($row['col'] + 1)."</a>";
+				else
+					echo ($row['flags'] & GUEST_PAID) ? "Bezahlt" : "Nicht Bezahlt"; ?></td>
+			<? endif; ?>
+			<? if (LS_IP_PUBLIC): ?>
+			<td class="liste" width=180><? PrintHTMLStr($row['ip_address']); ?></td>
+			<? endif; ?>
+		</tr>
+	<?
+		}
+	?>
+		<tr>
+			<td class="content"><?
+			if ($page > 0)
+				NavPrintPrevPage(ListLink($page - 1));
+			else
+				echo "&nbsp;";
+			?></td>
+			<td class="content" align="right" colspan=2><?
+			if ($page < $PageCount - 1 && $page >= 0 && $PageCount)
+				NavPrintNextPage(ListLink($page + 1));
+			else
+				echo "&nbsp;";
+			?></td>
+		</tr>
+	</table>
+	<?
+
+	EndPage("");
+?>

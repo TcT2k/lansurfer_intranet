@@ -1,0 +1,164 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	$res = SQL_Query("SELECT user.id as 'uid', user.email, user.name, user.clan, user.realname1, user.realname2, guest.flags, pwd 
+		FROM guest 
+			LEFT JOIN user ON user.id=user WHERE guest.id=$id");
+	$Guest = mysql_fetch_array($res);
+
+	NavStruct("orga/guestlist/");
+	
+	if ($action == 'login') {
+		user_login($Guest['uid'], $Guest['pwd'], true);
+	}
+	
+	StartPage("Details zum Gast");
+	if ($action == 'login') {
+	?>
+	  <script language="JavaScript">
+	  <!--
+	  var status_frame = parent.frames["navbar"];
+	  if (status_frame.location) {
+	  	var url = status_frame.location.href;
+	  	status_frame.location.replace(url);
+	  }
+	  //-->
+	  </script>
+	<?
+			echo '<p class=content>Du bist nun als dieser Gast eingeloggt</p>';
+			EndPage();
+			die();
+	}
+
+
+	user_auth_ex(AUTH_TEAM, 0, TEAM_GUEST);
+
+	if ($action == "setpaid") {
+		switch ($f_paid) {
+			case 0:
+				$f_oldflags = 0;
+				break;
+			case 1:
+				$f_oldflags = GUEST_PAID;
+				break;
+			case 2:
+				$f_oldflags = GUEST_PAID | GUEST_VIP;
+				break;
+			case 3:
+				$f_oldflags = GUEST_PAID | GUEST_EVENING;
+				break;
+			case 4:
+				$f_oldflags = GUEST_PAID | GUEST_PREPAID;
+				break;
+		}
+		if ($f_onlocation)
+			$f_oldflags |= GUEST_ONLOCATION;
+		$Guest[flags] = $f_oldflags;
+	  
+		SQL_Query("UPDATE guest SET flags=$f_oldflags WHERE id=$id");
+	} else {
+		if ($Guest[flags] & GUEST_PREPAID)
+			$f_paid = 4;
+		elseif ($Guest[flags] & GUEST_EVENING)
+			$f_paid = 3;
+		elseif ($Guest[flags] & GUEST_VIP)
+			$f_paid = 2;
+		elseif ($Guest[flags] & GUEST_PAID)
+			$f_paid = 1;
+		else
+			$f_paid = 0;
+	}
+	
+	echo "<p class=content>";
+	echo "<b>Name:</b> ".HTMLStr($Guest[name])."<br>
+		<b>Clan:</b> ".HTMLStr($Guest[clan])."<br>
+		<b>Vorname:</b> ".HTMLStr($Guest[realname1])."<br>
+		<b>Nachname:</b> ".HTMLStr($Guest[realname2])."<br>
+		<b>Email:</b> ".HTMLStr($Guest[email])."<br>
+		";
+
+	echo "<b>Sitzplatz:</b> ";		
+	$res = SQL_Query("SELECT
+			sb.id as 'blockid',
+			s.id,
+			sb.name,
+			s.row,
+			s.col 
+		FROM guest AS g
+			LEFT JOIN seats AS s ON s.guest=g.id
+			LEFT JOIN seat_block AS sb ON s.block=sb.id
+		WHERE g.id=$id AND status=".SEAT_OCCUPIED."
+		");
+	$Seat = mysql_fetch_array($res);
+	if ($Seat && $Seat[id]) {
+		echo "<a href=\"../party/seat.phtml?id=".$Seat[blockid]."&row=".$Seat[row]."&col=".$Seat[col]."\" target=\"main\">".$Seat[name].", ".chr($Seat[row] + 65)." ".($Seat[col] + 1)."</a><br>";
+	} else {
+		echo "<font color=white>(Unbekannt)</font>";
+	}
+	echo "<br>";
+		
+	if ($action == 'setpw') {
+		if ($submitted) {
+			if (!$f_pw1 || !$f_pw2)
+				FormError('f_pw1', "Passwort ben&ouml;tigt");
+			if ($f_pw1 != $f_pw2)
+				FormError('f_pw1', "Die Passw&ouml;rter sind nicht gleich");
+			if (!$FormErrorCount) {
+				SQL_Query("UPDATE user SET pwd=PASSWORD(".SQL_Quot($f_pw1).") WHERE id=".SQL_Quot($Guest['uid']));
+				echo '<p class=content>Passwort gespeichert.</p>';
+			}
+		}
+		
+		if (!$submitted || $FormErrorCount) {
+			FormStart();
+				FormValue('id', $id);
+				FormValue('action', $action);
+				FormValue('submitted', 1);
+				
+				FormElement('f_pw1', "Neues Passwort", '', 'password');
+				FormElement('f_pw2', "Neues Passwort (nochmal)", '', 'password');
+				FormElement('', '', "Speichern", 'submit');
+			FormEnd();
+		}
+	} elseif ($action == "remove") {
+		if ($submited) {
+			SQL_Query("DELETE FROM guest WHERE id=$id");
+			echo "<p class=content>Der Gast wurde von der G&auml;steliste entfernt.</p>";
+		} else {
+			echo "<p class=content>Willst du diesen Gast wirklich von der G&auml;steliste <b>entfernen</b>?</p>";
+			FormStart();
+				FormValue("id", $id);
+				FormValue("action", $action);
+				FormValue("submited", 1);
+				FormElement("", "", "Löschen", "submit");
+			FormEnd();
+		}
+	} else {
+		NavPrintAction($PHP_SELF.'?id='.$id.'&action=setpw', "Neues Passwort setzen");		
+		echo '<br>';
+		NavPrintAction($PHP_SELF.'?id='.$id.'&action=login', "Identit&auml;t annehmen");		
+		
+		FormStart();
+			FormValue("id", $id);
+			FormValue("f_oldflags", $Guest[flags]);
+			FormValue("action", "setpaid");
+			FormSelectStart("f_paid", "Zahlungs Status", $f_paid);
+				FormSelectItem("Nicht Bezahlt", 0);
+				FormSelectItem("Bezahlt", 1);
+				FormSelectItem("VIP (Taucht als Bezahlt auf aber wird nicht in Geldberechnungen einbezogen)", 2);
+				FormSelectItem("Abendkasse", 3);
+				FormSelectItem("Bezahlt (Vorgemerkt)", 4);
+			FormSelectEnd();
+			FormElement("f_onlocation", "Anwesend", 1, "checkbox", ($Guest[flags] & GUEST_ONLOCATION) ? "checked" : "");
+//			FormElement("f_paid", "Bezahlt", "1", "checkbox", ($Guest[flags] & GUEST_PAID) ? "checked" : "");
+			FormElement("", "", "Status Setzen", "submit");
+		FormEnd();
+	}
+
+	echo "</p>";
+
+	NavPrintBack();
+	
+	EndPage();
+?>

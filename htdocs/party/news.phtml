@@ -1,0 +1,49 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	StartPage("News", 0, 0, STYLE_NOINNER);
+
+	$LS_Design['newsitem'] = "
+	<table width=70% align=center>
+		<tr>
+			<th class=liste align=left width=\"70%\"><font face=Verdana size=2><b>%NEWS_TITLE%</b></font></th>
+			<th class=liste width=\"30%\">%NEWS_TIME%, %NEWS_DATE%</th>
+		</tr>
+		<tr>
+			<td class=liste colspan=2><font face=Verdana size=2>
+				<div align=justify>
+				%NEWS_TEXT%
+				</div>
+			</font></td>
+		</tr>
+	</table>
+	<p></p>
+	";
+	
+	$res = SQL_Query("SELECT 
+		user.name,
+		user.email,
+		news.title, 
+		news.msg,
+		DATE_FORMAT(news.date, '%e.%m.%Y') as date,
+		DATE_FORMAT(news.date, '%H:%i') as time
+		FROM news LEFT JOIN user ON author=user.id 
+		WHERE (news.options&".NEWS_TEAM.")
+		ORDER BY news.date DESC");
+	while ($row = mysql_fetch_array($res)) {
+		$s = $LS_Design['newsitem'];
+	
+		$s = str_replace ("%NEWS_TITLE%", $row['title'], $s);
+		$s = str_replace ("%NEWS_TEXT%", $row['msg'], $s);
+		$s = str_replace ("%NEWS_DATE%", $row['date'], $s);
+		$s = str_replace ("%NEWS_TIME%", $row['time'], $s);
+		$s = str_replace ("%AUTHOR_EMAIL%", $row['email'], $s);
+		$s = str_replace ("%AUTHOR_NAME%", $row['name'], $s);
+		
+		echo $s;
+	}
+	
+	EndPage();
+
+?>

@@ -1,0 +1,138 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+
+	StartPage("Forum");
+	
+	if ($user_valid && ($PageSize = $user_current[forum_pagecount]) > 25) {
+	
+	} else
+		$PageSize = 25;
+		
+	$ForumAdmin = user_auth_ex(AUTH_TEAM, 0, TEAM_FORUM, FALSE);
+	
+	echo "<h3 class=\"contentpanel\">Forum</h3>";
+
+	function utime()
+	{
+	    $time = explode(" ", microtime());
+	    $usec = (double)$time[0];
+	    $sec = (double)$time[1];
+	    return $sec + $usec;
+	}
+
+	NavPrintAction("topic.phtml?action=new&forum=$id", "Neues Thema");
+?>	
+	<br>
+	<p>
+	<table class="liste" width="96%">
+		<tr class="liste">
+			<th class="liste" width=200>Thema</th>
+			<th class="liste" width=40>Beitr&auml;ge</th>
+			<th class="liste" width=80>Seiten</th>
+			<th class="liste" width=200>Letzer Beitrag</th>
+		</tr>
+		<?
+		flush();
+		$starttime=utime();
+		
+		$res = SQL_Query("SELECT COUNT(*) FROM forum_topic");
+		$TopicCount = mysql_result($res, 0, 0);
+
+		$PageCount = ceil($TopicCount / $PageSize);
+
+		$SQLLimit = sprintf("LIMIT %d, %d", $page * $PageSize, $PageSize);
+
+		$res = SQL_Query("SELECT 
+				u.name as 'username',
+				u.id as 'userid',
+				u.clan,
+				ft.title,
+				ft.id,
+				ft.pcount,
+				lp.name, lp.email, lp.ls_id,
+				DATE_FORMAT(lp.date, '%d.%m.%Y') as 'date',
+				DATE_FORMAT(lp.date, '%H:%i') as 'time',
+				TO_DAYS(CURDATE()) - TO_DAYS(lp.date) as 'past'
+			FROM 
+				forum_topic AS ft,
+				forum_posting AS lp
+				LEFT JOIN user AS u ON u.id=lp.ls_id
+			WHERE (lp.topic=ft.id) AND (lp.flags=1)
+			ORDER BY lp.date DESC
+			$SQLLimit");
+
+		printf("<!-- DEBUG: Done, took %.2f seconds. -->", ($idle_while=utime()-$starttime));
+		
+		while ($row = mysql_fetch_array($res)) {
+		?>
+		<tr>
+			<td class="liste"><? echo "<a href=\"postings.phtml?id=".$row[id]."\">".HTMLStr($row[title], 30)."</a>"; ?></td>
+			<td class="liste" align="right"><? echo $row[pcount]; ?></td>
+			<td class="liste" align=center><?
+				for ($i = 0; $i < ceil($row[pcount] / $PageSize); $i++) {
+					if ($i > 0)
+						echo " ";
+					echo "<a href=\"postings.phtml?id=".$row[id]."&page=".($i)."\">".($i + 1)."</a>";
+				}
+			?></td>
+			<td class="liste"><?
+					switch ($row[past]) {
+						case 0:
+							echo "<b>Heute</b>";
+							break;
+						case 1:
+							echo "<b>Gestern</b>";
+							break;
+						default:
+							echo $row[date];
+					}
+				  echo ", ".$row[time]." von ";
+				  if ($row[ls_id] > 0)
+				  	echo HTMLStr($row[username]);
+				  else
+				    echo $row[name];
+				    
+				  if ($ForumAdmin) {
+				  	printf(" <a title=\"Dieses Thema entfernen\" href=\"topic.phtml?action=remove&id=%d\">[Entf]</a>", $row[id]);
+				  }
+				  	
+			?></td>
+		</tr>
+		
+		<?
+		}
+		?>
+		<tr>
+			<td class="content" colspan=2>
+			<?
+				if ($page)
+					NavPrintPrevPage(sprintf("%s?page=%d", $PHP_SELF, $page - 1), "Neuere Themen");
+				else
+					echo "&nbsp;";
+			?>
+			</td>
+			<td class="content" colspan=2 align=right>
+			<?
+				if ($page < $PageCount - 1 && $PageCount)
+					NavPrintNextPage(sprintf("%s?page=%d", $PHP_SELF, $page + 1), "&Auml;ltere Themen");
+				else
+					echo "&nbsp;";
+			?>
+			</td>
+		</tr>
+	</table>
+	</p>
+<?	
+	if ($PageCount > 1) {
+		echo "<p class=\"contentpanel\">Seiten mit &auml;lteren Themen ";
+		for ($i = 0; $i < $PageCount; $i++)
+			if ($i == $page)
+				echo ($i + 1)." ";
+			else
+				printf("<a href=\"%s?page=%d\">%d</a> ", $PHP_SELF, $i, $i+1);
+		echo "</p>";
+	}
+
+	EndPage();
+?>

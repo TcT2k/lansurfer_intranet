@@ -1,0 +1,48 @@
+<?
+	$LS_BASEPATH = "../";
+	include $LS_BASEPATH."../includes/ls_base.inc";
+	include $LS_BASEPATH."../includes/seat_util.inc";
+
+	if (isset($LS_SeatOverview))
+		$showoverview = TRUE;
+	
+	$LS_OPENPAGE = TRUE;
+	
+	StartPage("Sitzplan");
+	
+	$res = SQL_Query("SELECT * FROM seat_block $BlockWhere");
+	echo "<p class=content>";
+	$i = 0;
+	while ($row = mysql_fetch_array($res)) {
+		if ($i)
+			echo " | ";
+		if (!isset($id))
+			$id = $row[id];
+		if ($row[id] == $id) {
+			echo $row[name];
+			$Block = $row;
+		}
+		else
+			echo "<a href=$PHP_SELF?id=".$row[id].">".$row[name]."</a>";
+		$i++;
+	}
+	
+	echo "</p>";
+	
+	user_auth();
+
+	if ($showoverview) {
+		include $LS_SeatOverview;
+	} else {
+		if (!isset($row))
+			$row = -1;
+		if (!isset($col))
+			$col = -1;
+		
+		echo "<p><div align=center>";
+		RenderBlock($Block, false, true, $row, $col);
+		echo "</div></p>";
+	}
+
+	EndPage();
+?>
