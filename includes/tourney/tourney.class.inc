@@ -16,6 +16,7 @@
 		var $TeamTypes;
 		var $TeamCount;
 		var $ScoreType;
+		var $eflags;	// Disruptor: enhanced flags
 		
 		var $MatchesInitialized = false;
 		
@@ -36,6 +37,7 @@
 					$this->id = $id;
 					$this->StartTime = $this->info['startT'];
 					$this->MaxTeams = $this->info['MaxTeams'];
+					$this->eflags = $this->info['eflags'];
 					$this->DoubleLimit = $this->info['DELimit'];
 					$this->MatchTime = $this->info['MatchPause'] + $this->info['Games'] * $this->info['GameLength'];
 					$this->TeamSize = $this->info['TeamSize'];
@@ -146,6 +148,9 @@
 				case TS_REGISTRATION:
 					$s = _("Registration open");
 					break;
+				case TS_POSTDRAW:
+					$s = _("Post Draw ");
+					break;
 				case TS_PREMATCH:
 					$s = _("Pre Match ");
 					break;
@@ -204,7 +209,10 @@
 			if ($this->UserRegistered($id, true)) {
 				$can = false;
 			} else {
-				$can = $this->TeamCount < $this->MaxTeams;
+				if ($this->eflags & TEF_BLINDDRAW)
+					$can = $this->TeamCount < ($this->MaxTeams * $this->TeamSize);
+				else
+					$can = $this->TeamCount < $this->MaxTeams;
 			}
 			
 			return $can;

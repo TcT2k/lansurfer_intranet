@@ -49,6 +49,7 @@
 				FormSelectStart('setstatus', _("Status"), $tourney->Status);
 					FormSelectItem(_("Registration Closed"), TS_CLOSED);
 					FormSelectItem(_("Registration Opened"), TS_REGISTRATION);
+					if ($tourney->eflags & TEF_BLINDDRAW) FormSelectItem(_("Post Draw"), TS_POSTDRAW);
 					FormSelectItem(_("Pre Match"), TS_PREMATCH);
 					FormSelectItem(_("Matches"), TS_MATCH);
 					FormSelectItem(_("Finish"), TS_FINISHED);
@@ -57,11 +58,22 @@
 			
 				FormElement('', '', _("Set"), 'submit');
 			FormEnd();
+/*
+// no longer neccessary
 			echo '</td><td class=content valign=top>';
 			if (!$tourney->MatchesInitialized) {
 				NavPrintAction('orga/admin.php?action=initmatches&id='.$tourney->info['id'], _("Admin: Initialize Matches"));
 				echo '<br>';
 			}
+			if (($tourney->eflags & TEF_BLINDDRAW) and 1) {
+				NavPrintAction('orga/admin.php?action=teamsmerge&id='.$tourney->info['id'], _("Admin: Merge Teams"));
+				echo '<br>';
+			}
+			if (($tourney->eflags & TEF_BLINDDRAW) and 1) {
+				NavPrintAction('orga/admin.php?action=teamssplit&id='.$tourney->info['id'], _("Admin: Split Teams"));
+				echo '<br>';
+			}
+*/
 			echo '</td></tr>';
 			echo '</table>';
 		} else

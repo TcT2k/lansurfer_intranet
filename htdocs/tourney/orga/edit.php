@@ -17,22 +17,25 @@
   // Create Default Groups
 	if ($action == $acNewDef) {
 		include $LS_BASEPATH.'../includes/tourney/templates.inc';
-		
+	
 		if ($submitted) {
 			echo '<p class=content>';
 			$f_start = FormDateTime($f_start);
 
 			if ($f_preset) {
+
 				foreach($f_preset as $key => $value) {
 					$keys = explode('-', $key);
 					
-					$opt = TO_LOSER_SUBMIT | TO_STRICTTIMES;
+//					$opt = TO_LOSER_SUBMIT | TO_STRICTTIMES;
+					$opt = TO_LOSER_SUBMIT;
 					if ($TourneyPreSet[$keys[0]]['data'][$keys[1]]['-wwcl'])
 						$opt |= TO_WWCL | TO_SKIP_DOUBLEFINAL;
 					
 					$fields = array(
 						'MaxTeams' => 64,
 						'DELimit' => 2048,
+						'eflags' => 0,
 						'name' => _("Tournament"),
 						'rules' => '',
 						'icon' => '',
@@ -87,6 +90,7 @@
 					FormGroup(($grp['desc'] == '*default') ? _("Default Templates") : $grp['desc']);
 					foreach ($grp['data'] as $key => $value)  {
 						$s = $value['name'];
+						if ($value['-WWCLMainContest']) $s .= " ("._("WWCL Main Contest").")";
 						if ($value['icon'])
 							$s = '<img width=16 height=16 src="'.$LS_BASEPATH.'images/tourney/icons/'.$value['icon'].'"> '.$s;
 						
@@ -135,11 +139,15 @@
 				$f_options |= TO_WWCL;
 			if (!$f_doublefinal)
 				$f_options |= TO_SKIP_DOUBLEFINAL;
+
+			$f_eflags=0;
+			if ($f_eflags1) $f_eflags=$f_eflags|TEF_BLINDDRAW;
 			
 			if (!$FormErrorCount) {
 				$fields = SQL_QueryFields(array(
 					'MaxTeams' => $f_teams,
 					'DELimit' => $f_de_limit,
+					'eflags' => $f_eflags,
 					'name' => $f_name,
 					'rules' => $f_rulefile,
 					'icon' => $f_icon,
@@ -172,6 +180,7 @@
 				$f_teams = $row['MaxTeams'];
 				$f_de_limit = $row['DELimit'];
 				$f_name = $row['name'];
+				$f_eflags = $row['eflags'];
 
 				$f_rulefile = $row['rules'];
 				$f_icon = $row['icon'];
@@ -196,6 +205,7 @@
 			} else {
 				$f_teams = 64;
 				$f_de_limit = 2048;
+				$f_eflags = 0;
 				$f_teamsize = 1;
 				$f_group = 1;
 				$f_start = time();
@@ -211,7 +221,7 @@
 		}
 		$f_start_date = DateToStr($f_start);
 		$f_start_time = TimeToStr($f_start);
-		
+
 		if (!$submitted || $FormErrorCount) {
 			FormStart();
 				FormValue('submitted', 1);
@@ -233,12 +243,14 @@
 				FormSelectStart('f_de_limit', _("Double Elimination Limit"), $f_de_limit, '', true);
 					FormSelectItem(_("Complete Single Elimination"), 0);
 /*					for ($i = 16; $i < 256; $i*=2)
-						FormSelectItem(sprintf(_("Double Elimination in rounds with %d matches or less"), $i), $i);*/
+						FormSelectItem(sprintf(_("Double Elimination in rounds with %d matches or less"), $i), $i);
+*/
 					FormSelectItem(_("Complete Double Elimination"), 2048);
 				FormSelectEnd();
 				FormElement('f_doublefinal', _("Loser bracket winner must beat winner bracket winner two times"), 1, 'checkbox', ($f_doublefinal) ? 'checked' : '');
 				
 				FormElement('f_teamsize', _("Players per Team"), $f_teamsize, 'text', 'size=4');
+				FormElement('f_eflags1', _("Team Tournament: Random Teams (Blind Draw)"), 1, 'checkbox', ($f_eflags & TEF_BLINDDRAW) ? 'checked' : '');
 				FormSelectStart("f_rulefile", _("Rules"), $f_rulefile);
 					FormSelectItem(_("(No Rules)"), '');
 					$dir = opendir('../rules/');
@@ -254,22 +266,16 @@
 				
 				FormSelectStart('f_wwcltype', _("WWCL Tournament Type"), $f_wwcltype);
 					FormSelectItem(_("No WWCL Tournament"), 0);
-					FormSelectItem("Quake 3 Arena (1on1)", 1);
-					FormSelectItem("Quake 3 Arena (TDM 4on4)", 2);
-					FormSelectItem("Unreal Tournament (CTF 5on5)", 3);
-					FormSelectItem("Unreal Tournament (TDMPro 4on4)", 4);
-					FormSelectItem("Unreal Tournament (1on1)", 5);
-					FormSelectItem("HalfLife (4on4)", 6);
-					FormSelectItem("Counter-Strike (5on5)", 7);
-					FormSelectItem("Team Fortress Classic (8on8)", 8);
-					FormSelectItem("Broodwar (2on2)", 9);
-					FormSelectItem("Broodwar (1on1)", 10);
-					FormSelectItem("Need for Speed (1on1)", 11);
-					FormSelectItem("Serious Sam (1on1)", 12);
-					FormSelectItem("Fifa 2001 (1on1)", 13);
-					FormSelectItem("Formel1 GP3 (1on1)", 14);
-					FormSelectItem("Age of Empires 2 (1on1)", 15);
-					FormSelectItem("Tribes 2 (12on12)", 16);
+					$template=array();
+					include $LS_BASEPATH."../includes/tourney/templates/wwcl.inc";
+					for ($i=0;$i<sizeof($template);$i++)
+					{
+						if ($template[$i]['-wwcl'])
+							$str="";
+							if ($template[$i]['-WWCLMainContest']) $str=_("WWCL Main Contest")." - ";
+							$str.=$template[$i]['name'];
+							FormSelectItem($str, $template[$i]['WWCLType']);
+					}
 				FormSelectEnd();
 				
 				FormSelectStart("f_icon", _("Icon"), $f_icon);

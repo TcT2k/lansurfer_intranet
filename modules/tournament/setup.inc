@@ -34,6 +34,7 @@
 				GroupRanks int(11) DEFAULT '0' NOT NULL,
 				options int(10) unsigned DEFAULT '0' NOT NULL,
 				WWCLType int(10) unsigned DEFAULT '0' NOT NULL,
+				eflags int(11) DEFAULT '0' NOT NULL,
 				PRIMARY KEY (id)
 			"
 		),
@@ -154,6 +155,7 @@
 				DefTeam varchar(255) NOT NULL,
 				type smallint(5) unsigned DEFAULT '0' NOT NULL,
 				wwclid int(10) unsigned NOT NULL default '0',
+				seed float NULL,
 				PRIMARY KEY (id)
 			"
 		),
@@ -163,6 +165,7 @@
 				id int(10) unsigned NOT NULL auto_increment,
 				team int(10) unsigned DEFAULT '0' NOT NULL,
 				user int(10) unsigned DEFAULT '0' NOT NULL,
+				handicap float NULL,
 				PRIMARY KEY (id)
 			"
 		),

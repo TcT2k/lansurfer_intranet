@@ -30,7 +30,7 @@
 	}
 	
 	if ($action == 'register') {
-		$title = ($tourney->TeamSize == 1) ? _("Register") : _("Create Team");
+		$title = (($tourney->TeamSize == 1) or ($tourney->eflags & TEF_BLINDDRAW)) ? _("Register") : _("Create Team");
 
 		if ($adminuser) {
 			$founder = $adminuser;
@@ -40,15 +40,25 @@
 				$submitted=1;
 			}
 			$res = SQL_Query("SELECT clan, wwclclanid FROM user WHERE id=".$adminuser);
+			$res = SQL_Query("SELECT clan, wwclclanid, name FROM user WHERE id=".$adminuser);
 			if ($u = mysql_fetch_array($res)) {
+				$nick = $u['name'];
 				$clan = $u['clan'];
 				$wwclclan = ($u['wwclclanid']) ? ('C'.$u['wwclclanid']) : '';
+				if ($tourney->eflags & TEF_BLINDDRAW) {
+					$submitted=1;
+					$f_rules=1;
+					$f_name=$nick;
+				}
+
 			} else {
+				$nick = '';
 				$clan = '';
 				$wwclclan = '';
 			}
 		} else {
 			$founder = $user_current['id'];
+			$nick = $user_current['name'];
 			$clan = $user_current['clan'];
 			$wwclclan = ($user_current['wwclclanid']) ? ('C'.$user_current['wwclclanid']) : '';
 		}
@@ -56,9 +66,8 @@
 		if (!$tourney->UserCanRegister($founder)) {
 			LS_Error(_("You cannot register for this tourney."));
 		}
-		
+
 		if ($submitted) {
-			
 			if ($tourney->TeamSize > 1) {
 				if (!$f_name)
 					FormErrorEx('f_name', _("You have to specify a team name"));
@@ -89,15 +98,22 @@
 				$newteamid = mysql_insert_id();
 				SQL_Query("INSERT INTO TourneyTeamMember SET team=$newteamid,user=".$founder);
 				
-				if ($tourney->TeamSize > 1)
+				if (($tourney->TeamSize > 1) and !($tourney->eflags & TEF_BLINDDRAW))
 					printf(_("The team %s has been created."), $f_name);
 				else
 					printf(_("You have been registered."), $f_name);
 				echo '</p>';
 			}
 		} else {
-			$f_name = $clan;
-			$f_wwclid= $wwclclan;
+			if ($tourney->eflags & TEF_BLINDDRAW)
+				{
+				$f_name = $nick;
+				$f_wwclid = '';
+			}
+			else {
+				$f_name = $clan;
+				$f_wwclid= $wwclclan;
+			}
 			if (count($tourney->Maps))
 				$f_def_map = $tourney->Maps[0];
 			if (count($tourney->TeamTypes))
@@ -115,7 +131,10 @@
 				}
 				
 				if ($tourney->TeamSize > 1) {
-					FormElement('f_name', _("Team Name"), $f_name);
+					if ($tourney->eflags & TEF_BLINDDRAW)
+						FormValue('f_name', $f_name);
+					else
+						FormElement('f_name', _("Team Name"), $f_name);
 					if ($tourney->info['options'] & TO_WWCL)
 						FormElement('f_wwclid', _("WWCL Clan ID"), $f_wwclid, 'text', 'size=7 maxlength=8');
 				}
@@ -144,8 +163,76 @@
 				FormElement('', '', $title, 'submit');
 			FormEnd();
 		}
+
+	} elseif ($action == 'seed') {
+
+		if ($submitted)
+			{
+				if (user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE)) {
+					$res = SQL_Query("SELECT id FROM TourneyTeam WHERE tourney=".$tourney->id);
+					while ($row=mysql_fetch_array($res)) {
+						$seedv="seed_".$row['id'];
+						$seed=$$seedv;
+						if (!$seed) $seed='NULL';
+						SQL_Query("UPDATE TourneyTeam SET seed=$seed WHERE tourney=".$tourney->id." AND id=".$row['id']);
+					}
+					$submitted=false;
+				}
+				else
+					LS_Error(_("You have insufficient rights."));
+			}
+
+		if (!$submitted || $FormErrorCount) {
+			FormStart();
+				FormValue('submitted', 1);
+				FormValue('tourney', $tourney->id);
+				FormValue('action', $action);
+
+				$res = SQL_Query("SELECT id, name, wwclid, seed FROM TourneyTeam WHERE tourney=".$tourney->id." order by seed is null, seed");
+				while ($row=mysql_fetch_array($res)) {
+					FormElement('seed_'.$row['id'], $row['name'], $row['seed']);
+				}
+
+
+				FormElement('', '', _("Submit"), 'submit');
+			FormEnd();
+		}
+
+	} elseif ($action == 'hand') {
+
+		if ($submitted)
+			{
+				if (user_auth_ex(AUTH_TOURNEY, -1, 0, FALSE)) {
+					$res = SQL_Query("SELECT tm.id, tm.team FROM TourneyTeam tt, TourneyTeamMember tm WHERE tt.id=tm.team and tt.tourney=".$tourney->id);
+					while ($row=mysql_fetch_array($res)) {
+						$handv="hand_".$row['id'];
+						$hand=$$handv;
+						if (!$hand) $hand='NULL';
+						SQL_Query("UPDATE TourneyTeamMember SET handicap=$hand WHERE team=".$row['team']." AND id=".$row['id']);
+					}
+					$submitted=false;
+				}
+				else
+					LS_Error(_("You have insufficient rights."));
+			}
+
+		if (!$submitted || $FormErrorCount) {
+			FormStart();
+				FormValue('submitted', 1);
+				FormValue('tourney', $tourney->id);
+				FormValue('action', $action);
+
+				$res = SQL_Query("SELECT tm.id, u.name, tm.handicap FROM TourneyTeamMember tm, TourneyTeam tt, User u WHERE tt.id=tm.team AND tm.user=u.id AND tt.tourney=".$tourney->id." ORDER BY tm.handicap IS NULL, tm.handicap");
+				while ($row=mysql_fetch_array($res)) {
+					FormElement('hand_'.$row['id'], $row['name'], $row['handicap']);
+				}
+
+
+				FormElement('', '', _("Submit"), 'submit');
+			FormEnd();
+		}
 		
-	} elseif ($actoin == 'unregister') {
+	} elseif ($action == 'unregister') {
 	
 	}
 

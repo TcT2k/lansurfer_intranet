@@ -17,6 +17,7 @@
 	// Tourney Status
 	define('TS_CLOSED', 			0);
 	define('TS_REGISTRATION',10);
+	define('TS_POSTDRAW',	40);
 	define('TS_PREMATCH', 	 50);
 	define('TS_MATCH', 			 51);
 	define('TS_FINISHED', 	100);
@@ -55,6 +56,9 @@
 	define('MF_UNDO', 		 	 	 4);
 	define('MF_TIMELESS', 		 8);
 	define('MF_TIMEOUT',			16);
+
+	// EFlags by Disruptor
+	define ('TEF_BLINDDRAW',	1);
 	
 	require $LS_BASEPATH.'../includes/tourney/round.class.inc';
 	require $LS_BASEPATH.'../includes/tourney/tourney.class.inc';

@@ -22,6 +22,7 @@
 			t.MaxTeams,
 			t.TeamSize,
 			t.options,
+			t.eflags,
 			g.name as 'GrpName',
 			g.note as 'GrpNote',
 			g.type as 'GrpType',
@@ -45,7 +46,13 @@
 				break;
 			case TS_REGISTRATION:
 				$s = _("Registration open").':<br>'.sprintf(
-					($row['TeamSize'] == 1) ? _("%d of %d players registered") : _("%d of %d teams registered"), $row['TeamCount'], $row['MaxTeams']);
+					($row['eflags'] & TEF_BLINDDRAW) ? _("%d players for %d teams registered") :
+					(($row['TeamSize'] == 1) ? _("%d of %d players registered") : _("%d of %d teams registered"))
+					, $row['TeamCount'], $row['MaxTeams']);
+				$page = 'teams.php?id=%d';
+				break;
+			case TS_POSTDRAW:
+				$s = _("Post Draw");
 				$page = 'teams.php?id=%d';
 				break;
 			case TS_PREMATCH:

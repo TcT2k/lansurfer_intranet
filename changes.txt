@@ -1,0 +1,32 @@
+Changes at the REALMS (tournament) module of LANsurfer since 1.7.0preview4
+
+- No option 'initialize matches'.
+Instead of this option, you should set your tournament to pre-matches state.
+You may enter the tourney's round times in the tournament overview.
+There are no longer unwritten rules for altering the tourney state except the cancelled state.
+- The cancelled state
+If you've set your tournament to cancelled state, you can override the script processing by setting any other tourney state.
+- seeding
+Tourney admins may enter seeding numbers for each player to avoid that good players eliminate other good players in the first rounds.
+If there is no seeding entered, the system assumes the highest number plus 1 for that player(s).
+If there are some players with the same seeding number, the system uses random ordering within this group.
+You find the seeding option at the tourney participants screen.
+- blind draw tournaments
+In team tournaments you may activate blind draw mode.
+Then, single players instead of complete teams register for that tournament,
+ for example, up to 1280 players for a Counter-Strike 5on5 tourney with 256 teams.
+If you set the blind-draw option, the system constructs the teams after setting the post-draw state.
+You may undo this by setting the tourney to a state below post-draw.
+- handicap (for blind draw tournaments)
+You may use handicaps for tourney players. It's very like the seeding mechanism and could be used to avoid the creation of good teams and bad teams.
+- WWCL template for the 5th season
+We've added the new WWCL tournament types.
+- WWCL XML export
+The WWCL XML export will save a lot of time when you're submitting the tourney results to the WWCL.
+This module was tested by the WWCL boss Sparky himself, so we recommend to use it instead of the old export.
+Look at the export schedule before you start the export.
+
+
+Bugfixes at the REALMS module
+- Double elimination: unfair distribution of free wins
+As a result of the implementation of a seeding algorithm, there will be no longer die against die and player against player in the same round.

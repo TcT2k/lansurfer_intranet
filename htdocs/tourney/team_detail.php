@@ -3,6 +3,8 @@
 	require $LS_BASEPATH.'../includes/ls_base.inc';
   require $LS_BASEPATH."../includes/tourney/base.inc";
 
+error_reporting(7);
+
 	if (!isset($action)) $action = "show";
 	
 	$Team = new Team($id);
@@ -19,6 +21,7 @@
 	StartPage($title);
 
 	if ($action == "show") {
+
 		echo '<h3 class=content>'.$title.'</h3>';
 		
 		echo '<p class=content>';
@@ -45,22 +48,24 @@
 		echo '</p>';
 
 		if ($Tourney->TeamSize > 1) {
+
 			echo '<h3 class=content>'._("Members").'</h3>';
 			echo '<p class=content>';
-			if ($user_valid && $Tourney->Status < TS_PREMATCH) {
-				if ($Tourney->UserCanRegisterForTeam($user_current['id'], $Team)) {
+
+			if ($user_valid && $Tourney->Status < TS_POSTDRAW) {
+				if (($Tourney->UserCanRegisterForTeam($user_current['id'], $Team)) and !($Tourney->eflags&TEF_BLINDDRAW)){
 					NavPrintAction($PHP_SELF.'?action=join&id='.$id, _("Join team"));
 					echo '<br>';
 				}
 				if ($TeamAdmin) {
-					if ($tourney->Status < TS_PREMATCH) {
+					if ($tourney->Status < TS_POSTDRAW) {
 						NavPrintAction($PHP_SELF.'?action=unregister&id='.$id, ($Tourney->TeamSize > 1) ? _("Unregister team from tournament") : _("Unregister from tournament"));
 						echo '<br>';
 					}
 					NavPrintAction($PHP_SELF.'?action=add&id='.$id, _("Add Member"));
 					echo '<br>';
 				} 
-				if ($tourney->Status < TS_PREMATCH && $Team->UserCanLeaveTeam($user_current['id'])) {
+				if ($tourney->Status < TS_POSTDRAW && $Team->UserCanLeaveTeam($user_current['id'])) {
 					NavPrintAction($PHP_SELF.'?action=leave&id='.$id, _("Leave team"));
 					echo '<br>';
 				}
@@ -71,6 +76,7 @@
 			echo '<tr>';
 			echo '<th class=liste width="50%">'._("Name").'</th>';
 			echo '<th class=liste width="50%">'._("Clan").'</th>';
+			if ($Tourney->eflags & TEF_BLINDDRAW) echo '<th class=liste width="50%">'._("Handicap").'</th>';
 			echo '</tr>';
 			
 			foreach ($Team->member as $m) {
@@ -84,6 +90,7 @@
 				PrintIMSContactLink($m['uid'], $name);
 				echo '</td>';
 				echo '<td class=liste>'.$m['clan'].'</td>';
+				if ($Tourney->eflags & TEF_BLINDDRAW) echo '<td class=liste>'.$m['handicap'].'</td>';
 				if ($TeamAdmin && $m['uid'] != $Team->leader) {
 					echo '<td class=content>';
 					NavPrintDel($PHP_SELF.'?action=remove&id='.$id.'&mid='.$m['mid']);
@@ -93,10 +100,11 @@
 			}
 			
 			echo '</table>';
+
 		} else {
-			if ($user_valid && $Tourney->Status < TS_PREMATCH) {
+			if ($user_valid && $Tourney->Status < TS_POSTDRAW) {
 				if ($TeamAdmin) {
-					if ($tourney->Status < TS_PREMATCH) {
+					if ($tourney->Status < TS_POSTDRAW) {
 						NavPrintAction($PHP_SELF.'?action=unregister&id='.$id, ($Tourney->TeamSize > 1) ? _("Unregister from tournament") : _("Unregister from tournament"));
 						echo '<br>';
 					}
@@ -106,9 +114,12 @@
 		echo '<p class=content>';
 		NavPrintAction("javascript:window.close()", _("Close Window"));
 		echo '</p>';
+
+
 	} elseif ($action == 'unregister') {
 		echo '<h3 class=content>'._("Unregister from tournament").'</h3>';
 
+// blinddraw modifications?
 		if ($tourney->Status >= TS_PREMATCH)
 			LS_Error(_("Invalid tournament status."));
 		
@@ -194,7 +205,7 @@
 		NavPrintAction($PHP_SELF.'?id='.$id, _("Back"));
 		echo '</p>';
 	} elseif ($action == 'leave') {
-		if ($tourney->Status < TS_PREMATCH && $Team->UserCanLeaveTeam($user_current['id'])) {
+		if ($tourney->Status < TS_POSTDRAW && $Team->UserCanLeaveTeam($user_current['id'])) {
 			SQL_Query("DELETE FROM TourneyTeamMember WHERE user=".$user_current['id']." AND team=".$Team->id);
 			echo '<p class=content>'._("You have been removed from the team.").'</p>';
 		} else {
@@ -205,7 +216,7 @@
 		NavPrintAction($PHP_SELF.'?id='.$id, _("Back"));
 		echo '</p>';
 	} elseif ($action == 'join') {
-		if ($Tourney->UserCanRegisterForTeam($user_current['id'], $Team)) {
+		if (($Tourney->UserCanRegisterForTeam($user_current['id'], $Team)) and !($Tourney->eflags&TEF_BLINDDRAW)) {
 			SQL_Query("INSERT INTO TourneyTeamMember SET ".SQL_QueryFields(array(
 				'user' => $user_current['id'],
 				'team' => $Team->id
@@ -221,7 +232,7 @@
 		NavPrintAction($PHP_SELF.'?id='.$id, _("Back"));
 		echo '</p>';
 	}
-	
+
 
 	EndPage();
 ?>

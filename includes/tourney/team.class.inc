@@ -6,7 +6,8 @@
 		var $clan;
 		var $member;
 		var $memberCount;
-		var	$leader;
+		var $leader;
+		var $seed;
 	
 		function Team($id, $teamsize = 2) {
 			$this->member = array();
@@ -21,12 +22,14 @@
 					$this->name = $team['name'];
 					$this->leader = $team['leader'];
 					$this->id = $team['id'];
+					$this->seed = $team['seed'];
 					
 					$res = SQL_Query("SELECT
 							u.id as 'uid',
 							tm.id as 'mid',
 							u.name,
-							u.clan
+							u.clan,
+							tm.handicap
 						FROM TourneyTeamMember tm
 							LEFT JOIN user u ON u.id=tm.user
 						WHERE tm.team=$id

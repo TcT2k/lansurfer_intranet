@@ -72,6 +72,16 @@
   	NavPrintAction('wwcl.php?action=unknowns', _("Unknown Players Data Base"));
   	echo '</p>';
   }
+  if ($showWWCL) {
+  	echo '<p class=content>';
+  	echo '<b>XML '._("WWCL Export").'</b><br>';
+  	echo _('Since Season 4 you should use the new WWCL export to submit the results. Before you submit the results, you should check the generated XML file at').' <a href="http://xmlcheck.wwcl.net" target="_blank">http://xmlcheck.wwcl.net</a>';
+  	echo '<br>';
+  	NavPrintAction('wwclexport.php', "XML "._("WWCL Export"));
+  	echo '</p>';
+  }
+  
+
   
   echo '<h3 class=content>'._("Tournament Groups").'</h3>';
   
