@@ -1,0 +1,62 @@
+name;preis;size;beschreibung;lieferant;nummer;vorhanden
+Margherita;6;0;Tomaten,Käse;1;1;0
+Margherita;8.5;2;Tomaten,Käse;1;1;0
+Cipolla;7.5;0;Tomaten,Käse,Zwiebeln,Thunfisch;1;2;0
+Cipolla;10.5;2;Tomaten,Käse,Zwiebeln,Thunfisch;1;2;0
+Salami;7.0;0;Tomaten,Käse,Salami;1;3;0
+Salami;10.0;2;Tomaten,Käse,Salami;1;3;0
+Prosciuto;7;0;Tomaten,Käse,Schinken;1;4;0
+Prosciuto;10.0;2;Tomaten,Käse,Schinken;1;4;0
+Funghi;7;0;Tomaten,Käse,Champignons;1;5;0
+Funghi;10;2;Tomaten,Käse,Champignons;1;5;0
+Tonno;7;0;Tomaten,Käse,Champignons;1;6;0
+Tonno;10.5;2;Tomaten,Käse,Champignons;1;6;0
+Capriciosa;8.5;0;Tomaten,Käse,Salami,Schinken,Thunfisch,Champignons;1;7;0
+Capriciosa;12.5;2;Tomaten,Käse,Salami,Schinken,Thunfisch,Champignons;1;7;0
+Spinat;7.5;0;Tomaten,Käse,Spinat;1;8;0;
+Spinat;10.5;2;Tomaten,Käse,Spinat;1;8;0;
+Vegetaria;8.5;0;Tomaten,Käse,Spinat,Broccoli,Champignons,Artischocken,Zwiebeln,Paprika;1;9;0
+Vegetaria;12.5;2;Tomaten,Käse,Spinat,Broccoli,Champignons,Artischocken,Zwiebeln,Paprika;1;9;0
+Calzone(gefüllte Pizzatasche);8.5;0;Tomaten,Käse,Salami;Schinken,Thunfisch,Champignons;1;10;0
+Calzone(gefüllte Pizzatasche);12.5;2;Tomaten,Käse,Salami;Schinken,Thunfisch,Champignons;1;10;0
+Camberetti;10.5;0;Tomaten,Käse,Krabben,Knoblauch;1;11;0
+Camberetti;14.5;2;Tomaten,Käse,Krabben,Knoblauch;1;11;0
+Hawaii;8.5;0;Tomaten,Käse,Schinken,Ananas;1;12;0
+Hawaii;11.5;2;Tomaten,Käse,Schinken,Ananas;1;12;0
+Bolognese;7.5;0;Tomaten,Käse,Hackfleisch;1;13;0
+Bolognese;10.5;2;Tomaten,Käse,Hackfleisch;1;13;0
+Frutti di Mare;10.5;0;Tomaten,Käse,Meeresfrüchte,Knoblauch;1;14;0
+Frutti di Mare;14.5;2;Tomaten,Käse,Meeresfrüchte,Knoblauch;1;14;0
+Diavolo;7;0;Tomaten,Käse,Paprika,Zwiebel;1;15;0
+Diavolo;10;2;Tomaten,Käse,Paprika,Zwiebel;1;15;0
+Haus Buschmann;8.5;0;Tomaten,Käse,Champignons,Thunfisch,Ei;1;16;0
+Haus Buschmann;11.5;2;Tomaten,Käse,Champignons,Thunfisch,Ei;1;16;0
+Billermich;7.5;0;Tomaten,Käse,Sardellen,Kapern;1;17;0
+Billermich;10.5;2;Tomaten,Käse,Sardellen,Kapern;1;17;0
+Pepperoni;7;0;Tomaten,Käse,Zwiebeln,Pepperoni;1;18;0
+Pepperoni;9.5;2;Tomaten,Käse,Zwiebeln,Pepperoni;1;18;0
+Pizza-Gyros;8.5;0;Tomaten,Käse,Gyros;1;20;0
+Pizza-Gyros;12.5;2;Tomaten,Käse,Gyros;1;20;0
+Pizza-Brötchen;3.5;0;6-Stück;1;21;0
+Spaghetti-Napoli;8.5;1;Tomatensauce;1;22;0
+Spaghetti-Bolognese;9.5;2;Hackfleischsauce;1;23;0
+Spaghetti-Carbonara;11.5;2;Ei,Schinken,Sahne,Käse;1;24;0
+Maccheroni-Napoli;8.5;2;Tomatensauce;1;25;0
+Maccheroni-al Forno;11.5;2;Champignons,Schinken,Fleischsauce,mit Käse überbacken;1;26;0
+Maccheroni Quatro Formaggi;2;12.5;Gorgonzola,Gouda,Mozarella,Parmesan;1;27;0
+Tortellini-al Forno;12.5;2;Champignons,Schinken,Fleischsauce,mit Käse überbacken;1;28;0
+Tortellini-alla Panna;11.5;2;Schinken und Sahnesauce;1;29;0
+Lasagne;11.5;2;Tomatensauce,Fleischsauce,Schinken,mit Käse überbacken;1;30;0
+Trio Pasta;12.5;2;3 verschiedene Nudelsorten mit Käse überbacken;1;31;0
+Tagliatella alla Panna;11.5;2;Schinken,Sahnesauce;1;32;0
+Tagliatella-Verone;12.5;2;Champignons,Erbsen,Tomatensauce;1;33;0
+Tagliatella-Hawaii;11.5;2;Ananas,Currysauce mit Käse überbacken;1;34;0
+Krabbenauflauf;14.5;2;Thunfisch,Zweibeln,Champignons,Knoblauch,mit Käse überbacken;1;35;0
+Kartoffelauflauf;11.5;2;Spinat,Broccoli,Tomaten,Artischocken,mit Käse überbacken;1;36;0
+Gemüseauflauf;11.5;2;Broccoli,Kartoffeln,Spinat,Artischocken,Champignons,mit Käse überbacken;1;37;0
+Spinatauflauf;11.5;2;3 Sorten Gemüse,Broccoli,Spinat,Artischoken,Champignons mit Käse überbacken;1;38;0
+Chicken-Broccoli und Pommes Frites;15.5;2;-;1;39;0
+Chicken-Ham und Pommes Frites;15.5;2;-;1;40;0
+Gurkensalat;6;2;-;1;41;0
+Pomodori;6;2;Tomatensalat mit Zwiebeln;1;42;0
+Maissalat;8.5;2;Eisbergsalat,Tomaten,Gurken.Mais,Käse;1;43;0

@@ -8,6 +8,22 @@
 	require $LS_BASEPATH."../includes/ls_printing.inc";
 	require $LS_BASEPATH."../includes/user_util.inc";
 
+	setlocale(LC_ALL, LS_LANGUAGE);
+
+	$gt_funcs = get_extension_funcs ("gettext");
+	if ($gt_funcs && In_array('_', $gt_funcs)) {
+		putenv('LANG='.LS_LANGUAGE);
+		bindtextdomain ("messages", $LS_BASEPATH."../includes/locale");
+	} else {
+		// Enable Gettext workaround
+		if (!$GETTEXT_WORKAROUND) {
+			$GETTEXT_WORKAROUND = TRUE;
+			function _($s) {
+				return $s;
+			}
+		}
+	}
+
 // Funktionen
 
 	function LS_Error($msg, $die = TRUE) {
@@ -19,166 +35,48 @@
 			die;
 	}
 
-	function StartPage($title = "", $innerstyle = 1) {
+	function SetLang($lang = "") {
+
+		global $HTTP_ACCEPT_LANGUAGE, $LS_BASEPATH;
+		
+		$langs = split(',', $HTTP_ACCEPT_LANGUAGE);
+		$lang = $langs[0];
+		echo "<!-- LANG: $lang -->";
+		if ($lang == 'de')
+		  $lang = 'de_DE';
+		else
+		  $lang = 'en';
+
+		bindtextdomain("messages",  $LS_BASEPATH."../locale");
+		textdomain("messages");
+		setlocale(LC_ALL, $lang);
+		
+	}
+
+	function StartPage($title = "", $innerstyle = 1, $icon = '') {
 		global $LS_BASEPATH, $LS_TITLEPAGE, $LS_Design, $footerhtml, $HTTP_COOKIE_VARS, $LS_POPUPPAGE;
 
+//		SetLang();
+//		ob_start(ob_gzhandler); 
 
 		user_auth();
 ?>
 <html>
 <head>
 	<title><? echo $title; ?></title>
-<!--
-
--->	
-	
-<style type="text/css">
-<!--
-A{
-	color : #99ccff;
-	font : 11px Verdana, Helvetica;
-	text-decoration : none;
-}
-
-A:visited {
-	color : #99ccff;
-}
-
-A:hover {
-	color : #FFFFFF;
-}
-
-A:active {
-	color : #99ccff;
-}
-
-body {
-	scrollbar-face-color : #666666;
-	scrollbar-highlight-color : #333333;
-	scrollbar-shadow-color : #222222;
-	scrollbar-arrow-color : #9cCEFF;
-	scrollbar-3dlight-color : #888888;
-	scrollbar-track-color : #222222;
-	scrollbar-darkshadow-color : #111111;
-}
-
-H3.content {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 17px;
-	FONT-WEIGHT: bold;
-  COLOR: #99ccff;
-}
-.content {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: normal;
-}
-
-.form {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: normal;
-}
-
-TH.liste {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: normal;
-         BACKGROUND-COLOR: #333333;
-}
-
-TD.liste {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: normal;
-  BACKGROUND-COLOR: #555555;
-}
-
-TD.openmatch {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: normal;
-	COLOR: #909090;
-  BACKGROUND-COLOR: #555555;
-}
-
-.form_field {
-  font:10pt 'Verdana';
-  border-color: black;
-  border-style:solid;
-  border-width:2;
-}
-
-.form_btn {
-background-color: black; 
-color: white;
-font: 12px 'Arial';
-font-weight:bold;
-border-color:#99ccff;
-}
-
-
-.formerror {
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 12px;
-	FONT-WEIGHT: bold;
-         COLOR: #900000;
-}
-
-.formerrorsign {
-	FONT-SIZE: 20px;
-         COLOR: #900000;
-}
-
-#signupsign {
-	FONT-SIZE: 30px;
-}
-
-#signupsign_ready {
-	FONT-SIZE: 30px;
-         COLOR: #E7B500;
-}
-
-A.tlink:hover {
-	TEXT-DECORATION: none;
-}
-
-A.nav_link{
-	FONT-FAMILY: Verdana,Helvetica;
-	FONT-SIZE: 11px;
-	FONT-WEIGHT: normal;
-	TEXT-DECORATION: none;
-}
-A.nav_link:hover {
-	TEXT-DECORATION: underline;
-}
-
-#nav_level1 {
-	COLOR: #999999;
-}
-
-#nav_level2 {
-	COLOR: #CCCCCC;
-}
-
-#nav_level3 {
-	COLOR: #999999;
-}
-
-#nav_level4 {
-	COLOR: #666666;
-}
-
--->
-</style>
-<? if ($innerstyle == STYLE_NAVBAR): ?>
-<base target="main">
-<? endif; ?>
+	<link rel="StyleSheet" href="<? echo $LS_BASEPATH; ?>intra.css">
+	<? if ($innerstyle == STYLE_NAVBAR): ?>
+	<base target="main">
+	<? endif; ?>
 </head>
 
-<body text=white bgcolor=<? echo ($innerstyle != STYLE_NAVBAR) ? /*"#333333"*/ "black" : "black"; ?> class=content>
+<body>
 <? if (!$LS_POPUPPAGE): ?>
-<h3 class=content><? echo $title; ?></h3>
+<h3 class=content><?  
+	if ($icon && $icon != $LS_BASEPATH.'images/tourney/icons/')
+		echo '<img width=32 height=32 border=0 src="'.$icon.'"> ';
+	echo $title; 
+?></h3>
 <?
 if ($title)
 	NavPrint($title);
@@ -190,25 +88,55 @@ if ($title)
 	}
 	
 	function EndPage() {
-		global $LS_BASEPATH, $LS_TITLEPAGE, $LS_Design, $footerhtml;
+		global $LS_BASEPATH, $LS_TITLEPAGE, $LS_POPUPPAGE;
 		
 		echo "</p>";
-		echo "<!-- End Content -->\n";
-		echo $footerhtml;
-		
+		if (!$LS_POPUPPAGE)
+			echo "<p>&nbsp;</p><p>&nbsp;</p><p class=content align=right>Powered by <a target=_new href=\"http://www.lansurfer.com/\">LANsurfer.com</a></p>";
+		echo '</body></html>';
+		//echo "<!-- End Content -->\n";
 		SQL_Done();
 	}
 	
-	function LS_GetParty($id) {
-		$res = SQL_Query("SELECT * FROM party WHERE id=$id");
-		$row = mysql_fetch_array($res);
-		return $row;
+	function deStrToDate($date, $time = "") {
+		$thedate = -1;
+		
+		list( $day, $month, $year ) = split( '[/.-]', $date );
+		
+		if ($time)
+			list($hour, $minute) = split( '[:.-]', $time );
+		
+		if (checkdate($month, $day, $year))
+			$thedate = mktime($hour, $minute, 0, $month, $day, $year);
+		else
+			$thedate = -1;
+		
+		return $thedate;
 	}
 	
-	function LS_GetTeam($id) {
-		$res = SQL_Query("SELECT * FROM orga_team WHERE id=$id");
-		$row = mysql_fetch_array($res);
-		return $row;
+	function DateToStr($date) {
+		return date('d.m.Y', $date);
 	}
+
+	function TimeToStr($time) {
+		return date('H:i', $time);
+	}
+	
+	function StrToDate($date, $time = '') {
+		$thedate = -1;
+		
+		list( $day, $month, $year ) = split( '[/.-]', $date );
+		
+		if ($time)
+			list($hour, $minute) = split( '[:.-]', $time );
+		
+		if (checkdate($month, $day, $year))
+			$thedate = mktime($hour, $minute, 0, $month, $day, $year);
+		else
+			$thedate = -1;
+		
+		return $thedate;
+	}
+
 
 ?>

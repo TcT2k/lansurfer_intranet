@@ -31,7 +31,7 @@
 		global $FormErrors, $FormErrorCount;
 			
 		if (!$FormErrorCount)
-			echo "<tr><td class=formerror colspan=2>Es gab Fehler beim bearbeiten des Formulars:<br>Bitte &uuml;berpr&uuml;fe deine Angaben.</td></tr>";
+			echo "<tr><td class=formerror colspan=2>"._("There were errors when processing the form:<br>Please check your input.")."</td></tr>";
 	
 		$FormErrors[$FormErrorCount] = $name;
 		
@@ -47,7 +47,7 @@
 	}
 
 	function FormGroup($text) {
-		echo "<tr><th class=\"form\" colspan=2><br>".$text."</th></tr>\n";
+		echo "<tr><th class=\"form\" colspan=2 align=left><br>".$text."<hr width=400></th></tr>\n";
 	}
 
 	function FormValue($name, $value) {
@@ -68,57 +68,79 @@
 		echo $value."</td></tr>\n";
 	}
 
-	function FormSelectStart($name, $caption, $value, $extratags = "") {
-		global $FormCurrentSelectValue;
+	function FormSelectStart($name, $caption, $value, $extratags = "", $radio = false) {
+		global $FormCurrentSelectValue, $FormCurrentSelectRadio, $FormCurrentSelectName;
 		$FormCurrentSelectValue = $value;
+		$FormCurrentSelectRadio = $radio;
+		$FormCurrentSelectName = $name;
 		
-		echo "<tr><td class=\"form\">".$caption.":</td><td class=\"form\">\n";
-		echo "<select name=\"".$name."\"";
-		if ($extratags)
-			echo $extratags." ";
-		echo ">\n";
+		echo "<tr><td class=\"form\" valign=top>".$caption.":</td><td class=\"form\">\n";
+		if (!$radio) {
+			echo "<select name=\"".$name."\"";
+			if ($extratags)
+				echo $extratags." ";
+			echo ">\n";
+		}
 	}
 	
 	function FormSelectItem($caption, $value = -1, $extratags = "") {
-		global $FormCurrentSelectValue;
+		global $FormCurrentSelectValue, $FormCurrentSelectRadio, $FormCurrentSelectName;
 	
-		echo "<option";
-		if ($value != -1) {
-			echo " value=\"$value\"";
-			
+		if (!$FormCurrentSelectRadio) {
+			echo "<option";
+			if ($value != -1) {
+				echo " value=\"$value\"";
+				
+				if ($value == $FormCurrentSelectValue)
+					echo " selected";
+			} else {
+				if ($caption == $FormCurrentSelectValue)
+					echo " selected";
+			}
+			if ($extratags)
+				echo " $extratags";
+			echo ">$caption</option>";
+		} else {
+			echo '<input type=radio name="'.$FormCurrentSelectName.'" value="'.$value.'"';
 			if ($value == $FormCurrentSelectValue)
-				echo " selected";
+				echo " checked";
+			echo '>'.$caption.'<br>';
 		}
-		if ($extratags)
-			echo " $extratags";
-		echo ">$caption</option>";
 	}
 	
 	function FormSelectEnd() {
+		global $FormCurrentSelectValue, $FormCurrentSelectRadio;
+
 		echo "</select></td></tr>\n";
 	}
 
+	function FormDateTime($datetime) {
+		return StrToDate($datetime[date], $datetime[time]);
+	}
+	
 	function FormElement($name, $caption, $value = "", $type = "text", $extratags = "", $linepos = 0) {
 		global $FormErrors, $FormErrorCount;
 
 		for ($i=0; $i < $FormErrorCount && !($ElementError = ($FormErrors[$i] == $name)); $i++) ;
 	
 		
-		$showcaption = ($type == "text" || $type == "password" || $type == "textarea");
-		if ($type == "checkbox" || $type == "radio")
+		if ($type == "text" || $type == "password" || $type == "textarea" || $type == "file" || $type == "datetime")
+			$showcaption = 1;
+		elseif ($type == "checkbox" || $type == "radio")
 			$showcaption = 2;
+		else
+			$showcaption = 0;
 
 		if ($linepos > 1)
 			$showcaption = 0;
 	
-		if ($linepos >= 0) {
+		if ($linepos == 0 || $linepos == 1) {
 			echo "     <tr><td class=\"form\"";
 			if ($showcaption == 2 || $type == "submit")
 				echo " colspan=2";
 			echo ">";
 	
 			// Elemente mit vorangestellter Caption
-				
 			if ($showcaption == 1)
 				echo $caption.":</td>\n<td class=\"form\">\n";
 		} else {
@@ -127,23 +149,21 @@
 			
 		if ($type == "textarea") {
 			echo "<textarea name=\"$name\" class=\"form_textarea\" $extratags>$value</textarea>";
+		} elseif ($type == 'datetime') {
+			echo ' <input type="text" value="'.DateToStr($value).'" name="'.$name.'[date]" size=10 maxlength=10 class="form_field">';
+			echo ' <input type="text" value="'.TimeToStr($value).'" name="'.$name.'[time]" size=5 maxlength=5 class="form_field">';
 		} else {
-			echo "<input type=\"$type\" value=\"$value\" ";
-			if ($name) {
-				echo "name=\"".$name;
-				if ($datetime)
-					echo "_date";
-				echo "\"";
-			}
+			echo '<input type="'.$type.'" value="'.$value.'" ';
+			if ($name)
+				echo 'name="'.$name.'"';
 			if ($extratags)
 				echo " $extratags ";
 			if ($type == "submit")
 				echo "class=\"form_btn\"";
-			if ($type == "text" || $type == "password")
-				echo "class=\"form_field\"";
+			if ($type == 'text' || $type == 'password' || $type == 'datetime')
+				echo 'class="form_field"';
 				
 			echo ">";
-			
 		}
 		if ($showcaption == 2)
 			echo "&nbsp;".$caption;
@@ -151,12 +171,12 @@
 		if ($ElementError)
 			echo "</td><td class=\"formerrorsign\">&lt;</font>";
 
-		if ($linepos == 0)
+		if ($linepos == 0 || $linepos == 3)
 			echo "\n</td></tr>\n";
 	}
 
 	
-	function NavStruct($path, $param = NULL) {
+	function NavStruct($path, $param = FALSE) {
 		global $LS_BASEPATH, $NavStructParam;
 		
 		include $LS_BASEPATH."../includes/navbase.inc";
@@ -189,7 +209,7 @@
 	function NavPrint($title) {
 		global $NavList, $LS_BASEPATH, $sess, $NavStructParam, $team;
 
-		$NavStructParam['team'] = $team;
+		$NavStructParam[team] = $team;
 
 		$max = count($NavList);
 		
@@ -220,23 +240,23 @@
 			if (isset($sess))
 				$url = $sess->url($url);
 		
-			echo "<td class=\"contentpanel\" width=\"10\"><img src=\"".$LS_BASEPATH."images/navigation/arrow_left.gif\" width=\"5\" height=\"9\"></td>\n";
-			echo "<td class=\"contentpanel\"><img src=\"".$LS_BASEPATH."images/pixel.gif\" width=\"5\" height=\"1\"></td>";
-			echo "<td class=\"contentpanel\" valign=\"top\" nowrap><a href=\"".$url."\" class=\"nav_link\" id=\"nav_level".$level."\">".$NavList[$i][0]."</a></td>\n";
-      echo "<td class=\"contentpanel\"><img src=\"".$LS_BASEPATH."images/pixel.gif\" width=\"5\" height=\"1\"></td>\n";
+			echo '<td class="content" width="10"><img src="'.$LS_BASEPATH.'images/navigation/arrow_left.gif" width="5" height="9"></td>';
+			echo '<td class="content"><img src="'.$LS_BASEPATH.'images/pixel.gif" width="5" height="1"></td>';
+			echo '<td class="content" valign="top" nowrap><a href="'.$url.'" class="NavLink" id="NavLevel'.$level.'">'.$NavList[$i][0].'</a></td>';
+      echo '<td class="content"><img src="'.$LS_BASEPATH.'images/pixel.gif" width="5" height="1"></td>';
 		}
 
 		$level = 1;
-		echo "<td class=\"contentpanel\" width=\"10\"><img src=\"".$LS_BASEPATH."images/navigation/quadrat.gif\" width=\"9\" height=\"9\"></td>\n";
-		echo "<td class=\"contentpanel\"><img src=\"".$LS_BASEPATH."images/pixel.gif\" width=\"5\" height=\"1\"></td>";
-		echo "<td class=\"contentpanel\" valign=\"top\" width=\"100%\" navwrap id=\"#nav_level1\">$title</td>\n";
+		echo '<td class="content" width="10"><img src="'.$LS_BASEPATH.'images/navigation/quadrat.gif" width="9" height="9"></td>';
+		echo '<td class="content"><img src="'.$LS_BASEPATH.'images/pixel.gif" width="5" height="1"></td>';
+		echo '<td valign="top" width="100%" nowrap><span class=content id=NavLevel1>'.$title.'</span></td>';
 	}
 	
 	function NavPrintBack($caption = "") {
 		global $LS_BASEPATH, $NavList;
 		
 		echo "<p>";
-		NavPrintAction($NavList[count($NavList) - 1][1], ($caption) ? $caption : "Zur&uuml;ck");
+		NavPrintAction($NavList[count($NavList) - 1][1], ($caption) ? $caption : _("Back"));
 		echo "</p>";
 	}
 	
@@ -244,15 +264,15 @@
 		global $LS_BASEPATH, $LS_Design;
 	
 		echo "<a href=\"$url\">";
-		echo ($caption) ? $caption : "N&auml;chste Seite";
-		echo " <img src=\"".$LS_Design['nav_next']."\" border=0 width=\"10\" height=\"9\"></a>";
+		echo ($caption) ? $caption : _("Next Page");
+		echo " <img src=\"".$LS_Design[nav_next]."\" border=0 width=\"10\" height=\"9\"></a>";
 	}
 
 	function NavPrintPrevPage($url, $caption = "") {
 		global $LS_BASEPATH, $LS_Design;
 	
-		echo "<a href=\"$url\"><img src=\"".$LS_Design['nav_prev']."\" border=0 width=\"10\" height=\"9\"> ";
-		echo ($caption) ? $caption : "Vorherige Seite";
+		echo "<a href=\"$url\"><img src=\"".$LS_Design[nav_prev]."\" border=0 width=\"10\" height=\"9\"> ";
+		echo ($caption) ? $caption : _("Previous Page");
 		echo "</a>";
 	}
 	
@@ -260,11 +280,11 @@
 		global $LS_BASEPATH, $LS_Design, $sess;
 		
 		if ($url == "")
-			$url = $LS_BASEPATH."notopen.phtml";
+			$url = $LS_BASEPATH."notopen.php";
 		if (isset($sess))
 			$url = $sess->url($url);
 		
-		echo "<a href=\"".$url."\"><img border=0 width=5 height=9 src=\"".$LS_Design['nav_action']."\"> $caption</a>";
+		echo "<a href=\"".$url."\"><img border=0 width=5 height=9 src=\"".$LS_Design[nav_action]."\"> $caption</a>";
 	}
 	
 	function HTMLStr($str, $limit = 0) {
@@ -307,11 +327,11 @@
 		
 		} else {
 			$LS_Design[ls_intern] = TRUE;
-			$LS_Design['nav_action'] = $LS_BASEPATH."images/navigation/arrow_right.gif";
-			$LS_Design['nav_next'] = $LS_BASEPATH."images/navigation/page_next.gif";
-			$LS_Design['nav_prev'] = $LS_BASEPATH."images/navigation/page_prev.gif";
+			$LS_Design[nav_action] = $LS_BASEPATH."images/navigation/arrow_right.gif";
+			$LS_Design[nav_next] = $LS_BASEPATH."images/navigation/page_next.gif";
+			$LS_Design[nav_prev] = $LS_BASEPATH."images/navigation/page_prev.gif";
 			
-			include $LS_BASEPATH."../includes/design/header.phtml";		
+			include $LS_BASEPATH."../includes/design/header.php";		
 		}
 		if ($LS_StatusRefreshNeeded) {
 			LS_RefreshStatusFrame();
@@ -327,7 +347,7 @@
 			echo $footerhtml;
 		
 		} else {
-			include $LS_BASEPATH."../includes/design/footer.phtml";		
+			include $LS_BASEPATH."../includes/design/footer.php";		
 		}
 	}
 	
@@ -339,26 +359,31 @@
 		echo ExternalURL($url);
 	}
 
-	define("DD_TIME",			1);
-	define("DD_DATE",			2);
+	define('DD_TIME',			1);
+	define('DD_DATE',			2);
+	define('DD_NORELATIVE',		4);
 	
 	function DisplayDate($timestamp, $options = 3) {
 		$d = getdate($timestamp);
 		$n = getdate(time());
 		
-		$daydiff = $n[yday] - $d[yday];
-		switch ($daydiff) {
-			case 1:
-				$day = "<b>Gestern</b>";
-				break;
-			case 0:
-				$day = "<b>Heute</b>";
-				break;
-			case -1:
-				$day = "<b>Morgen</b>";
-				break;
-			default:
-				$day = date("d.m.Y", $timestamp);
+		if ($options & DD_NORELATIVE) {
+			$day = strftime('%x', $timestamp);
+		} else {
+			$daydiff = $n[yday] - $d[yday];
+			switch ($daydiff) {
+				case 1:
+					$day = "<b>"._("Yesterday")."</b>";
+					break;
+				case 0:
+					$day = "<b>"._("Today")."</b>";
+					break;
+				case -1:
+					$day = "<b>"._("Tomorrow")."</b>";
+					break;
+				default:
+					$day = strftime('%x', $timestamp);
+			}
 		}
 		$s = "";
 		if ($options & DD_DATE)
@@ -369,51 +394,56 @@
 			$s .= date("H:i", $timestamp);
 		return $s;
 	}
+
+	function NavPrintDel($url, $caption = '') {
+		global $LS_BASEPATH;
+		if ($caption == '')
+			$caption = _("Remove");
 	
-	function GetGuestStatusString($party = 0) {
-		global $user_valid, $user_current, $sess;
-		
-		$text = "";
-		if ($user_valid) {
-			$text = "<b>".HTMLStr($user_current[name],30)."</b><br>";
-			
-			
-			$res = SQL_Query("SELECT * FROM guest WHERE (user=".$user_current[id].") AND (party=$party)");
-			$guest = mysql_fetch_array($res);
-			
-			$res = SQL_Query("SELECT * FROM party WHERE id=$party");
-			$Party = mysql_fetch_array($res);
-			
-			if ($guest) {
-				$text .= "1. Angemeldet<br>";
-				if ($guest[flags] & GUEST_PAID) {
-					$seaturl = $Party[seat_url];
-					if (!$seaturl || $seaturl == "http://")
-						$seaturl = "http://".LS_EXT_SCRIPT_PATH."signup.phtml?party=".$party;
-					
-					$seaturl = $sess->url($seaturl);
-				
-					$text.= "2. Bezahlt<br>3. <a href=\"".$seaturl."\">Sitzplatz</a><br>";
-				} else {
-					$text.= "2. <a href=\"".$sess->url("http://".LS_EXT_SCRIPT_PATH."signup.phtml?party=$party")."\">Bezahlen</a><br>3. Sitzplatz<br>";
-				}
-			} else {
-				$text .= "1. <a href=\"".$sess->url("http://".LS_EXT_SCRIPT_PATH."signup.phtml?party=$party")."\">Anmelden</a><br>2. Bezahlen<br>3. Sitzplatz<br>";
-			}
-	
-			$text .= "<a href=\"".$sess->url("http://".LS_EXT_SCRIPT_PATH."details.phtml?party=$party")."\">Details</a>";
-			
-		} else {
-			$text = "<a href=\"".$sess->url("http://".LS_EXT_SCRIPT_PATH."details.phtml?party=$party")."\">Login</a>";
-		}
-		return $text;
+		echo '<a href="'.$url.'"><img alt="'.$caption.'" border=0 width=12 height=12 src="'.$LS_BASEPATH.'images/navigation/delete_button.gif"></a>';
 	}
-/*	
-	$NavList[0][0] = "Home";
-	$NavList[0][1] = $LS_BASEPATH."index.phtml";
-*/
-	$LS_Design['nav_action'] = $LS_BASEPATH."images/navigation/arrow_right.gif";
-	$LS_Design['nav_next'] = $LS_BASEPATH."images/navigation/page_next.gif";
-	$LS_Design['nav_prev'] = $LS_BASEPATH."images/navigation/page_prev.gif";
+
+	function PrintSeat($userid) {
+		$res = SQL_Query("SELECT * FROM guest WHERE user=".$userid);
+		if ($Guest = mysql_fetch_array($res)) {
+			$res = SQL_Query("SELECT
+					sb.id as 'blockid',
+					s.id,
+					sb.name,
+					s.row,
+					s.col 
+				FROM guest AS g
+					LEFT JOIN seats AS s ON s.guest=g.id
+					LEFT JOIN seat_block AS sb ON s.block=sb.id
+				WHERE g.id=".$Guest[id]." AND s.status=".SEAT_OCCUPIED."
+				");
+			$Seat = mysql_fetch_array($res);
+		}
+		if ($Seat && $Seat[id]) {
+			echo '<a href="../party/seat.php?id='.$Seat[blockid].'&row='.$Seat[row].'&col='.$Seat[col].'" target="_new">'.$Seat[name].', '.chr($Seat[row] + 65).' '.($Seat[col] + 1).'</a>';
+		} else {
+			echo "("._("Unknown").")";
+		}
+	}
+	
+	function FloatToCurrency($value, $edit = false) {
+		global $LS_locale_info;
+
+		if (!$LS_locale_info)
+			$LS_locale_info = localeconv();
+
+		
+		if ($edit)
+			return sprintf('%s', str_replace('.', $LS_locale_info['decimal_point'], $value));
+		else
+			return str_replace('.', $LS_locale_info['decimal_point'], sprintf('%.2f %s', str_replace('.', $LS_locale_info['decimal_point'], $value), LS_CATERING_CURRENCY));
+	}
+
+	$LS_locale_info = false;
+
+	
+	$LS_Design[nav_action] = $LS_BASEPATH."images/navigation/arrow_right.gif";
+	$LS_Design[nav_next] = $LS_BASEPATH."images/navigation/page_next.gif";
+	$LS_Design[nav_prev] = $LS_BASEPATH."images/navigation/page_prev.gif";
 
 ?>

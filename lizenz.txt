@@ -6,6 +6,6 @@ Dieses Archiv enthält die LANsurfer Intranet Software im folgenden Software gena
 2. Diese Software darf in keiner Form weiter gegeben werden
 3. Eine kommerzielle Nutzung ist ohne Einwillgung des LANsurfer Teams untersagt
 4. Die Nutzung der Software oder von Teilen der Software ausserhalb einer mit LANsurfer im Internet organisierten Party ist ohne die Zustimmung des LANsurfer Teams untersagt.
-5. Die Weitergabe von Turnierergebnissen, die mit dem Turniermodul durchgeführt wurden, an Partyveranstalter übergreifende Ligen ist ohne die Zustimmung des LANsurfer Teams untersagt.
+5. Die Weitergabe von Turnierergebnissen, die mit dem Turniermodul durchgeführt wurden, an Partyveranstalter übergreifende Ligen ist ohne die Zustimmung des LANsurfer Teams untersagt. Die Weitergabe an die WWCL (http://wwcl.net) ist gestattet.
 6. In der Software auftretende Fehler müssen dem LANsurfer Team entweder per Email an bugs@lansurfer.com oder über das "Bug Tracking" in der "Orga Ecke" von LANsurfer mitgeteilt werden. Dabei sollte der Fehler möglichst Detailt beschrieben werden. Sollte der Fehler schon im Bug Tracking bereich aufgeführt sein muss er nicht mitgeteilt werden.
 7. Jegliche Modifikationen an der Software sind erlaubt und sogar erwünscht. Berechtigen jedoch nicht zur Weitergabe der gesamten Software.
